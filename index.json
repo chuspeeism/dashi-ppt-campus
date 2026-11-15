@@ -126,6 +126,24 @@
     "pku.pptx.part-011",
     "pku.pptx.part-012"
    ]
+  },
+  "scu.pptx": {
+   "bytes": 77805647,
+   "parts": [
+    "scu.pptx.part-000",
+    "scu.pptx.part-001",
+    "scu.pptx.part-002",
+    "scu.pptx.part-003",
+    "scu.pptx.part-004",
+    "scu.pptx.part-005",
+    "scu.pptx.part-006",
+    "scu.pptx.part-007",
+    "scu.pptx.part-008",
+    "scu.pptx.part-009",
+    "scu.pptx.part-010",
+    "scu.pptx.part-011",
+    "scu.pptx.part-012"
+   ]
   }
  }
 }
