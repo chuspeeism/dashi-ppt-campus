@@ -13,6 +13,12 @@
     "whu.pptx.part-006",
     "whu.pptx.part-007"
    ]
+  },
+  "zju.pptx": {
+   "bytes": 2267135,
+   "parts": [
+    "zju.pptx.part-000"
+   ]
   }
  }
 }
