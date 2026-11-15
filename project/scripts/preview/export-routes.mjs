@@ -116,7 +116,7 @@ function scrubCampusNative(info) {
 // 学校原生封面 / 目录模板:浏览器内导出(editable-pptx-browser.js)从这里取 manifest.json 与
 // <学校 key>.pptx(50–90 MB),在用户浏览器里完成选页 / 填字 / 合并。模板目录默认是仓库的
 // assets/campus-native(不进 git,由 scripts/campus-schools/build-native-templates.py 生成),
-// 可用环境变量 DASHI_CAMPUS_NATIVE_DIR 覆盖。只放行这两类文件名;与导出端点同一套同源鉴权。
+// 可用环境变量 DASHI_CAMPUS_NATIVE_DIR 覆盖;模板目录里没有的模板从下载缓存取(见 native-fetch.mjs)。只放行这两类文件名;与导出端点同一套同源鉴权。
 export async function handleCampusNativeAsset(req, res, requestUrl) {
   if (!isAllowedExportRequest(req)) {
     writeForbiddenExportResponse(res);
@@ -129,8 +129,9 @@ export async function handleCampusNativeAsset(req, res, requestUrl) {
     return;
   }
   const dir = path.resolve(process.env.DASHI_CAMPUS_NATIVE_DIR || path.join(ROOT, 'assets/campus-native'));
-  const file = path.join(dir, name);
-  // 本机没有这所学校的模板时按需下载(与服务端导出同一套,实现在导出引擎的 native-fetch.mjs)
+  let file = path.join(dir, name);
+  // <学校>.pptx:模板目录里有就直接用;没有再看技能目录之外的下载缓存,都没有就按需下载进缓存
+  //(与服务端导出同一套,实现在导出引擎的 native-fetch.mjs)
   if (name.endsWith('.pptx') && !existsSync(file)) {
     try {
       const { ensureCampusNativeTemplate } = await import('../../packages/html-deck-to-pptx/src/editable.mjs');
@@ -141,7 +142,7 @@ export async function handleCampusNativeAsset(req, res, requestUrl) {
       } catch {
         // 没有清单:不校验大小
       }
-      await ensureCampusNativeTemplate(dir, name, { expectedBytes });
+      file = (await ensureCampusNativeTemplate(dir, name, { expectedBytes })) || file;
     } catch (error) {
       console.warn(`[campus-native] ${scrubLocalPaths(error?.message || String(error))}`);
     }

@@ -27,6 +27,7 @@ import {
 } from './preview/export-routes.mjs';
 import { ensureUsableTmpdir } from './preview/ensure-tmpdir.mjs';
 import { resolveSchoolAssetFallback } from './preview/campus-school-assets.mjs';
+import { resolvePreviewRuntimeDirs } from './preview/runtime-dirs.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
@@ -44,11 +45,13 @@ const PORT = Number(process.env.PORT || process.argv[3] || 4178);
 const HOST = process.env.HOST || '127.0.0.1';
 const LOCAL_HOSTNAME = getLocalHostname();
 const LAN_IPS = getLanIps();
-const CERT_DIR = path.join(ROOT, 'output/https-preview');
+// 导出文件与证书的位置见 preview/runtime-dirs.mjs:安装版不再写进技能目录里的 project/output。
+const { exportDir: RUNTIME_EXPORT_DIR, certDir: RUNTIME_CERT_DIR } = resolvePreviewRuntimeDirs({ root: ROOT, serveRoot: SERVE_ROOT });
+const CERT_DIR = RUNTIME_CERT_DIR;
 const CERT_META = path.join(CERT_DIR, 'cert-meta.json');
 const CERT_KEY = path.join(CERT_DIR, 'localhost-key.pem');
 const CERT_FILE = path.join(CERT_DIR, 'localhost-cert.pem');
-const EXPORT_DIR = path.join(ROOT, 'output/exports');
+const EXPORT_DIR = RUNTIME_EXPORT_DIR;
 const INTERNAL_PREVIEW_FILES = new Set(['.preview-server.json', '.preview-server.log']);
 const LEXICAL_SERVE_ROOT = path.resolve(SERVE_ROOT);
 const LEXICAL_EXPORT_DIR = path.resolve(EXPORT_DIR);

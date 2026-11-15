@@ -49,7 +49,7 @@ node <skill-root>/scripts/check_latest_version.mjs
 
 ## 使用规则
 
-- 运行生成器需要 Node.js 20+ 和 npm;首次生成时渲染脚本会在 Skill 内置 `project/` 目录安装依赖。Windows 用 `render_goal_deck.ps1`(直接 PowerShell,不经 WSL/bash);macOS / Linux 用 `render_goal_deck.sh`。
+- 运行生成器需要 Node.js 20+ 和 npm;首次生成时渲染脚本会自动准备依赖,默认装在 Skill 目录之外的 `~/.dashi-ppt/deps/`(`project/node_modules` 只是指向它的链接),学校原生模板下载后缓存在 `~/.dashi-ppt/campus-native/`,都不占 Skill 目录;不要手动在 `project/` 里运行 `npm install`。宿主统计 Skill 目录文件数时如果会跟随链接,设环境变量 `DASHI_PPT_DEPS_MODE=external`(或在 `~/.dashi-ppt/config.json` 写 `{"depsMode": "external"}`)后重新运行渲染脚本,`project/` 里就不再放链接。Windows 用 `render_goal_deck.ps1`(直接 PowerShell,不经 WSL/bash);macOS / Linux 用 `render_goal_deck.sh`。
 - 风格选择提问:用户可见回复必须嵌入 `<skill-root>/assets/skill/theme-style-grid.png` 的 Markdown 图片,先展开绝对路径;这是回复展示用内置风格图,不可写入 `goal.json` 或任何 media 字段;列出当前可选风格和极简“适合/人群”,不能只在内部进度提示中提到风格图。
 - 开工前确认两件事:主题风格、是否需要图片/视频。用户未明确表达且非整体委托时,先提问等答复,不得代选;无法提问的环境(脚本/批处理)才自选,并在交付说明中列出所选与理由。
 - 委托模式:仅当用户对整体明确委托(“都你来定”“不用问,直接开干”“不用问我,直接生成”)时,才自选主题、默认 HTML、默认不使用 image-gen,最终说明假设。用户只说内容/文案“随意”“自拟”时,仅自拟内容;风格、页数、媒体等已给的不得擅自改变,未给的按上一条先问。
