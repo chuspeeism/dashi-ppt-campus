@@ -130,10 +130,10 @@ export async function handleCampusNativeAsset(req, res, requestUrl) {
   }
   const dir = path.resolve(process.env.DASHI_CAMPUS_NATIVE_DIR || path.join(ROOT, 'assets/campus-native'));
   const file = path.join(dir, name);
-  // 本机没有这所学校的模板时按需下载(与服务端导出同一套,见 packages/html-deck-to-pptx/src/native-fetch.mjs)
+  // 本机没有这所学校的模板时按需下载(与服务端导出同一套,实现在导出引擎的 native-fetch.mjs)
   if (name.endsWith('.pptx') && !existsSync(file)) {
     try {
-      const { ensureCampusNativeTemplate } = await import('../../packages/html-deck-to-pptx/src/native-fetch.mjs');
+      const { ensureCampusNativeTemplate } = await import('../../packages/html-deck-to-pptx/src/editable.mjs');
       let expectedBytes = 0;
       try {
         const manifest = JSON.parse(readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
