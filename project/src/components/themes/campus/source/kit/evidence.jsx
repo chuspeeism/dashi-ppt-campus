@@ -86,6 +86,10 @@ const EVIDENCE_CSS = `
 .cp-fx-b{font-weight:700;}
 .cp-fx-hl{padding:.02em .2em .06em;margin:0 .06em;border-radius:.24em;background:var(--campus-accent-tint);color:var(--theme-accent);box-shadow:0 0 0 .06em var(--campus-accent-line);-webkit-box-decoration-break:clone;box-decoration-break:clone;}
 .cp-fx-t{font-style:normal;}
+/* 直接带字的行内元素一律 line-height:1(数字、括号也包在 .cp-fx-n 里),行盒高度仍由外层 .cp-fx 的 1.5 撑开,网页排版不变。
+   导出 PPTX 时每段字是一个独立文本框、行距取自己的 line-height:底字按 1.5 倍、下标按 1 倍排,
+   PowerPoint / WPS 会把底字基线压低半个多行距,下标反而比底字基线高,看起来像上标。 */
+.cp-fx-v,.cp-fx-t,.cp-fx-fn,.cp-fx-o,.cp-fx-p,.cp-fx-n,.cp-fx-sqrt-sign{line-height:1;}
 `;
 
 export function useEvidenceStyle() {
@@ -381,6 +385,14 @@ export function parseFormula(source) {
     while (peek() === '_' || peek() === '^') {
       const which = peek();
       pos += 1;
+      // 宽容写法:`T_urban` 这类紧跟 3 个及以上连续英文字母(没写花括号)时整段作上下标;
+      // 严格按 LaTeX 只有第一个字母是下标,会排成「T_u rban」。1–2 个字母仍按 LaTeX 规则。
+      const word = /^[A-Za-z]{3,}/.exec(src.slice(pos));
+      if (word) {
+        pos += word[0].length;
+        if (which === '_') sub = { t: 'var', v: word[0] }; else sup = { t: 'var', v: word[0] };
+        continue;
+      }
       const arg = readArg();
       if (which === '_') sub = arg; else sup = arg;
     }
@@ -398,11 +410,11 @@ function renderNode(node, key) {
   if (!node) return null;
   switch (node.t) {
     case 'var': return <span className="cp-fx-v" key={key}>{node.v}</span>;
-    case 'num': return <React.Fragment key={key}>{node.v}</React.Fragment>;
+    case 'num': return <span className="cp-fx-n" key={key}>{node.v}</span>;
     case 'text': return <span className="cp-fx-t" key={key}>{node.v}</span>;
     case 'fn': return <span className="cp-fx-fn" key={key}>{node.v}</span>;
     case 'op': return <span className="cp-fx-o" key={key}>{node.v}</span>;
-    case 'punct': return node.gap ? <span className="cp-fx-p" key={key}>{node.v}</span> : <React.Fragment key={key}>{node.v}</React.Fragment>;
+    case 'punct': return <span className={node.gap ? 'cp-fx-p' : 'cp-fx-n'} key={key}>{node.v}</span>;
     case 'space': return <React.Fragment key={key}>{node.v}</React.Fragment>;
     case 'group': return <React.Fragment key={key}>{renderNodes(node.c, key)}</React.Fragment>;
     case 'frac':

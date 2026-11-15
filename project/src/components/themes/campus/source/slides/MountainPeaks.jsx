@@ -6,7 +6,7 @@
 import React from 'react';
 import { useThemeStyle, enterDelay } from '../../../shared/style.jsx';
 import { safeArray, safeNumber, safeMax, safeRatio, clamp } from '../../../chart-safety.mjs';
-import { CampusFrame, TitleRow, CHAPTER_CONTROL, TITLE_ROW_SPACE, useCampusLayout } from '../kit/chrome.jsx';
+import { CampusFrame, TitleRow, CHAPTER_CONTROL, TITLE_ROW_SPACE, useCampusLayout, textWidthEm } from '../kit/chrome.jsx';
 import { ToneDefs } from '../kit/feature-b.jsx';
 import { useFeatureCStyle, useSvgId, Stop, r2, sampleSpline, polyPath, Sparkles, FlagMark, PoleDefs, NoSeal, KickerChip } from '../kit/feature-c.jsx';
 
@@ -123,8 +123,22 @@ export function MountainPeaks(props) {
   const baseY = H - cardH * 0.45;
   const flagH = n >= 5 ? 74 : 84;
   const labelSpace = flagH + 128;
-  const hMax = baseY - labelSpace;
   const span = W / n;
+  const numPx = n >= 5 ? 50 : 58;
+  // 峰顶标注(数值 + 名称胶囊)的高度与它离峰顶的距离(小旗 + 10px),和下面的 .cp-g5-mt-label 排法一致
+  const labelH = top => (top ? numPx * 1.25 + 10 + 44 : numPx + 10 + 40);
+  const labelLift = top => (top ? flagH + 14 : flagH) + 10;
+  // 左上角导语区(眉题胶囊 + 导语 + 说明小字;关掉导语时只有说明小字)压在第一座峰的上空:按导语实际行数估算它的底边,
+  // 第一座峰的标注顶到它下面还留 18px;第一座峰太高时整组山峰(含远景)等比压低,峰与峰的高低比例不变。
+  const leadW = r2(Math.min(span * 1.25, W * 0.34));
+  // 导语区各块:胶囊 42、间距 16、导语每行 22px × 1.62 + 上下 2px、间距 16、说明小字 27(按偏多估,宁可多留一点)
+  const leadLines = Math.max(1, Math.ceil((textWidthEm(p.lead) * 22) / Math.max(1, (leadW - 24) * 0.96)));
+  const leadBottom = p.showLead ? 42 + 16 + leadLines * 22 * 1.62 + 4 + 16 + 27 : 27;
+  const hMaxFull = baseY - labelSpace;
+  const firstTop = topIndex === 0;
+  const firstH = hMaxFull * Math.max(0.4, safeRatio(levels[0], lmax, 0.4));
+  const firstRoom = baseY - labelLift(firstTop) - labelH(firstTop) - (leadBottom + 18);
+  const hMax = hMaxFull * clamp(firstH > 0 ? firstRoom / firstH : 1, 0.5, 1);
   const halfBase = span * 0.78;
   const edge = span * 0.5;
   const mountains = peaks.map((pk, i) => {
@@ -317,7 +331,7 @@ export function MountainPeaks(props) {
         </svg>
 
         {p.showLead && (
-          <div className="cp-g5-mt-lead cp-g5-lead campus-rise" style={{ width: r2(Math.min(span * 1.25, W * 0.34)), ...enterDelay(2) }}>
+          <div className="cp-g5-mt-lead cp-g5-lead campus-rise" style={{ width: leadW, ...enterDelay(2) }}>
             <KickerChip text={p.kicker} />
             <p className="cp-g5-lead-text">{p.lead}</p>
             <div className="cp-g5-mt-note">
@@ -334,7 +348,7 @@ export function MountainPeaks(props) {
         )}
 
         {mountains.map(m => (
-          <div key={m.i} className={`cp-g5-mt-label campus-rise${m.top ? ' is-top' : ''}`} style={{ left: m.px, top: r2(m.py - (m.top ? flagH + 14 : flagH) - 10), '--cp-g5-mt-num': `${n >= 5 ? 50 : 58}px`, ...enterDelay(3 + m.i) }}>
+          <div key={m.i} className={`cp-g5-mt-label campus-rise${m.top ? ' is-top' : ''}`} style={{ left: m.px, top: r2(m.py - (m.top ? flagH + 14 : flagH) - 10), '--cp-g5-mt-num': `${numPx}px`, ...enterDelay(3 + m.i) }}>
             <div className="cp-g5-mt-figure">
               <div className="cp-g5-mt-num">{m.pk?.value}</div>
               <div className="cp-g5-mt-unit">{m.pk?.unit}</div>

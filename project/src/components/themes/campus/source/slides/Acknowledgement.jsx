@@ -85,6 +85,13 @@ const CSS = `
 .cp-g1-ak-grid.is-4 .cp-g1-ak-col{padding-left:24px;padding-right:24px;}
 .cp-g1-ak-grid.is-4 .cp-g1-ak-col-body{font-size:22px;}
 .cp-g1-ak-cols .campus-conclusion{margin-top:0;}
+/* 无合影时各栏共用同一组行(subgrid):标题、分隔线、正文在同一条水平线上,正文多一行少一行都从同一位置往下排;
+   整组按最长那栏在栏里纵向居中(上下留白写在首尾两行上,不再每栏各自居中、标题高低不齐)。 */
+.cp-g1-ak-cols.no-photo .cp-g1-ak-grid{grid-template-rows:minmax(84px,1fr) auto auto auto minmax(84px,1fr);row-gap:0;}
+.cp-g1-ak-cols.no-photo .cp-g1-ak-col{display:grid;grid-template-rows:subgrid;grid-row:1 / -1;justify-items:center;align-items:start;align-content:stretch;padding-top:0;padding-bottom:0;}
+.cp-g1-ak-cols.no-photo .cp-g1-ak-col-title{grid-row:2;}
+.cp-g1-ak-cols.no-photo .cp-g1-ak-col > .cp-g1-ak-rule{grid-row:3;}
+.cp-g1-ak-cols.no-photo .cp-g1-ak-col-body{grid-row:4;}
 `;
 
 export function Acknowledgement(props) {

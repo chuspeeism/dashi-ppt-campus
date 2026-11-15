@@ -82,6 +82,23 @@ const CSS = `
 .cp-g1-sc.is-2 .cp-g1-sc-head-no{font-size:96px;}
 .cp-g1-sc.is-2 .cp-g1-sc-icon{width:104px;height:104px;}
 .campus[data-campus-nav="rail"] .cp-g1-sc.is-5 .cp-g1-sc-desc{font-size:20px;}
+/* 一排卡片:各卡共用同一组行(subgrid),卡头 / 图位、标题、分隔线、说明分别在同一条水平线上;
+   说明多一行少一行都从同一位置往下排(按最长那张定行高),不再每张卡各自居中、标题高低不齐。
+   上下留白写在行上:有图时图位占满剩余高度、文字贴底;无图时文字组按最长那张在卡身里纵向居中。 */
+.cp-g1-sc:not(.is-grid){--sc-head:minmax(46%,1fr);--sc-top:50px;--sc-bot:30px;grid-template-rows:var(--sc-head) var(--sc-top) auto auto auto var(--sc-bot);row-gap:0;}
+.cp-g1-sc.no-media:not(.is-grid){--sc-head:42%;--sc-top:minmax(36px,1fr);--sc-bot:minmax(40px,1fr);}
+.cp-g1-sc.is-2:not(.is-grid){--sc-top:56px;--sc-bot:32px;}
+.cp-g1-sc.is-2.no-media:not(.is-grid){--sc-top:minmax(40px,1fr);--sc-bot:minmax(40px,1fr);}
+.cp-g1-sc:not(.is-grid) .cp-g1-sc-card{display:grid;grid-template-rows:subgrid;grid-row:1 / -1;}
+.cp-g1-sc:not(.is-grid) .cp-g1-sc-media,.cp-g1-sc:not(.is-grid) .cp-g1-sc-head{grid-row:1;min-height:0;}
+.cp-g1-sc:not(.is-grid) .cp-g1-sc-body,.cp-g1-sc.is-2:not(.is-grid) .cp-g1-sc-body,.cp-g1-sc.no-media:not(.is-grid) .cp-g1-sc-body{grid-row:3 / span 3;display:grid;grid-template-rows:subgrid;justify-content:stretch;padding-top:0;padding-bottom:0;}
+/* 2×2:同一排的两张卡同理共用一组行(两排之间夹一条 24px 的间隔行),图位 / 卡头在左侧占满整张卡高 */
+.cp-g1-sc.is-grid{grid-template-rows:minmax(26px,1fr) auto auto auto minmax(26px,1fr) 24px minmax(26px,1fr) auto auto auto minmax(26px,1fr);row-gap:0;}
+.cp-g1-sc.is-grid .cp-g1-sc-card{display:grid;grid-template-columns:calc(42% + 12px) minmax(0,1fr);grid-template-rows:subgrid;grid-row:1 / span 5;}
+.cp-g1-sc.is-grid.no-media .cp-g1-sc-card{grid-template-columns:210px minmax(0,1fr);}
+.cp-g1-sc.is-grid .cp-g1-sc-card:nth-child(n+3){grid-row:7 / span 5;}
+.cp-g1-sc.is-grid .cp-g1-sc-media,.cp-g1-sc.is-grid .cp-g1-sc-head{grid-column:1;grid-row:1 / -1;min-height:0;}
+.cp-g1-sc.is-grid .cp-g1-sc-body{grid-column:2;grid-row:2 / span 3;display:grid;grid-template-rows:subgrid;justify-content:stretch;padding-top:0;padding-bottom:0;}
 `;
 
 export function SignificanceCards(props) {

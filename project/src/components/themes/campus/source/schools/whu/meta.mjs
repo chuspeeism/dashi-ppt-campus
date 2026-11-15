@@ -35,6 +35,9 @@ export default Object.freeze({
     white: '#FFFFFF',
     'white-0': 'rgba(255,255,255,0)',
     'hl-shadow': 'rgba(122,138,166,.22)', // 当前项高亮外投影
+    glow: 'rgba(255,255,255,.92)',        // 封面引言 / 页脚的白色光晕(压在樱花与天空上时托住字形)
+    'glow-soft': 'rgba(255,255,255,.6)',
+    veil: 'rgba(255,255,255,.5)',         // 封面页脚下的淡白薄雾
   }),
   // 这所学校自己的文字(不是示例内容):goal 没写对应通用字段时使用
   defaults: Object.freeze({

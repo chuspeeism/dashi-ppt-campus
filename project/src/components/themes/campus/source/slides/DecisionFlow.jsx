@@ -52,7 +52,9 @@ const CSS = `
 .cp-g2-df-node::after{content:'';position:absolute;left:0;top:12px;bottom:12px;width:5px;border-radius:0 3px 3px 0;background:var(--campus-fill-bar);}
 .cp-g2-df-text{min-width:0;font-size:21px;line-height:1.35;font-weight:600;color:var(--theme-ink);text-wrap:balance;}
 /* 开始 / 结束:渐变胶囊 */
-.cp-g2-df-node.is-term::before{border-radius:999px;border:0;background:var(--campus-fill);box-shadow:var(--campus-shadow-lift);}
+/* 渐变底画在节点自身上(不放伪元素):导出引擎把「不带子元素的渐变块」当装饰、透明度压到 8%,伪元素上的深色胶囊在 PPTX 里会变成很淡的浅色块 */
+.cp-g2-df-node.is-term{border-radius:999px;background:var(--campus-fill);box-shadow:var(--campus-shadow-lift);}
+.cp-g2-df-node.is-term::before{display:none;}
 .cp-g2-df-node.is-term::after{display:none;}
 .cp-g2-df-node.is-term .cp-g2-df-text{color:var(--theme-on-accent);font-family:var(--theme-font-serif);font-weight:700;font-size:22px;letter-spacing:.06em;}
 /* 判断:菱形(三层裁切形状:校色描边 / 白底 / 浅校色),文字居中 */

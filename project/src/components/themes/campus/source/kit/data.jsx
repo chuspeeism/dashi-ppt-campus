@@ -304,27 +304,39 @@ export function StatStrip({ items = [], compact = false, className = '', style, 
 }
 
 /**
+ * value 只是这一条的序号(「01」「1」「02」「No.1」「#1」…,与左侧编号块重复)时视为没写:
+ * agent 常把 value 填成序号,渲染出来是「01 01 标题」。value 本意是这条结论的关键数字(0.82、+3.1%)。
+ */
+export function isSeqValue(value, index) {
+  const m = /^(?:no\.?\s*|#)?0*(\d{1,3})[.、)）]?$/i.exec(String(value ?? '').trim());
+  return Boolean(m) && Number(m[1]) === index + 1;
+}
+
+/**
  * 解读栏的条目列表(不含外框):items = [{ value, title, text }],value / title 可空。
- * 编号用浅底编号块(01、02…),value 是大号衬线数字(如模块带来的提升)。
+ * 编号用浅底编号块(01、02…),value 是大号衬线数字(如模块带来的提升);value 为空或只是本条序号时不画,标题顶到它的位置。
  */
 export function InsightItems({ items = [], delay = 0, enter, boxed = false }) {
   useDataStyle();
   return (
     <div className={`cp-g3-ins-list${boxed ? ' is-boxed' : ''}`}>
-      {safeArray(items).map((item, i) => (
+      {safeArray(items).map((item, i) => {
+        const value = isSeqValue(item?.value, i) ? null : item?.value;
+        return (
         <div className="cp-g3-ins-item campus-fade" style={enter ? enter(delay + i) : undefined} key={i}>
           <div className={`campus-seal${i === 0 ? '' : ' is-soft'}`}>{String(i + 1).padStart(2, '0')}</div>
           <div className="cp-g3-ins-main">
-            {(item?.value || item?.title) ? (
+            {(value || item?.title) ? (
               <div className="cp-g3-ins-head">
-                {item?.value ? <div className="cp-g3-ins-value">{item.value}</div> : null}
+                {value ? <div className="cp-g3-ins-value">{value}</div> : null}
                 {item?.title ? <div className="cp-g3-ins-title">{item.title}</div> : null}
               </div>
             ) : null}
             {item?.text ? <p className="cp-g3-ins-text">{item.text}</p> : null}
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

@@ -43,6 +43,12 @@ const CSS = `
 .cp-sch-whu .wh-event-text{font-family:${SEMI};font-weight:600;font-size:40px;letter-spacing:4px;color:var(--sch-ink);text-align:center;line-height:1.2;white-space:nowrap;}
 .cp-sch-whu .wh-foot{font-family:${MEDIUM};font-weight:500;font-size:21px;letter-spacing:4px;color:var(--sch-ink);line-height:1.2;white-space:pre;}
 .cp-sch-whu.is-toc .wh-foot{color:var(--sch-foot-gray);}
+/* 封面引言(关键词版是完整题目)与页脚压在樱花和天空上:加一圈柔和的白色光晕托住字形,樱花最密的第一帧(缩略图、
+   不能自动播放时)也读得出来;只是网页效果,导出时文字填进原生页的文本框,原生页照模板。 */
+.cp-sch-whu.is-cover .wh-quote{text-shadow:0 0 2px var(--sch-glow),0 0 12px var(--sch-glow),0 0 26px var(--sch-glow-soft);}
+.cp-sch-whu.is-cover .wh-foot{text-shadow:0 0 2px var(--sch-glow),0 0 8px var(--sch-glow),0 0 18px var(--sch-glow-soft);}
+/* 页脚下面一层很淡的白色薄雾(椭圆渐隐,无硬边),樱花最密时把细小的页脚字托出来 */
+.cp-sch-whu .wh-foot-veil{position:absolute;pointer-events:none;background:radial-gradient(50% 50% at 50% 50%,var(--sch-veil) 0%,var(--sch-veil) 45%,var(--sch-white-0) 100%);}
 .cp-sch-whu .wh-veil{position:absolute;background:linear-gradient(90deg,var(--sch-white) 42%,var(--sch-white-0) 100%);pointer-events:none;}
 .cp-sch-whu .wh-toc-title{font-family:${HEAVY};font-weight:900;font-size:160px;letter-spacing:8px;color:var(--sch-slate);line-height:1.2;white-space:nowrap;}
 .cp-sch-whu .wh-toc-en{font-family:${MEDIUM};font-weight:500;font-size:48px;letter-spacing:8px;color:var(--sch-slate);line-height:1.2;white-space:nowrap;}
@@ -79,17 +85,59 @@ const TOC = {
 };
 
 const clean = value => String(value ?? '').trim();
-const KEYWORD_QUOTE_CAP = 18;
-const KEYWORD_QUOTE_W = 788.89;  // 两行时每行的宽度上限(同原版引言框宽)
+// 关键词版引言放完整题目。单行最多约 13 字(56px 时约 750px):再长一行会伸到右侧老图书馆的屋顶上(视频末帧
+// 屋顶从舞台 x≈1000 起),所以超过 13 字就拆成两行,每行宽度也不超过原版引言框宽 788.89。
+const KEYWORD_QUOTE_CAP = 13;
+const KEYWORD_QUOTE_W = 788.89;
+// 两行时引言框加高、活动名称胶囊整体下移(导出时经 coverBoxes 把原生页上这两个形状挪到同样的位置);两行字号上限 48
+const KEYWORD_QUOTE_2 = [113.78, 555.61, 788.89, 120];
+const KEYWORD_EVENT_2 = [113.78, 715.61, 527.55, 81.44];
+const KEYWORD_QUOTE_2_SIZE = 48;
 // 目录英文小标折行宽度(模板「目录英文0N」框宽 221.28,右对齐)
 const EN_W = 200;  // 留余量:PowerPoint 里这款黑体的大写字母比网页估算宽
+
+// 拆两行时不在这些常见词中间断开(论文题目里最常见的双字词;只是兜底的打分项,不求完整)
+const KEEP_WORDS = new Set(('管理 会计 企业 经营 应用 研究 数字 经济 背景 制造 工具 优化 对策 问题 现状 融合 视角 视域 分析 系统 设计 实现 方法 技术 '
+  + '模型 数据 发展 影响 机制 策略 城市 环境 网络 智能 评价 基于 财务 成本 控制 绩效 预算 风险 价值 战略 创新 教育 教学 学生 高校 社会 文化 '
+  + '政策 产业 金融 市场 资源 信息 平台 服务 质量 效率 路径 演变 驱动 导航 组合 信号 算法 检测 识别 结构 材料 性能 生态 治理 乡村 振兴 体系 '
+  + '建设 改革 实践 理论 综述 探讨 探究 中国 我国 时空 特征 效应 构建 提升 案例').split(' '));
+
+/**
+ * 关键词版引言(完整题目):≤ 13 字一行;更长拆成两行——题目里写了换行就照写的拆,否则在中点附近找断点:
+ * 标点后、「的 / 之 / 下 / 中」后、「与 / 和 / 及 / 在 / 对」前优先,不拆开常见双字词和连续的字母数字。
+ */
+function keywordQuote(p) {
+  const raw = String(p?.title ?? '').trim();
+  const full = raw.replace(/\n/g, '');
+  if (charCount(full) <= KEYWORD_QUOTE_CAP) return full;
+  if (raw.includes('\n')) return splitTitle(raw, KEYWORD_QUOTE_CAP);
+  const chars = Array.from(full);
+  const width = list => charCount(list.join(''));
+  const total = width(chars);
+  let best = null;
+  for (let at = 1; at < chars.length; at += 1) {
+    const off = Math.abs(width(chars.slice(0, at)) - total / 2);
+    if (off > Math.max(2, total * 0.2)) continue;
+    const a = chars[at - 1];
+    const b = chars[at];
+    let score = off;
+    if ('，,、：:；;'.includes(a)) score -= 3;
+    if ('的之下中'.includes(a)) score -= 1.5;
+    if ('与和及暨并在对'.includes(b)) score -= 1.5;
+    if (KEEP_WORDS.has(a + b)) score += 4;
+    if (/[A-Za-z0-9]/.test(a) && /[A-Za-z0-9]/.test(b)) score += 6;
+    if (/[，,、：:；;。）)」』]/.test(b)) score += 6;  // 标点不放到第二行开头
+    if (!best || score < best.score) best = { at, score };
+  }
+  if (!best) return splitTitle(full, Math.ceil(total / 2) + 1);
+  return `${chars.slice(0, best.at).join('').trim()}\n${chars.slice(best.at).join('').trim()}`;
+}
 
 function coverTexts(school, p, variant) {
   const quote = clean(p.subtitle) || clean(p.motto) || school.defaults.motto;
   if (variant === 'keyword') {
     // 完整题目放引言:超过一行约 18 字(字段表「约容纳」)时拆成两行,左半幅放得下,不压到右边的老图书馆和樱花
-    const full = String(p.title ?? '').replace(/\n/g, '').trim();
-    return { title: coverKeyword(school, p), quote: charCount(full) > KEYWORD_QUOTE_CAP ? splitTitle(full, Math.ceil(charCount(full) / 2) + 1) : full };
+    return { title: coverKeyword(school, p), quote: keywordQuote(p) };
   }
   if (variant === 'long_title') return { title: splitTitle(p.title, school.titleCaps.long_title), quote };
   return { title: String(p.title ?? '').replace(/\n/g, ''), quote };
@@ -144,11 +192,14 @@ function Cover({ school, props: p, variant }) {
   const { title, quote } = coverTexts(school, p, variant);
   const titleSize = fitText(title, { size: cfg.titleSize, width: cfg.title[2], spacing: cfg.titleSpacing });
   const keyword = variant === 'keyword';
-  // 关键词版引言两行时字号同时受框高(80,两行行高 1.2)限制,和原生页「溢出时缩排」后的大小一致
+  // 关键词版引言:一行时按原版引言框宽缩字;两行时框加高到 120、字号上限 48(原生页按行内字号同比缩排,两边一致)
+  const quote2 = keyword && quote.includes('\n');
+  const quoteRect = quote2 ? KEYWORD_QUOTE_2 : cfg.quote;
+  const eventRect = quote2 ? KEYWORD_EVENT_2 : cfg.event;
   const quoteSize = keyword
-    ? (quote.includes('\n')
-      ? Math.min(fitText(quote, { size: 56, width: KEYWORD_QUOTE_W, spacing: 2 }), Math.floor((cfg.quote[3] / 2 / 1.2) * 100) / 100)
-      : fitText(quote, { size: 56, width: cfg.quote[2], spacing: 2 }))
+    ? (quote2
+      ? fitText(quote, { size: KEYWORD_QUOTE_2_SIZE, width: KEYWORD_QUOTE_W, spacing: 2 })
+      : fitText(quote, { size: 56, width: KEYWORD_QUOTE_W, spacing: 2 }))
     : fitText(quote, { size: 56, width: cfg.quote[2], spacing: 6 });
   const event = clean(p.kicker);
   const foot = coverFoot(school, p);
@@ -165,18 +216,19 @@ function Cover({ school, props: p, variant }) {
             style={{ fontSize: titleSize }}>{title}</NativeText>}
       </div>
       <div className="cp-sch-abs wh-layer wh-cue" style={{ ...box([0, 0, 1920, 1080]), ...cueStyle(CUES.quote, 21.6) }}>
-        <NativeText school="whu" field="引言" rect={cfg.quote} anchor="middle" className={keyword ? 'wh-quote' : 'wh-quote is-dist'}
+        <NativeText school="whu" field="引言" rect={quoteRect} anchor="middle" className={keyword ? 'wh-quote' : 'wh-quote is-dist'}
           style={keyword ? { fontSize: quoteSize, letterSpacing: 2, fontWeight: 700, lineHeight: 1.2 } : { fontSize: quoteSize, letterSpacing: 6 * (quoteSize / 56) }}>{quote}</NativeText>
       </div>
       {event ? (
         <div className="cp-sch-abs wh-layer wh-cue" style={{ ...box([0, 0, 1920, 1080]), ...cueStyle(CUES.event, 21.6) }}>
-          <div className="wh-event" style={box(cfg.event)} aria-hidden="true" />
-          <NativeText school="whu" field="活动名称" rect={cfg.event} anchor="middle" className="wh-event-text"
-            style={{ fontSize: fitText(event, { size: 40, width: cfg.event[2] - 48, spacing: 4 }) }}>{event}</NativeText>
+          <div className="wh-event" style={box(eventRect)} aria-hidden="true" />
+          <NativeText school="whu" field="活动名称" rect={eventRect} anchor="middle" className="wh-event-text"
+            style={{ fontSize: fitText(event, { size: 40, width: eventRect[2] - 48, spacing: 4 }) }}>{event}</NativeText>
         </div>
       ) : null}
       <SchoolImage school={school} file="logo-image56.png" rect={[135.25, 121.41, 207.75, 65.33]} />
       <div className="cp-sch-abs wh-layer wh-cue" style={{ ...box([0, 0, 1920, 1080]), ...cueStyle(CUES.foot, 0) }}>
+        <div className="wh-foot-veil" style={box([20, 952, 1040, 104])} aria-hidden="true" />
         <NativeText school="whu" field="目录页脚" rect={[108, 982.08, 864, 43.2]} anchor="middle" className="wh-foot"
           style={{ fontSize: fitText(foot, { size: 21, width: 864, spacing: 4 }) }}>{foot}</NativeText>
       </div>
@@ -240,6 +292,10 @@ export default {
   Toc,
   // 活动名称为空时不画胶囊,导出时清空模板里的活动名称框
   coverClear: props => (clean(props?.kicker) ? [] : ['活动名称']),
+  // 关键词版题目拆成两行时引言框加高、活动名称胶囊下移,原生页上同名形状挪到同样的位置
+  coverBoxes: (props, variant) => (variant === 'keyword' && keywordQuote(props).includes('\n')
+    ? { 引言: KEYWORD_QUOTE_2, 活动名称: KEYWORD_EVENT_2 }
+    : {}),
   // 条目没有英文小标时清空模板里的英文框
   tocClear: (props, count) => (Array.isArray(props?.items) ? props.items.slice(0, count) : [])
     .map((item, i) => (clean(item?.note) ? null : `toc.${i}.en`)).filter(Boolean),
