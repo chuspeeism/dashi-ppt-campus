@@ -177,6 +177,9 @@ export const CAMPUS_BASE_CSS = `
 /* 栏目行:渐变标签 + 渐隐延伸线 */
 .campus-label-row{display:flex;align-items:center;gap:18px;}
 .campus-label-row::after{content:'';flex:1;height:2px;border-radius:1px;background:var(--campus-fade-line);}
+/* LabelRow 用真实元素画延伸线(伪元素作 flex 子项时导出引擎拿不到它的位置,会画到行的左上角压住胶囊) */
+.campus-label-line{flex:1;min-width:0;height:2px;border-radius:1px;background:var(--campus-fade-line);}
+.campus-label-row.has-line::after{display:none;}
 /* 渐变卡头:卡片顶部的校色条(上圆角跟随卡片) */
 .campus-card-head{display:flex;align-items:center;gap:14px;min-height:58px;padding:0 24px;background:var(--campus-fill-deep);color:var(--theme-on-accent);border-radius:var(--campus-radius) var(--campus-radius) 0 0;font-size:24px;font-weight:700;letter-spacing:.06em;}
 /* 衬线数字 */

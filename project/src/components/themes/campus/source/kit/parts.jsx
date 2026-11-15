@@ -198,8 +198,9 @@ export function NumberCard({ variant = 'tab', no, title, check = true, compact =
 export function LabelRow({ label, note, soft = false, className = '', style }) {
   usePartsStyle();
   return (
-    <div className={`campus-label-row${note ? ' has-note' : ''} ${className}`} style={style}>
+    <div className={`campus-label-row has-line${note ? ' has-note' : ''} ${className}`} style={style}>
       <div className={`campus-chip${soft ? ' is-soft' : ''}`}>{label}</div>
+      <div className="campus-label-line" aria-hidden="true" />
       {note ? <div className="campus-label-note">{note}</div> : null}
     </div>
   );

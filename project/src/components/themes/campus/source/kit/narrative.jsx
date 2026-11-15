@@ -11,8 +11,8 @@ const NARRATIVE_CSS = `
 /* —— 段内关键词强调:**词** 渲染成加粗的校色字 + 一道压在字脚的浅校色荧光笔(用下划线画,不用背景:
    行内元素带背景会让导出引擎把整段拆成逐行碎片,用下划线时整段仍导出为一个可编辑文本框) —— */
 .cp-g1-em{font-weight:700;color:var(--theme-accent);text-decoration-line:underline;text-decoration-color:rgb(var(--theme-accent-rgb) / .18);text-decoration-thickness:.36em;text-underline-offset:-.2em;text-decoration-skip-ink:none;}
-/* 渐变色块上的强调:白字加粗 + 点缀色荧光笔 */
-.cp-g1-on-fill .cp-g1-em{color:var(--theme-on-accent);text-decoration-color:var(--campus-spark-soft);}
+/* 深色 / 渐变色块上的强调:白字加粗 + 一道实色点缀色下划线(半透明的荧光笔在深色底上只剩一道灰印,看不出强调) */
+.cp-g1-on-fill .cp-g1-em{color:var(--theme-on-accent);text-decoration-color:var(--campus-spark);text-decoration-thickness:.12em;text-underline-offset:.22em;}
 
 /* —— 线性小图标(纯装饰) —— */
 .cp-g1-icon{flex:none;display:block;}

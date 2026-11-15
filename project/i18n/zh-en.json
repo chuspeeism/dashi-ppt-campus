@@ -4020,7 +4020,7 @@
  "「色块」主题下的整页背景色。": "Full-page background color under the \"Color block\" theme.",
  "「色块」主题下的整页背景色（其它主题忽略）。": "Full-page background color under the \"Color block\" theme (ignored by other themes).",
  "「图里看什么」的条数,每条可用 tag 对应子图号。": "Number of \"what to look for\" notes; each tag can point to a panel label.",
- "「问—答」的组数:3 组三栏,4 组两行两列。": "Number of Q&A pairs: 3 in three columns, 4 in a 2 × 2 grid.",
+ "「问—答」的组数:3 组三行通栏(问左答右),4 组两行两列。": "Number of Q&A pairs: 3 as full-width rows (question left, answer right), 4 in a 2 × 2 grid.",
  "「问题 → 本文工作」的对数;每对左侧一个待解决的问题,右侧对应的工作。": "Number of \"problem → this work\" pairs; each pair has a problem on the left and the matching work on the right.",
  "「问题 → 原因 → 对策」的行数;每行是 层面标签 topic、问题 problem、原因 cause、对策 measure,三格各写一句(30 字左右)。": "Number of problem → cause → countermeasure rows; each row has an aspect label (topic), problem, cause and measure, one sentence each (about 30 characters).",
  "「右侧截图位」打开时显示的照片或截图(只用第 1 张)。goal 里写 props.images 时要同时写 showPhoto: true。": "The photo or screenshot shown when \"Screenshot on the right\" is on (only the first image is used). When writing props.images in the goal, also write showPhoto: true.",

@@ -218,13 +218,83 @@ export function wrapWords(text, { size, width, spacing = 0, maxLines = 2 }) {
   return rows.join('\n');
 }
 
-/** 把长标题拆成不超过 perLine 字的两行:优先在「 · 」「：」「——」「，」处断开,否则从中间断。 */
+// 拆两行时尽量不在这些常见双字词中间断开(论文题目里最常见的词;只是打分项,不求完整)。
+const TITLE_KEEP_WORDS = new Set(('管理 会计 企业 经营 应用 研究 数字 经济 背景 制造 工具 优化 对策 问题 现状 融合 视角 视域 分析 系统 设计 实现 '
+  + '方法 技术 模型 数据 发展 影响 机制 策略 城市 环境 网络 智能 评价 基于 财务 成本 控制 绩效 预算 风险 价值 战略 创新 教育 教学 学生 高校 '
+  + '社会 文化 政策 产业 金融 市场 资源 信息 平台 服务 质量 效率 路径 演变 驱动 导航 组合 信号 算法 检测 识别 结构 材料 性能 生态 治理 乡村 '
+  + '振兴 体系 建设 改革 实践 理论 综述 探讨 探究 中国 我国 时空 特征 效应 构建 提升 案例 学习 深度 交通 流量 预测 图像 目标 '
+  + '中心 中小 下降 下游 在线 对比 对象 和谐 及时 与会 之间 转型 农村 电商 模式 道路 缺陷 素养 大学 动态 多源 定位 复杂 面向 改进 '
+  + '电子 商务 遥感 热岛 人工 神经 机器 长江 地区 区域 数学 物理 化学 生物 医学 临床 患者 护理 法律 经济带').split(' '));
+// 常见四字词:断点落在它们中间(第二、三字之间)同样扣分
+const TITLE_KEEP_PHRASES = ['电子商务', '人工智能', '深度学习', '机器学习', '神经网络', '乡村振兴', '数字经济', '高质量发展', '供应链', '物联网', '大数据', '卷积神经'];
+const TITLE_PUNCT_AFTER = '，,、：:；;。！!？?';
+const TITLE_NO_LINE_START = '，,、：:；;。！!？?）)」』》”’…—·的之';
+const TITLE_NO_LINE_END = '（(「『《“‘';
+
+/** 第 at 个字前断开的打分(越小越好):两行长度差 + 断点类型 + 禁则。返回 { at, head, tail, score, kind }。 */
+function scoreTitleBreak(chars, at, total) {
+  const head = chars.slice(0, at).join('').trim();
+  const tail = chars.slice(at).join('').trim();
+  if (!head || !tail) return null;
+  const a = chars[at - 1];
+  const b = chars[at];
+  const headW = charCount(head);
+  const tailW = charCount(tail);
+  let kind = '';
+  let score = Math.abs(headW - total / 2);
+  if (TITLE_PUNCT_AFTER.includes(a) || a === ' ' || b === ' ' || (a === '—' && b !== '—') || a === '·') {
+    kind = 'punct';
+    score -= 3;
+  } else if ('的之下中'.includes(a) && !TITLE_KEEP_WORDS.has(a + b)) {
+    kind = 'word';
+    score -= 1.5;
+  } else if ('与和及暨并在对'.includes(b) && !TITLE_KEEP_WORDS.has(b + (chars[at + 1] || ''))) {
+    kind = 'word';
+    score -= 1.5;
+  }
+  if (TITLE_KEEP_WORDS.has(a + b)) score += 4;
+  else if (TITLE_KEEP_PHRASES.some(phrase => {
+    const near = chars.slice(Math.max(0, at - phrase.length + 1), at + phrase.length - 1).join('');
+    for (let i = near.indexOf(phrase); i >= 0; i = near.indexOf(phrase, i + 1)) {
+      const start = Math.max(0, at - phrase.length + 1) + i;
+      if (start < at && at < start + phrase.length) return true;
+    }
+    return false;
+  })) score += 4;
+  if (/[A-Za-z0-9]/.test(a) && /[A-Za-z0-9]/.test(b)) score += 8;
+  if (TITLE_NO_LINE_START.includes(b)) score += 8;
+  if (TITLE_NO_LINE_END.includes(a)) score += 8;
+  return { at, head, tail, headW, tailW, score, kind };
+}
+
+/**
+ * 把长标题拆成不超过 perLine 字的两行。
+ * 1. 先在中点附近(两行字数差不超过总字数的一半左右)找标点或虚词断点:标点后、「的 / 之 / 下 / 中」后、
+ *    「与 / 和 / 及 / 在 / 对」前,两行都放得下且两行长度最接近的那一处;不拆开常见双字词和连续的字母数字,
+ *    不把标点或「的」放到第二行开头。
+ * 2. 找不到时退回原来的规则:「 · 」「：」「——」「，」处断开 → 「的 / 与 / 和 / 及」处断开 → 从中间断。
+ *    其中虚词离中点太远(短的一行不到长的一行四成)时改在中点附近不拆词的位置断;从中间断时同样挑不拆词的位置。
+ */
 export function splitTitle(title, perLine) {
   const text = String(title ?? '').trim();
   if (text.includes('\n')) return text.split('\n').slice(0, 2).join('\n');
   if (charCount(text) <= perLine) return text;
-  const marks = [' · ', '·', '：', ':', '——', '—', '，', ',', ' '];
   const chars = Array.from(text);
+  const total = charCount(text);
+  const join = item => `${item.head}\n${item.tail}`;
+  const breaks = [];
+  for (let at = 1; at < chars.length; at += 1) {
+    const item = scoreTitleBreak(chars, at, total);
+    if (item) breaks.push(item);
+  }
+  const fits = item => Math.max(item.headW, item.tailW) <= perLine;
+  const near = item => Math.abs(item.headW - total / 2) <= Math.max(2, total * 0.25);
+  const preferred = breaks
+    .filter(item => item.kind && item.score < 4 && near(item) && fits(item))
+    .sort((x, y) => x.score - y.score)[0];
+  if (preferred) return join(preferred);
+
+  const marks = [' · ', '·', '：', ':', '——', '—', '，', ',', ' '];
   let best = null;
   for (const mark of marks) {
     let from = 0;
@@ -248,7 +318,15 @@ export function splitTitle(title, perLine) {
     const score = Math.max(charCount(chars.slice(0, at).join('')), charCount(chars.slice(at).join('')));
     if (!wordBreak || score < wordBreak.score) wordBreak = { at, score };
   });
-  if (wordBreak && wordBreak.score <= perLine) return `${chars.slice(0, wordBreak.at).join('')}\n${chars.slice(wordBreak.at).join('')}`;
+  if (wordBreak && wordBreak.score <= perLine) {
+    // 虚词离中点太远、一行不到另一行的四成(如「…管理中的 / 应用研究」)时,中点附近有不拆词的位置就用它
+    const short = total - wordBreak.score;
+    const balanced = short < wordBreak.score * 0.4 && breaks
+      .filter(item => item.score < 1.5 && Math.abs(item.headW - total / 2) <= 2 && fits(item))
+      .sort((x, y) => x.score - y.score)[0];
+    if (balanced) return join(balanced);
+    return `${chars.slice(0, wordBreak.at).join('')}\n${chars.slice(wordBreak.at).join('')}`;
+  }
   if (best && best.score <= perLine) return best.text;
   // 都超出时取更均衡的一处(超出的部分由 fitText 缩小字号),实在没有断点才从中间断
   const mid = Math.ceil(chars.length / 2);
@@ -256,6 +334,12 @@ export function splitTitle(title, perLine) {
   const fallback = [best, wordBreak && { text: `${chars.slice(0, wordBreak.at).join('')}\n${chars.slice(wordBreak.at).join('')}`, score: wordBreak.score }]
     .filter(Boolean).sort((a, b) => a.score - b.score)[0];
   if (fallback && fallback.score <= midScore + 2) return fallback.text;
+  // 从中间断:中点前后各两个字里挑不拆词的位置,其次挑两行都放得下的
+  // (宁可某一行略超出、由 fitText 缩字,也不把词拆开)
+  const middle = breaks
+    .filter(item => Math.abs(item.at - mid) <= 2)
+    .sort((x, y) => (x.score >= 4) - (y.score >= 4) || fits(y) - fits(x) || x.score - y.score)[0];
+  if (middle) return join(middle);
   return `${chars.slice(0, mid).join('')}\n${chars.slice(mid).join('')}`;
 }
 
@@ -264,16 +348,23 @@ export function splitTitle(title, perLine) {
 
 /**
  * 从场景名(kicker)推一个不超过 4–5 个字的短词,推不出来返回 ''。规则按顺序匹配:
- *   含「开题」→ 开题报告;含「博士 / 硕士」且含「答辩」→ 学位答辩;含「答辩」→ 毕业答辩;
- *   含「汇报」→ 学习汇报;含「课程 / 课堂」→ 课程汇报。
+ *   含「开题」→ 开题报告;含「中期」→ 中期检查;含「博士 / 硕士」且含「答辩」→ 学位答辩;含「答辩」→ 毕业答辩;
+ *   含「汇报」→ 学习汇报;含「课程 / 课堂」→ 课程汇报;
+ *   含「读书」→ 读书分享;含「文献 / 精读」→ 文献精读;含「组会」→ 组会汇报;含「分享」→ 主题分享。
+ * 「中期」排在「答辩」前面(「中期答辩」是中期检查,不是毕业答辩);其余新增的规则都排在原有规则之后。
  */
 export function sceneKeyword(kicker) {
   const k = String(kicker ?? '');
   if (/开题/.test(k)) return '开题报告';
+  if (/中期/.test(k)) return '中期检查';
   if (/博士|硕士/.test(k) && /答辩/.test(k)) return '学位答辩';
   if (/答辩/.test(k)) return '毕业答辩';
   if (/汇报/.test(k)) return '学习汇报';
   if (/课程|课堂/.test(k)) return '课程汇报';
+  if (/读书/.test(k)) return '读书分享';
+  if (/文献|精读/.test(k)) return '文献精读';
+  if (/组会/.test(k)) return '组会汇报';
+  if (/分享/.test(k)) return '主题分享';
   return '';
 }
 
