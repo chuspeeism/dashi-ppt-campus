@@ -10,6 +10,10 @@ project/node_modules/
 output/
 project/output/
 
+# 导出时按需下载的学校原生模板(每个 45–90 MB)
+project/assets/campus-native/*.pptx
+project/assets/campus-native/*.part-*
+
 uploads/
 screens/
 screenshots/

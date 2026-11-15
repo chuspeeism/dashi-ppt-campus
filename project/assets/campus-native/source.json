@@ -1,0 +1,6 @@
+{
+  "note": "学校原生封面 / 目录模板(<学校 key>.pptx)的下载地址。导出时本机没有所选学校的模板,就按顺序从这些地址下载;正式发布时把地址换成正式仓库或国内镜像。",
+  "baseUrls": [
+    "https://github.com/jadon7/dashi-ppt-campus-preview/releases/download/campus-native-v1/"
+  ]
+}

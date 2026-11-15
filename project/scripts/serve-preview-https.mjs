@@ -162,7 +162,11 @@ const serveRequest = async (req, res) => {
     return;
   }
   if ((req.method === 'GET' || req.method === 'HEAD') && requestUrl.pathname.startsWith('/api/campus-native/')) {
-    handleCampusNativeAsset(req, res, requestUrl);
+    handleCampusNativeAsset(req, res, requestUrl).catch(error => {
+      console.warn(`[campus-native] ${error?.message || error}`);
+      if (!res.headersSent) res.writeHead(500, { 'content-type': 'text/plain;charset=utf-8', 'cache-control': 'no-store' });
+      res.end();
+    });
     return;
   }
 

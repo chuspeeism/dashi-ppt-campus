@@ -1,7 +1,7 @@
 // 导出/保存相关 API 路由(editable-pptx / pdf / save-deck-state)。从 scripts/serve-preview-https.mjs
 // 拆出,逻辑逐字节保留:仅把闭包捕获的顶层常量(ROOT/SERVE_ROOT/EXPORT_DIR/PORT/HOST/…)
 // 改为 initExportRoutes() 注入的模块内状态,行为不变。
-import { createReadStream, mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
+import { createReadStream, existsSync, mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { scrubLocalPaths } from '../scrub-local-paths.mjs';
 import { launchExportBrowser } from './launch-export-browser.mjs';
@@ -117,7 +117,7 @@ function scrubCampusNative(info) {
 // <学校 key>.pptx(50–90 MB),在用户浏览器里完成选页 / 填字 / 合并。模板目录默认是仓库的
 // assets/campus-native(不进 git,由 scripts/campus-schools/build-native-templates.py 生成),
 // 可用环境变量 DASHI_CAMPUS_NATIVE_DIR 覆盖。只放行这两类文件名;与导出端点同一套同源鉴权。
-export function handleCampusNativeAsset(req, res, requestUrl) {
+export async function handleCampusNativeAsset(req, res, requestUrl) {
   if (!isAllowedExportRequest(req)) {
     writeForbiddenExportResponse(res);
     return;
@@ -130,6 +130,22 @@ export function handleCampusNativeAsset(req, res, requestUrl) {
   }
   const dir = path.resolve(process.env.DASHI_CAMPUS_NATIVE_DIR || path.join(ROOT, 'assets/campus-native'));
   const file = path.join(dir, name);
+  // 本机没有这所学校的模板时按需下载(与服务端导出同一套,见 packages/html-deck-to-pptx/src/native-fetch.mjs)
+  if (name.endsWith('.pptx') && !existsSync(file)) {
+    try {
+      const { ensureCampusNativeTemplate } = await import('../../packages/html-deck-to-pptx/src/native-fetch.mjs');
+      let expectedBytes = 0;
+      try {
+        const manifest = JSON.parse(readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
+        expectedBytes = Number(Object.values(manifest.schools || {}).find(school => school?.file === name)?.file_bytes) || 0;
+      } catch {
+        // 没有清单:不校验大小
+      }
+      await ensureCampusNativeTemplate(dir, name, { expectedBytes });
+    } catch (error) {
+      console.warn(`[campus-native] ${scrubLocalPaths(error?.message || String(error))}`);
+    }
+  }
   let stat;
   try {
     stat = statSync(file);
