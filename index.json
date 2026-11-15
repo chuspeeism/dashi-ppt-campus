@@ -91,6 +91,23 @@
     "henu.pptx.part-008",
     "henu.pptx.part-009"
    ]
+  },
+  "sjtu.pptx": {
+   "bytes": 71762217,
+   "parts": [
+    "sjtu.pptx.part-000",
+    "sjtu.pptx.part-001",
+    "sjtu.pptx.part-002",
+    "sjtu.pptx.part-003",
+    "sjtu.pptx.part-004",
+    "sjtu.pptx.part-005",
+    "sjtu.pptx.part-006",
+    "sjtu.pptx.part-007",
+    "sjtu.pptx.part-008",
+    "sjtu.pptx.part-009",
+    "sjtu.pptx.part-010",
+    "sjtu.pptx.part-011"
+   ]
   }
  }
 }
