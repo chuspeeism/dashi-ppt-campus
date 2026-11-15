@@ -108,6 +108,24 @@
     "sjtu.pptx.part-010",
     "sjtu.pptx.part-011"
    ]
+  },
+  "pku.pptx": {
+   "bytes": 77338586,
+   "parts": [
+    "pku.pptx.part-000",
+    "pku.pptx.part-001",
+    "pku.pptx.part-002",
+    "pku.pptx.part-003",
+    "pku.pptx.part-004",
+    "pku.pptx.part-005",
+    "pku.pptx.part-006",
+    "pku.pptx.part-007",
+    "pku.pptx.part-008",
+    "pku.pptx.part-009",
+    "pku.pptx.part-010",
+    "pku.pptx.part-011",
+    "pku.pptx.part-012"
+   ]
   }
  }
 }
