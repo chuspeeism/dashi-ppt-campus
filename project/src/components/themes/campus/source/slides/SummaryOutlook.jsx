@@ -48,7 +48,8 @@ const CSS = `
 .cp-so-list.is-4 .cp-so-item-desc{font-size:21px;line-height:1.5;margin-top:4px;}
 .cp-so-side{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:24px;}
 .cp-so-box{position:relative;flex:1 1 0;min-height:0;display:flex;flex-direction:column;padding:24px 32px 26px;border-radius:var(--campus-radius);}
-.cp-so-box-items{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;gap:18px;margin-top:24px;}
+/* 条目按行等分内容区、每条在自己那一行里垂直居中:条目少时不在下半截留空;两块的高度按条目数分配(行内 flex-grow) */
+.cp-so-box-items{flex:1;min-height:0;display:grid;grid-auto-rows:minmax(0,1fr);align-items:center;row-gap:10px;margin-top:18px;}
 .cp-so-box-item{display:flex;align-items:baseline;gap:16px;}
 .cp-so-box-item .campus-mark{transform:translateY(-3px) rotate(45deg);}
 .cp-so-box-text{font-size:24px;line-height:1.62;text-wrap:pretty;}
@@ -58,7 +59,7 @@ const CSS = `
 .cp-so-box.is-limit .campus-mark{background:var(--campus-accent-line);}
 /* 未来展望:白卡 + 渐变卡头,和左侧结论卡同一语言,避免右下出现大面积实色 */
 .cp-so-box.is-outlook{padding:0;}
-.cp-so-box.is-outlook .cp-so-box-items{margin:0;padding:26px 32px 26px;}
+.cp-so-box.is-outlook .cp-so-box-items{margin:0;padding:16px 32px 18px;}
 .cp-so-box.is-outlook .cp-so-box-text{color:var(--theme-ink);}
 `;
 
@@ -87,7 +88,7 @@ export function SummaryOutlook(props) {
           </div>
         </section>
         <div className="cp-so-side">
-          <section className="cp-so-box is-limit campus-rise" style={enterDelay(2)}>
+          <section className="cp-so-box is-limit campus-rise" style={{ ...enterDelay(2), flexGrow: limits.length + 1.5 }}>
             <div className="cp-so-box-bar" aria-hidden="true" />
             <div><div className="campus-chip is-soft" style={{ display: 'inline-flex' }}>{p.limitsLabel}</div></div>
             <div className="cp-so-box-items">
@@ -99,7 +100,7 @@ export function SummaryOutlook(props) {
               ))}
             </div>
           </section>
-          <section className="cp-so-box is-outlook campus-card campus-rise" style={enterDelay(3)}>
+          <section className="cp-so-box is-outlook campus-card campus-rise" style={{ ...enterDelay(3), flexGrow: outlooks.length + 1.5 }}>
             <div className="campus-card-head">{p.outlookLabel}</div>
             <div className="cp-so-box-items">
               {outlooks.map((item, i) => (

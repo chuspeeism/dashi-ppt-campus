@@ -101,7 +101,8 @@ const CSS = `
 function MiniChart({ chart, letter, points, series, zero, index, steps = 4 }) {
   const keys = series.map((_, s) => `${letter}${s + 1}`);
   const values = points.flatMap(pt => keys.map(k => safeNumber(pt?.[k], 0)));
-  const { min, max, ticks } = niceRange(values, { steps, zero });
+  // 上下各留数据跨度 6% 的余量:最小 / 最大值不正好落在坐标轴或顶线上
+  const { min, max, ticks, labels } = niceRange(values, { steps, zero, pad: 0.06 });
   const span = max - min;
   const last = points.length - 1;
   const xOf = i => clamp(safeRatio(i, last, 0.5) * 100, 0, 100);
@@ -138,7 +139,7 @@ function MiniChart({ chart, letter, points, series, zero, index, steps = 4 }) {
             return (
               <React.Fragment key={i}>
                 <div className={`campus-grid-line${i === 0 ? ' is-base' : ''}`} style={{ top: `${y}%` }} />
-                <div className="campus-grid-tick" style={{ top: `${y}%` }}>{Math.abs(ticks[i]) >= 1e5 ? compactNumber(ticks[i], 0) : ticks[i]}</div>
+                <div className="campus-grid-tick" style={{ top: `${y}%` }}>{Math.abs(ticks[i]) >= 1e5 ? compactNumber(ticks[i], 0) : labels[i]}</div>
               </React.Fragment>
             );
           })}

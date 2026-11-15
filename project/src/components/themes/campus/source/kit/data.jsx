@@ -143,10 +143,16 @@ function niceStep(raw) {
  * 坐标范围:按数据的最小 / 最大值取整格刻度。zero=true 时范围总包含 0(柱、损失曲线);
  * zero=false 时下限可以抬高(精度类曲线集中在 60–90 时不把线压扁)。返回 { min, max, ticks }。
  */
-export function niceRange(values, { steps = 4, zero = true } = {}) {
+export function niceRange(values, { steps = 4, zero = true, pad = 0 } = {}) {
   const list = safeArray(values).map(v => safeNumber(v, 0));
   let lo = safeMin(list, 0);
   let hi = safeMax(list, 1);
+  // pad:数据上下各留出数据跨度的这一比例(曲线端点不压在坐标轴 / 顶线上);强制含 0 的一侧不留
+  const margin = Math.max(0, safeNumber(pad, 0)) * (hi - lo);
+  if (margin > 0) {
+    if (!(zero && lo >= 0)) lo -= margin;
+    if (!(zero && hi <= 0)) hi += margin;
+  }
   if (zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
   if (hi - lo <= 0) {
     const pad = Math.abs(hi) > 0 ? Math.abs(hi) * 0.5 : 1;
@@ -162,7 +168,9 @@ export function niceRange(values, { steps = 4, zero = true } = {}) {
   let decimals = 0;
   while (decimals < 4 && Math.abs(step * 10 ** decimals - Math.round(step * 10 ** decimals)) > 1e-6) decimals += 1;
   const fmt = v => Number(v.toFixed(decimals));
-  return { min: fmt(min), max: fmt(min + n * step), ticks: Array.from({ length: n + 1 }, (_, i) => fmt(min + i * step)) };
+  const ticks = Array.from({ length: n + 1 }, (_, i) => fmt(min + i * step));
+  // labels:刻度文字统一小数位(「1.0」「1.2」,不是「1」「1.2」)
+  return { min: fmt(min), max: fmt(min + n * step), ticks, decimals, labels: ticks.map(t => t.toFixed(decimals)) };
 }
 
 /**

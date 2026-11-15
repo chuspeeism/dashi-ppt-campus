@@ -1,4 +1,4 @@
-// 问答页:3–4 组「问—答」序号卡片(上沿伸出 Q 编号标签;3 组三栏、4 组两行两列),问题用渐变圆章,回应用浅校色圆章。
+// 问答页:3–4 组「问—答」序号卡片(上沿伸出 Q 编号标签;3 组三行通栏、问左答右,4 组两行两列),问题用渐变圆章,回应用浅校色圆章。
 // 适合预设答辩问题、常见疑问、评审意见回应。
 import React from 'react';
 import { useThemeStyle, enterDelay } from '../../../shared/style.jsx';
@@ -29,7 +29,12 @@ const CSS = `
 .cp-qa-question{font-family:var(--theme-font-serif);font-weight:700;font-size:30px;line-height:1.38;letter-spacing:.03em;color:var(--theme-ink);text-wrap:balance;}
 .cp-qa-a{flex:1;min-height:0;display:flex;align-items:flex-start;gap:20px;margin-top:18px;padding-top:18px;border-top:1px dashed var(--campus-accent-line);}
 .cp-qa-answer{font-size:23px;line-height:1.75;color:var(--theme-muted);text-wrap:pretty;}
-.cp-qa.is-3 .cp-qa-question{font-size:28px;}
+/* 3 组:三行通栏,问题在左、回应在右(三栏时每张卡近 800px 高只放几行字,下半截整片空白) */
+.cp-qa.is-3{gap:30px;}
+.cp-qa.is-3 .cp-qa-card.campus-ncard{flex-direction:row;align-items:center;padding:30px 40px 22px;}
+.cp-qa.is-3 .cp-qa-q{flex:0 0 33%;min-width:0;align-items:center;padding-right:36px;}
+.cp-qa.is-3 .cp-qa-a{flex:1;min-width:0;align-self:stretch;align-items:center;margin-top:0;padding-top:0;padding-left:36px;border-top:0;border-left:1px dashed var(--campus-accent-line);}
+.cp-qa.is-3 .cp-qa-answer{font-size:24px;}
 `;
 
 export function QaResponse(props) {
@@ -37,7 +42,7 @@ export function QaResponse(props) {
   const p = { ...DEFAULTS, ...props };
   const items = safeArray(p.items).slice(0, clamp(p.itemCount, 3, 4));
   const n = items.length;
-  const cols = n === 3 ? 3 : 2;
+  const cols = n === 3 ? 1 : 2;
   return (
     <CampusFrame chapterIndex={p.chapterIndex}>
       <TitleRow no={p.sectionNo} title={p.title} className="campus-rise" style={enterDelay(0)} />
@@ -67,6 +72,6 @@ QaResponse.META = {
   copyBudgets: { 'items[].question': 18, 'items[].answer': 80 },
   controls: [
     { ...CHAPTER_CONTROL, default: 4 },
-    { key: 'itemCount', type: 'number', label: '问答组数', default: 4, min: 3, max: 4, description: '「问—答」的组数:3 组三栏,4 组两行两列。' },
+    { key: 'itemCount', type: 'number', label: '问答组数', default: 4, min: 3, max: 4, description: '「问—答」的组数:3 组三行通栏(问左答右),4 组两行两列。' },
   ],
 };

@@ -72,7 +72,8 @@ function briefLayout(info) {
     const options = (control.options || []).map(option => (typeof option === 'object' ? option.value : option)).filter(value => value != null);
     return `${key}(${options.length ? options.join('|') : control.type},默认 ${control.default}:${control.label})`;
   });
-  const media = (info.mediaSlots || []).map(slot => `${slot.field} 最多 ${slot.maxCount ?? slot.max ?? '若干'} 张(${(slot.accepts || []).join('/')});没有图片时用上面的控件把图位关掉(none / false),mediaMode 是 auto 的页不写图片会自动原生绘制`);
+  const hint = mediaOffHint(info.controls || []);
+  const media = (info.mediaSlots || []).map(slot => `${slot.field} 最多 ${slot.maxCount ?? slot.max ?? '若干'} 张(${(slot.accepts || []).join('/')});${hint}`);
   return [
     `${info.layout} — ${info.label || ''}${info.roles?.length ? ` [${info.roles.join(', ')}]` : ''}`,
     scalar.length ? `文字: ${scalar.join(' ')}` : '',
@@ -80,6 +81,23 @@ function briefLayout(info) {
     controls.length ? `控件: ${controls.join(' ')}` : '',
     media.length ? `图片: ${media.join('; ')}` : '',
   ].filter(Boolean).join('\n');
+}
+
+// 没有图片时怎么处理图位:按这一页实际有的控件说,不给所有图片页套同一句(有的页根本没有关图位的开关)。
+function mediaOffHint(controls) {
+  const keyOf = control => control.publicKey || control.key;
+  const optionValues = control => (control.options || []).map(option => (typeof option === 'object' ? option.value : option));
+  if (controls.some(control => keyOf(control) === 'mediaMode' && optionValues(control).includes('auto'))) {
+    return '没写图片时自动原生绘制,不用管图位';
+  }
+  const offs = [];
+  for (const control of controls) {
+    const key = keyOf(control);
+    if (control.type === 'toggle' && /^show(Photo|Photos|Images?)$/.test(key)) offs.push(`"${key}": false`);
+    else if (/image|media/i.test(key) && optionValues(control).includes('none')) offs.push(`"${key}": "none"`);
+  }
+  if (offs.length) return `没有图片时写 ${offs.join(' / ')} 关掉图位`;
+  return '这页的图位关不掉,没有图片时不要选这页(换对照表里同类的无图页面)';
 }
 
 function parseCliLayouts(argv) {

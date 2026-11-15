@@ -3466,7 +3466,7 @@ export const pages = [
         "min": 3,
         "max": 4,
         "publicKey": "itemCount",
-        "desc": "「问—答」的组数:3 组三栏,4 组两行两列。"
+        "desc": "「问—答」的组数:3 组三行通栏(问左答右),4 组两行两列。"
       }
     ],
     "defaultProps": {

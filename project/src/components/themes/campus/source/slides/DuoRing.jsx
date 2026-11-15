@@ -58,9 +58,10 @@ const CSS = `
 .cp-duo-rail{position:absolute;top:8%;bottom:8%;left:-36px;width:0;border-left:2px dashed var(--campus-accent-line);}
 .cp-duo-rail.is-right{left:auto;right:-38px;border-left-color:var(--campus-gold-line);}
 .cp-duo-dot{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:var(--theme-surface);border:3px solid var(--theme-accent);box-shadow:0 0 0 6px rgb(var(--theme-accent-rgb) / .1);}
-.cp-duo-dot::after{content:'';position:absolute;left:5px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--campus-fill);}
 .cp-duo-dot.is-right{border-color:var(--campus-gold);box-shadow:0 0 0 6px rgb(var(--campus-gold-rgb) / .16);}
-.cp-duo-dot.is-right::after{background:var(--campus-gold-fill);}
+/* 圆点的渐变芯用真实元素画(不放伪元素):伪元素上的渐变块导出时被当装饰、透明度压到 8%,PPTX 里芯几乎看不见 */
+.cp-duo-dot-core{position:absolute;left:5px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--campus-fill);}
+.cp-duo-dot.is-right .cp-duo-dot-core{background:var(--campus-gold-fill);}
 .cp-duo-label{position:absolute;transform:translate(-50%,-50%);width:1.15em;font-family:var(--theme-font-serif);font-weight:700;font-size:50px;line-height:1.12;letter-spacing:0;text-align:center;color:var(--theme-on-accent);word-break:break-all;}
 .cp-duo-label.is-right{color:var(--campus-gold-deep);}
 .cp-duo-center{position:absolute;transform:translate(-50%,-50%);font-family:var(--theme-font-serif);font-weight:700;font-size:30px;line-height:1.2;letter-spacing:.08em;color:var(--theme-accent);text-align:center;white-space:nowrap;}
@@ -175,7 +176,7 @@ export function DuoRing(props) {
                 <div className={`cp-duo-rail${right ? ' is-right' : ''}`} aria-hidden="true" />
                 {col.items.map((item, i) => (
                   <div className="cp-duo-item campus-rise" style={enterDelay(4 + i)} key={i}>
-                    <div className={`cp-duo-dot${right ? ' is-right' : ''}`} aria-hidden="true" style={right ? { left: 'auto', right: -49, top: 25 } : { left: -35, top: 25 }} />
+                    <div className={`cp-duo-dot${right ? ' is-right' : ''}`} aria-hidden="true" style={right ? { left: 'auto', right: -49, top: 25 } : { left: -35, top: 25 }}><div className="cp-duo-dot-core" /></div>
                     <SlantTag text={item?.title} tone={right ? 'gold' : 'accent'} />
                     <p className="cp-duo-desc">{item?.desc}</p>
                   </div>

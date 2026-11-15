@@ -39,7 +39,10 @@ const CSS = `
 const COVER = {
   default: { title: [108, 329.24, 1008, 187.2], titleSize: 192, titleSpacing: 12, sub: [108, 538.4, 1008, 79.2], subSize: 52, subSpacing: 6, info: [108, 692.17, 1008, 57.6], dash: 648 },
   long_title: { title: [108, 292, 1008, 224.38], titleSize: 92, titleSpacing: 4, sub: [108, 524.38, 1008, 72], subSize: 48, subSpacing: 6, info: [108, 670.95, 1008, 57.6], dash: 626.78 },
-  keyword: { title: [108, 329.24, 1008, 187.2], titleSize: 192, titleSpacing: 12, sub: [108, 538.4, 1008, 84], subSize: 60, subSpacing: 4, info: [108, 692.17, 1008, 57.6], dash: 648 },
+  keyword: { title: [108, 329.24, 1008, 187.2], titleSize: 192, titleSpacing: 12, sub: [108, 538.4, 1008, 84], subSize: 60, subSpacing: 4, info: [108, 692.17, 1008, 57.6], dash: 648,
+    // 完整题目拆成两行时:60px 两行高约 144px,在 84px 的框里居中会上压大字、下压橙色短线,
+    // 改用大字下沿到短线之间的框(约 112px)和 46px 字号,两行正好放下
+    sub2: [108, 530, 1008, 112], sub2Size: 46 },
 };
 
 // 目录:每种条目数下序号框左上角(模板「目录-0N-序号」,按从上到下排);条目标题在序号右侧 139.2、下移 0.87,说明再下移 67.6
@@ -96,14 +99,17 @@ function Cover({ school, props: p, variant }) {
   const info = infoLine(p);
   const long = variant === 'long_title';
   const titleSize = fitText(title, { size: box.titleSize, width: box.title[2], spacing: box.titleSpacing });
+  const twoLineSub = Boolean(box.sub2) && sub.includes('\n');
+  const subRect = twoLineSub ? box.sub2 : box.sub;
+  const subSize = twoLineSub ? box.sub2Size : box.subSize;
   return (
     <SchoolStage school={school} page="cover">
       <SchoolVideo school={school} file="video-media7.mp4" poster="video-media7-poster.jpg" rect={[0, 0, 1920, 1080]} />
       <SchoolImage school={school} file="img-image61.png" rect={[0, 0, 1920, 1080]} />
       <NativeText school="xmu" field="主标题" rect={box.title} anchor={long ? 'top' : 'middle'} nowrap className="xm-title"
         style={{ fontSize: titleSize, letterSpacing: box.titleSpacing * (titleSize / box.titleSize), lineHeight: long ? 1.18 : 1.2 }}>{title}</NativeText>
-      {sub ? <NativeText school="xmu" field="副标题" rect={box.sub} anchor="middle" className="xm-sub"
-        style={{ fontSize: fitText(sub, { size: box.subSize, width: box.sub[2], spacing: box.subSpacing }), letterSpacing: box.subSpacing }}>{sub}</NativeText> : null}
+      {sub ? <NativeText school="xmu" field="副标题" rect={subRect} anchor="middle" className="xm-sub"
+        style={{ fontSize: fitText(sub, { size: subSize, width: subRect[2], spacing: box.subSpacing }), letterSpacing: box.subSpacing }}>{sub}</NativeText> : null}
       <div className="xm-dash" style={{ left: 118, top: box.dash - 2, width: 38 }} aria-hidden="true" />
       {info ? <NativeText school="xmu" field="讲堂信息" rect={box.info} anchor="middle" className="xm-info"
         style={{ fontSize: fitText(info, { size: 30, width: box.info[2], spacing: 6 }) }}>{info}</NativeText> : null}

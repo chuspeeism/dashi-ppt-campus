@@ -263,11 +263,43 @@ function isRuntimeSlideActive(slide) {
   return !!slide?.hasAttribute?.('data-deck-active') || !!slide?.classList?.contains?.('active');
 }
 
+// 卸掉视频的 src 释放解码器时,把原地址记在 data-dashi-released-src 上:相邻页只卸视频、
+// 不卸 React 树(cv-near),翻回来重新渲染时 React 认为 src 没变、不会再写回属性,
+// 视频就停在第 0 帧(学校封面的背景视频)。restoreReleasedVideos 在页面重新激活时写回。
+const RELEASED_SRC_ATTR = 'data-dashi-released-src';
+
 function releaseVideoElement(video) {
   video.pause?.();
+  const src = video.getAttribute?.('src');
+  if (src) video.setAttribute?.(RELEASED_SRC_ATTR, src);
   video.removeAttribute?.('src');
-  video.querySelectorAll?.('source[src]')?.forEach(source => source.removeAttribute('src'));
+  video.querySelectorAll?.('source[src]')?.forEach(source => {
+    source.setAttribute(RELEASED_SRC_ATTR, source.getAttribute('src'));
+    source.removeAttribute('src');
+  });
   video.load?.();
+}
+
+function restoreReleasedVideos(root) {
+  collectVideoElements(root).forEach(video => {
+    let restored = false;
+    const saved = video.getAttribute(RELEASED_SRC_ATTR);
+    if (saved != null) {
+      if (!video.getAttribute('src')) {
+        video.setAttribute('src', saved);
+        restored = true;
+      }
+      video.removeAttribute(RELEASED_SRC_ATTR);
+    }
+    video.querySelectorAll?.(`source[${RELEASED_SRC_ATTR}]`)?.forEach(source => {
+      if (!source.getAttribute('src')) {
+        source.setAttribute('src', source.getAttribute(RELEASED_SRC_ATTR));
+        restored = true;
+      }
+      source.removeAttribute(RELEASED_SRC_ATTR);
+    });
+    if (restored) video.load?.();
+  });
 }
 
 function collectVideoElements(root) {
@@ -1245,6 +1277,7 @@ function renderRuntimeThemeSlide(slide, values = {}, options = {}) {
     }
     applyImageSlotSources(root, componentProps.__mediaApi);
     bindRenderedImageSlots(root, componentProps.__mediaApi);
+    if (isRuntimeSlideActive(slide)) restoreReleasedVideos(root);
     root.dataset.importedThemeRuntime = 'true';
     const pageSpec = inferDeckPagePropSpec(entry);
     if (pageSpec) root.dataset.dashiDynamicPageProps = pageSpec.kind;
@@ -1296,6 +1329,7 @@ function renderRuntimeBespokeSlide(slide) {
         </SlideViewModelProvider>,
       );
     });
+    if (isRuntimeSlideActive(slide)) restoreReleasedVideos(root);
     root.dataset.importedBespokeRuntime = 'true';
     window.__syncDeckPageNumbers?.(slide);
     return true;

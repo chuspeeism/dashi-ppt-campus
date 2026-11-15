@@ -66,7 +66,9 @@ const CSS = `
 .cp-g2-vm-node.is-m::before{border:2.5px solid var(--theme-accent);}
 .cp-g2-vm-node.is-m .cp-g2-vm-code{background:var(--campus-fill);color:var(--theme-on-accent);}
 /* 因变量:渐变实底 */
-.cp-g2-vm-node.is-y::before{border:0;background:var(--campus-fill-deep);box-shadow:var(--campus-shadow-lift);}
+/* 渐变底画在节点自身上(不放伪元素):伪元素上的渐变块导出时被当装饰、透明度压到 8%,PPTX 里深色节点发白 */
+.cp-g2-vm-node.is-y{border-radius:14px;background:var(--campus-fill-deep);box-shadow:var(--campus-shadow-lift);}
+.cp-g2-vm-node.is-y::before{display:none;}
 .cp-g2-vm-node.is-y .cp-g2-vm-code{background:var(--campus-on-accent-glass);color:var(--theme-on-accent);}
 .cp-g2-vm-node.is-y .cp-g2-vm-name{color:var(--theme-on-accent);}
 /* 调节:虚线框 + 浅底 */
