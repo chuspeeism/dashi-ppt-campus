@@ -144,6 +144,24 @@
     "scu.pptx.part-011",
     "scu.pptx.part-012"
    ]
+  },
+  "sysu.pptx": {
+   "bytes": 80359734,
+   "parts": [
+    "sysu.pptx.part-000",
+    "sysu.pptx.part-001",
+    "sysu.pptx.part-002",
+    "sysu.pptx.part-003",
+    "sysu.pptx.part-004",
+    "sysu.pptx.part-005",
+    "sysu.pptx.part-006",
+    "sysu.pptx.part-007",
+    "sysu.pptx.part-008",
+    "sysu.pptx.part-009",
+    "sysu.pptx.part-010",
+    "sysu.pptx.part-011",
+    "sysu.pptx.part-012"
+   ]
   }
  }
 }
