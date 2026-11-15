@@ -34,6 +34,7 @@ import {
 } from './components/themes/runtime-build.mjs';
 import { selectedSchoolKeys, wantSchoolAsset } from './components/themes/campus/source/schools/bundle.mjs';
 import { deckCoverFromSlides } from './deck-cover.mjs';
+import { resolveNodeModulesDir } from './node-modules-dir.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const FULL_THEME_REGISTRY = path.join(ROOT, 'src/components/themes/theme-registry.jsx');
@@ -164,10 +165,10 @@ function copyRuntimeAssets(outDir, { usedThemeKeys = [], schools = [] } = {}) {
     fs.rmSync(dir, { recursive: true, force: true });
   });
   fs.mkdirSync(assetsDir, { recursive: true });
-  copyRequiredFile(path.join(ROOT, 'node_modules/gsap/dist/gsap.min.js'), path.join(assetsDir, 'vendor/gsap.min.js'));
-  copyRequiredFile(path.join(ROOT, 'node_modules/pptxgenjs/dist/pptxgen.bundle.js'), path.join(assetsDir, 'vendor/pptxgen.bundle.js'));
-  copyRequiredFile(path.join(ROOT, 'node_modules/pdf-lib/dist/pdf-lib.min.js'), path.join(assetsDir, 'vendor/pdf-lib.min.js'));
-  copyRequiredFile(path.join(ROOT, 'node_modules/html-to-image/dist/html-to-image.js'), path.join(assetsDir, 'vendor/html-to-image.js'));
+  copyRequiredFile(path.join(resolveNodeModulesDir(ROOT), 'gsap/dist/gsap.min.js'), path.join(assetsDir, 'vendor/gsap.min.js'));
+  copyRequiredFile(path.join(resolveNodeModulesDir(ROOT), 'pptxgenjs/dist/pptxgen.bundle.js'), path.join(assetsDir, 'vendor/pptxgen.bundle.js'));
+  copyRequiredFile(path.join(resolveNodeModulesDir(ROOT), 'pdf-lib/dist/pdf-lib.min.js'), path.join(assetsDir, 'vendor/pdf-lib.min.js'));
+  copyRequiredFile(path.join(resolveNodeModulesDir(ROOT), 'html-to-image/dist/html-to-image.js'), path.join(assetsDir, 'vendor/html-to-image.js'));
   for (const assetPath of RUNTIME_ASSET_PATHS) {
     if (assetPath === RUNTIME_TEMPLATE) continue;
     copyRuntimeAsset(assetPath, outDir);
@@ -261,7 +262,7 @@ function resolveThemeRegistryEntry(usedThemeKeys) {
   }
   const importPrefix = `${path.join(ROOT, 'src/components/themes')}/`;
   const source = buildThemeRegistrySource(normalized, { importPrefix });
-  const cacheDir = path.join(ROOT, 'node_modules/.cache/dashi-theme-registry');
+  const cacheDir = path.join(resolveNodeModulesDir(ROOT), '.cache/dashi-theme-registry');
   fs.mkdirSync(cacheDir, { recursive: true });
   const registryPath = path.join(
     cacheDir,

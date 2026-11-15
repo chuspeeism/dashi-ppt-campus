@@ -62,45 +62,13 @@ if (-not (Test-Path -LiteralPath $projectRoot -PathType Container)) {
 
 $node = (Get-Command node.exe -ErrorAction Stop).Source
 $npm = (Get-Command npm.cmd -ErrorAction Stop).Source
-$npx = (Get-Command npx.cmd -ErrorAction Stop).Source
 
 Push-Location $projectRoot
 try {
-    # .npmrc 缺失时从模板重建(npm publish 会剔除 .npmrc,个别安装路径可能丢失)。
-    if (-not (Test-Path -LiteralPath '.npmrc') -and (Test-Path -LiteralPath 'npmrc.template')) {
-        Copy-Item -LiteralPath 'npmrc.template' -Destination '.npmrc'
-    }
-
-    $nodeModulesStamp = Join-Path $projectRoot 'node_modules\.package-lock.json'
-    $installRequired = -not (Test-Path -LiteralPath (Join-Path $projectRoot 'node_modules'))
-    if (-not $installRequired -and (Test-Path -LiteralPath $nodeModulesStamp)) {
-        $stampTime = (Get-Item -LiteralPath $nodeModulesStamp).LastWriteTimeUtc
-        foreach ($manifest in @('package.json', 'package-lock.json')) {
-            if ((Test-Path -LiteralPath $manifest) -and (Get-Item -LiteralPath $manifest).LastWriteTimeUtc -gt $stampTime) {
-                $installRequired = $true
-                break
-            }
-        }
-    } elseif (-not $installRequired) {
-        $installRequired = $true
-    }
-
-    if ($installRequired) {
-        # 首装前探测 npm 源:官方可达走官方,不可达锁 npmmirror;探测失败不阻塞
-        #(缺省 .npmrc 已指 npmmirror)。native 命令非零退出码在此不抛错,等价 .sh 的 || true。
-        & $node 'scripts\ensure-registry.mjs'
-        Invoke-Native $npm 'install'
-    }
-
-    # 镜像模式下 playwright 浏览器二进制同样走 npmmirror,否则国内下载必败。
-    if ((Test-Path -LiteralPath '.npmrc') -and (Select-String -LiteralPath '.npmrc' -SimpleMatch 'registry=https://registry.npmmirror.com' -Quiet)) {
-        if (-not $env:PLAYWRIGHT_DOWNLOAD_HOST) {
-            $env:PLAYWRIGHT_DOWNLOAD_HOST = 'https://cdn.npmmirror.com/binaries/playwright'
-        }
-    }
-
-    # chromium headless shell:幂等(已装秒过),下载失败不阻塞生成(导出回退系统 Chrome)。
-    & $npx '--no-install' 'playwright-core' 'install' 'chromium-headless-shell' *> $null
+    # 运行依赖默认装在技能目录之外(~/.dashi-ppt/deps/<依赖指纹>/),project\node_modules 只是 junction;
+    # DASHI_PPT_DEPS_MODE=external 连 junction 也不放,=local 就地安装(旧做法)。已就绪时秒过;
+    # 也负责 .npmrc 重建、npm 源探测和无头浏览器安装。详见 project\scripts\prepare-deps.mjs。
+    Invoke-Native $node 'scripts\prepare-deps.mjs'
 
     $outputDirectory = Split-Path -Parent $outputPath
     New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null

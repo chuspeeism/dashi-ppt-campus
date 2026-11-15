@@ -11,6 +11,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildSync } from 'esbuild';
+import { resolveNodeModulesDir } from '../../node-modules-dir.mjs';
 import {
   buildThemeModuleEntrySource,
   buildThemeRegistrySource,
@@ -34,7 +35,7 @@ const REACT_EXTERNALS = ['react', 'react-dom', 'react-dom/client', 'react/jsx-ru
 // nodePaths 只是「找不到时」的回退锚点,挡不住「相对 importer 已能找到另一份 react」。
 // 用绝对路径别名强制所有 react specifier 指向同一份,彻底去重(对源路径无影响:本就是同一份)。
 function reactAliasMap(root) {
-  const nm = path.join(root, 'node_modules');
+  const nm = resolveNodeModulesDir(root);
   return {
     react: path.join(nm, 'react'),
     'react-dom': path.join(nm, 'react-dom'),
@@ -83,7 +84,7 @@ function clientRuntimeBuildOptions({ root, outFile, registryPath }) {
     inject: [path.join(root, 'src/react-shim.js')],
     // 链接到的预构建模块可能位于无 node_modules 的目录(如 sync 写入的 project/dist)。
     // nodePaths 是回退解析锚点;主题源路径正常解析时不会用到,故不改变 JAD-201 的源路径产出。
-    nodePaths: [path.join(root, 'node_modules')],
+    nodePaths: [resolveNodeModulesDir(root)],
     define: {
       'process.env.NODE_ENV': '"production"',
     },
@@ -113,7 +114,7 @@ export function buildClientRuntimeFromModules({ root, outFile, themeKeys, module
 export function buildThemeModule({ root, themeKey, outDir }) {
   const themesDir = path.join(root, 'src/components/themes');
   const entrySource = buildThemeModuleEntrySource(themeKey, { importPrefix: `${themesDir}${path.sep}` });
-  const cacheDir = path.join(root, 'node_modules/.cache/dashi-theme-runtime-build');
+  const cacheDir = path.join(resolveNodeModulesDir(root), '.cache/dashi-theme-runtime-build');
   fs.mkdirSync(cacheDir, { recursive: true });
   const entryPath = path.join(cacheDir, `module-entry-${themeKey}-${process.pid}-${Date.now()}-${rand()}.jsx`);
   fs.writeFileSync(entryPath, entrySource);
@@ -133,7 +134,7 @@ export function buildThemeModule({ root, themeKey, outDir }) {
         '.css': 'text',
       },
       inject: [path.join(root, 'src/react-shim.js')],
-      nodePaths: [path.join(root, 'node_modules')],
+      nodePaths: [resolveNodeModulesDir(root)],
       define: {
         'process.env.NODE_ENV': '"production"',
       },
@@ -146,7 +147,7 @@ export function buildThemeModule({ root, themeKey, outDir }) {
 }
 
 function writeTempRegistry(root, source, cacheDirOverride) {
-  const cacheDir = cacheDirOverride || path.join(root, 'node_modules/.cache/dashi-theme-registry');
+  const cacheDir = cacheDirOverride || path.join(resolveNodeModulesDir(root), '.cache/dashi-theme-registry');
   fs.mkdirSync(cacheDir, { recursive: true });
   const registryPath = path.join(cacheDir, `registry-${process.pid}-${Date.now()}-${rand()}.jsx`);
   fs.writeFileSync(registryPath, source);
