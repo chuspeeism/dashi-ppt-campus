@@ -30,6 +30,15 @@ if (brief) {
   process.stdout.write(compactJson(results.length === 1 ? results[0] : { layouts: results }));
 }
 
+// 非文字字段标出类型(数字 / 布尔 / 对象 / 数组),文字字段不标
+function typeNote(type) {
+  if (type === 'number') return ':数字';
+  if (type === 'boolean') return ':布尔';
+  if (Array.isArray(type)) return ':数组';
+  if (type && typeof type === 'object') return `:对象{${Object.keys(type).join(',')}}`;
+  return '';
+}
+
 // --brief:一页一小段纯文本,只留写 props 要用的东西——字段名(括号里是字数上限)、数组每项的键和数量控件、开关 / 选项、图片位。
 function briefLayout(info) {
   const budgets = info.copyBudgets || {};
@@ -45,11 +54,14 @@ function briefLayout(info) {
       const count = meta.countKey ? `数量控件 ${meta.countKey}` : '';
       const item = shape[0];
       const fields = item && typeof item === 'object'
-        ? `{${Object.keys(item).map(field => `${field}${limit(`${key}[].${field}`)}`).join(', ')}}`
+        ? `{${Object.entries(item).map(([field, type]) => `${field}${typeNote(type)}${limit(`${key}[].${field}`)}`).join(', ')}}`
         : `${typeof item === 'string' ? '字符串' : JSON.stringify(item)}${limit(`${key}[]`)}`;
       arrayLines.push(`  ${key}[] ${[range, count].filter(Boolean).join(', ')}: ${fields}`);
+    } else if (shape && typeof shape === 'object') {
+      // 对象字段:写成 {"key": {...}},括号里列出它的子字段
+      scalar.push(`${key}{${Object.entries(shape).map(([field, type]) => `${field}${typeNote(type)}${limit(`${key}.${field}`)}`).join(', ')}}`);
     } else {
-      scalar.push(`${key}${limit(key)}`);
+      scalar.push(`${key}${typeNote(shape)}${limit(key)}`);
     }
   }
   const countKeys = new Set((info.arrayMeta || []).map(item => item.countKey).filter(Boolean));
