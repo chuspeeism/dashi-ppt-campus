@@ -1635,6 +1635,19 @@
   body.editor-panels-collapsed #preview-panel-collapse:hover{background:rgba(0,0,0,.72);border-color:rgba(255,255,255,.3)}
   body.editor-panels-collapsed #preview-panel-collapse img{filter:invert(1);opacity:.92}
   body[data-mode="present"] #preview-panel-collapse{display:none}
+  /* 窄视口(< 1000px,如豆包右侧工作台约 700px 宽):右侧编辑面板默认收起,打开时是盖在右侧的浮层,不参与舞台布局;
+     右上角开关一直可见,只开关这块浮层。< 820px 时目录收窄、工具栏去掉页数和「重置」文字。宽视口不受影响。 */
+  body.pp-narrow:not([data-mode="present"]) #preview-panel-collapse{display:grid}
+  body.pp-narrow #preview-panel{z-index:121;max-width:calc(100vw - 40px);box-shadow:-18px 0 48px rgba(0,0,0,.24)}
+  body.pp-narrow:not(.preview-panel-open) #preview-panel{box-shadow:none}
+  body.pp-xnarrow{--slide-rail-w:108px;--slide-rail-min-w:96px}
+  body.pp-xnarrow .slide-rail-resize{display:none}
+  body.pp-xnarrow #slide-rail-list{--rail-pad-x:8px}
+  body.pp-xnarrow #deck-topbar{gap:10px;padding-left:14px}
+  body.pp-xnarrow .pp-topbar-count{display:none}
+  body.pp-xnarrow .pp-topbar-actions{gap:5px}
+  body.pp-xnarrow #deck-topbar #preview-reset{padding:0 9px}
+  body.pp-xnarrow #preview-reset>span{display:none}
   #slide-rail{position:fixed;left:0;top:var(--pp-topbar-h);z-index:24;width:var(--slide-rail-w);min-width:var(--slide-rail-min-w);max-width:var(--slide-rail-max-w);height:calc(100vh - var(--pp-topbar-h));display:flex;flex-direction:column;background:var(--pp-bg);color:var(--pp-fg);border-right:1px solid var(--pp-divider);box-shadow:none;font-family:var(--sans);overflow:hidden}
   body.editor-panels-collapsed #slide-rail{display:none}
   body[data-mode="present"] #slide-rail{display:none}
@@ -3599,6 +3612,34 @@ if(deckMode === 'edit' && !document.body.classList.contains('editor-panels-colla
   document.body.classList.add('preview-panel-open');
 }
 
+// 窄视口控制台:视口窄于 NARROW_CONSOLE_W 时右侧面板默认收起、打开时作为浮层盖在右侧(不挤占舞台);
+// 窄于 XNARROW_CONSOLE_W 时目录收窄。跨过阈值时实时切换,回到宽视口时恢复进入窄视口前的面板开合。
+const NARROW_CONSOLE_W=1000;
+const XNARROW_CONSOLE_W=820;
+let narrowPanelRestore=false;
+function isNarrowConsole(){
+  return document.body.classList.contains('pp-narrow');
+}
+function syncNarrowConsole(){
+  const narrow=innerWidth < NARROW_CONSOLE_W;
+  const was=isNarrowConsole();
+  document.body.classList.toggle('pp-narrow', narrow);
+  document.body.classList.toggle('pp-xnarrow', innerWidth < XNARROW_CONSOLE_W);
+  if(narrow === was) return;
+  if(narrow){
+    narrowPanelRestore=document.body.classList.contains('preview-panel-open');
+    document.body.classList.remove('preview-panel-open');
+  }else{
+    if(narrowPanelRestore && !document.body.classList.contains('editor-panels-collapsed')){
+      document.body.classList.add('preview-panel-open');
+    }
+    narrowPanelRestore=false;
+  }
+  window.__syncEditorPanelState?.();
+}
+window.__isNarrowConsole=isNarrowConsole;
+syncNarrowConsole();
+
 function isEditMode(){
   return deckMode === 'edit';
 }
@@ -4638,10 +4679,12 @@ function layoutDeck(){
   const panel=document.getElementById('preview-panel');
   const panelOpen=isEditMode() && document.body.classList.contains('preview-panel-open');
   const collapsed=document.body.classList.contains('editor-panels-collapsed');
-  const panelW=panelOpen && panel ? panel.offsetWidth : 0;
+  const narrow=isNarrowConsole();
+  // 窄视口下面板是浮层,不占舞台宽度
+  const panelW=panelOpen && panel && !narrow ? panel.offsetWidth : 0;
   const railW=isEditMode() && slideRail ? slideRail.offsetWidth : 0;
   const topbarH=(isEditMode() && deckTopbar && !collapsed) ? deckTopbar.offsetHeight : 0;
-  const stagePad=(isEditMode() && !collapsed) ? 64 : 0;
+  const stagePad=(isEditMode() && !collapsed) ? (narrow ? 24 : 64) : 0;
   const stage=measureDeckStage(innerWidth-railW-panelW-stagePad*2,innerHeight-topbarH-stagePad*2,railW+stagePad);
   deckW=stage.width;
   deckH=stage.height;
@@ -4658,7 +4701,10 @@ function layoutDeck(){
   applyDeckTransform();
 }
 window.__layoutDeck=layoutDeck;
-addEventListener('resize',layoutDeck);
+addEventListener('resize',() => {
+  syncNarrowConsole();
+  layoutDeck();
+});
 
 let slideRailResizePointerId=null;
 let slideRailResizeFrame=null;
@@ -8982,9 +9028,13 @@ refreshRailCatalog();
       if(slideRail) slideRail.inert = collapsed;
     }
     if(panelCollapse){
-      const label = window.__deckI18n.ui(collapsed ? '展开面板' : '收起面板');
-      panelCollapse.classList.toggle('is-collapsed', collapsed);
-      panelCollapse.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      // 窄视口:开关只管右侧浮层,按浮层是否展开显示状态
+      const shown = window.__isNarrowConsole?.()
+        ? !collapsed && document.body.classList.contains('preview-panel-open')
+        : !collapsed;
+      const label = window.__deckI18n.ui(shown ? '收起面板' : '展开面板');
+      panelCollapse.classList.toggle('is-collapsed', !shown);
+      panelCollapse.setAttribute('aria-expanded', shown ? 'true' : 'false');
       panelCollapse.setAttribute('aria-label', label);
       panelCollapse.setAttribute('title', label);
     }
@@ -9001,7 +9051,32 @@ refreshRailCatalog();
 
   panel.addEventListener('mousedown', e => e.stopPropagation());
   panelCollapse?.addEventListener('mousedown', e => e.stopPropagation());
-  panelCollapse?.addEventListener('click', () => setEditorPanelsCollapsed(!document.body.classList.contains('editor-panels-collapsed')));
+  // 窄视口下右侧面板是浮层:开关只打开 / 关闭浮层,工具栏和目录保持可见
+  function setNarrowPanelOpen(open){
+    if(document.body.classList.contains('editor-panels-collapsed')){
+      document.body.classList.remove('editor-panels-collapsed');
+      window.__setEditableTextMode?.(canEditDeck());
+    }
+    document.body.classList.toggle('preview-panel-open', Boolean(open));
+    syncEditorPanelState();
+    requestEditorShellLayout();
+  }
+  window.__setNarrowPanelOpen = setNarrowPanelOpen;
+  window.__syncEditorPanelState = syncEditorPanelState;
+  panelCollapse?.addEventListener('click', () => {
+    if(isEditMode() && window.__isNarrowConsole?.()){
+      const shown = !document.body.classList.contains('editor-panels-collapsed') && document.body.classList.contains('preview-panel-open');
+      setNarrowPanelOpen(!shown);
+      return;
+    }
+    setEditorPanelsCollapsed(!document.body.classList.contains('editor-panels-collapsed'));
+  });
+  addEventListener('keydown', event => {
+    if(event.key !== 'Escape' || !isEditMode() || !window.__isNarrowConsole?.()) return;
+    if(!document.body.classList.contains('preview-panel-open')) return;
+    if(event.target?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable="plaintext-only"],[role="textbox"]')) return;
+    setNarrowPanelOpen(false);
+  });
   document.getElementById('preview-present-btn')?.addEventListener('click', () => window.__enterPresentMode?.());
   syncEditorPanelState();
   window.__setEditableTextMode?.(canEditDeck());
