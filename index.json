@@ -19,6 +19,19 @@
    "parts": [
     "zju.pptx.part-000"
    ]
+  },
+  "xmu.pptx": {
+   "bytes": 48075258,
+   "parts": [
+    "xmu.pptx.part-000",
+    "xmu.pptx.part-001",
+    "xmu.pptx.part-002",
+    "xmu.pptx.part-003",
+    "xmu.pptx.part-004",
+    "xmu.pptx.part-005",
+    "xmu.pptx.part-006",
+    "xmu.pptx.part-007"
+   ]
   }
  }
 }
