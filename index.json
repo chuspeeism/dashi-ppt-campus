@@ -76,6 +76,21 @@
     "neu.pptx.part-008",
     "neu.pptx.part-009"
    ]
+  },
+  "henu.pptx": {
+   "bytes": 61888950,
+   "parts": [
+    "henu.pptx.part-000",
+    "henu.pptx.part-001",
+    "henu.pptx.part-002",
+    "henu.pptx.part-003",
+    "henu.pptx.part-004",
+    "henu.pptx.part-005",
+    "henu.pptx.part-006",
+    "henu.pptx.part-007",
+    "henu.pptx.part-008",
+    "henu.pptx.part-009"
+   ]
   }
  }
 }
