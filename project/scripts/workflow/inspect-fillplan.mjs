@@ -668,6 +668,9 @@ function publicControl(control) {
     maxByKey: control.maxByKey,
     maxByValue: control.maxByValue,
     display: control.display,
+    options: Array.isArray(control.options) && control.options.length
+      ? control.options.map(option => (option && typeof option === 'object' ? option.value : option))
+      : undefined,
   };
 }
 

@@ -7,6 +7,8 @@ description: 制作 PPT、演示文稿、幻灯片、汇报材料时使用。Das
 
 Dashi PPT 生成静态 HTML 横向翻页 PPT。使用本 skill 时,先把用户的自然语言需求整理成 JSON 计划,再调用本地项目生成器输出 `index.html` 和 `assets/`。
 
+> **高校场景先看这里**:用户要做毕业答辩 / 学位论文答辩 / 开题报告 / 中期检查 / 课程汇报 / 组会汇报,或提到了自己的学校、学院、导师——主题直接用 `campus` 高校版,**不用再让用户选风格**。生成只按「使用规则」里 `campus` 那几条做(**直接手写 `goal.json`**,见「campus 稿的生成流程」),本文其余讲「标准 3+1 / PageContentPack / `goal:scaffold` / v4 bespoke」的章节对 campus 都不适用,不用读、不用执行。用户说了「不用问我」「直接生成」「你来定」就不再提问:题目、姓名、学校、导师等用户给的照写,没给的(日期、页数、数据)自己定,并在交付说明里列出假设。
+
 
 ## 版本
 
@@ -50,7 +52,7 @@ node <skill-root>/scripts/check_latest_version.mjs
 - 运行生成器需要 Node.js 20+ 和 npm;首次生成时渲染脚本会在 Skill 内置 `project/` 目录安装依赖。Windows 用 `render_goal_deck.ps1`(直接 PowerShell,不经 WSL/bash);macOS / Linux 用 `render_goal_deck.sh`。
 - 风格选择提问:用户可见回复必须嵌入 `<skill-root>/assets/skill/theme-style-grid.png` 的 Markdown 图片,先展开绝对路径;这是回复展示用内置风格图,不可写入 `goal.json` 或任何 media 字段;列出当前可选风格和极简“适合/人群”,不能只在内部进度提示中提到风格图。
 - 开工前确认两件事:主题风格、是否需要图片/视频。用户未明确表达且非整体委托时,先提问等答复,不得代选;无法提问的环境(脚本/批处理)才自选,并在交付说明中列出所选与理由。
-- 委托模式:仅当用户对整体明确委托(“都你来定”“不用问,直接开干”)时,才自选主题、默认 HTML、默认不使用 image-gen,最终说明假设。用户只说内容/文案“随意”“自拟”时,仅自拟内容;风格、页数、媒体等已给的不得擅自改变,未给的按上一条先问。
+- 委托模式:仅当用户对整体明确委托(“都你来定”“不用问,直接开干”“不用问我,直接生成”)时,才自选主题、默认 HTML、默认不使用 image-gen,最终说明假设。用户只说内容/文案“随意”“自拟”时,仅自拟内容;风格、页数、媒体等已给的不得擅自改变,未给的按上一条先问。
 - 非交互/一次性执行(无法追问)时:未指定风格按内容主题自选已验收主题;无真实素材且不能生图时优先选无媒体页,不调 image-gen;最终说明全部假设。
 - Deck 语言跟随用户沟通语言:非中文用户在 `goal.json` 顶层加 `"language": "en"`;全部文案字段用目标语言撰写,页面自带的默认中文文案(含结尾页“感谢阅读”类装饰字段)一律覆盖,不得残留中文。编辑器界面语言自动跟随打开者的系统语言,右上角可手动切换,无需在生成时处理。
 - 交付格式:默认 HTML;“生成 PPT”“做 PPT”“做一个 PPT”“制作 ppt”表示 PPT 呈现形态。只有明确 `PPTX`、`PowerPoint`、`可编辑 PPTX`、`导出 PPTX`、`PPT 格式` 或“格式/文件类型为 PPT/PPTX”时才交付 PPTX 文件。
@@ -76,10 +78,13 @@ node <skill-root>/scripts/check_latest_version.mjs
   - **campus 稿的生成流程(与其他主题不同,必须按这个做)**:campus **不走**下文的「标准 3+1 / PageContentPack / `goal:scaffold` / contentMap / projection」流程——那套的自动选页和结构投影是给其他主题设计的,用在 campus 上会选错页(封面、目录被换成别的页)、内容也投影不进去。campus 稿**直接手写 `goal.json`**:
     1. 顶层写 `"themePack": "campus"`、`title` / `goal` / `audience` / `owner`、`randomSeed`、`brand`(见下面几条)和 `slides`;**不写 `schemaVersion`**。
     2. `slides` 每页一个对象 `{"layout": "campus_<id>", "props": {...}}`,一页只写这一个 layout:第 1 页固定 `campus_temp_cover`(封面),第 2 页 `campus_temp_agenda`(目录),最后一页 `campus_temp_closing`(结语);中间各页按下面的「campus 选页对照」逐页指定页面,不要用 `layout:query` 的自动排序结果替代对照表(它会把特色页排在对口页面前面)。
-    3. 封面 props:`kicker`(场景名,如「本科毕业论文答辩」)、`title`(题目)、`presenterLabel` / `presenter`(答辩人)、`advisor`(指导教师)、`unit`(学院 / 单位)、`date`;目录 props:`itemCount` + `items[]`(每项 `no` / `title` / `note`(英文小标,可省)/ `desc`(一句说明,可省)),条目与 `brand.chapters` 的章节一一对应。
-    4. 写每个内容页的 props 前,先运行 `npm --prefix <skill-root>/project run inspect:layout -- --compact campus_<id>` 看这一页有哪些字段、数组每项的键名和数量控件;数组条数要和对应的数量控件一致(例如 `items` 写 4 条就同时写 `"itemCount": 4`);每个内容页都写 `chapterIndex`(属于第几章,1 起)、`sectionNo`(如 `"2.1"`)和 `title`。**不要去读组件源码**,`inspect:layout` 和样例足够。
+    3. 封面 props:`kicker`(场景名,如「本科毕业论文答辩」)、`title`(题目)、`presenterLabel` / `presenter`(答辩人)、`advisor`(指导教师)、`unit`(学院 / 单位)、`date`;目录 props:`itemCount` + `items[]`(每项 `no` / `title` / `note`(英文小标,可省)/ `desc`(一句说明,可省)),条目与 `brand.chapters` 的章节一一对应(致谢、参考文献不进目录、不单独成章,`chapterIndex` 写最后一章)。结语页 `title` 写 4–6 个字(如「谢谢聆听」),长句放 `subtitle`。
+    4. 写每个内容页的 props 前,先运行 `npm --prefix <skill-root>/project run inspect:layout -- --brief campus_<id> campus_<id> …`(可以一次列出本稿要用的全部页面,每页只有几行:字段名、括号里是字数上限、数组每项的键和条数范围、数量控件、开关和可选值、图片位;`--compact` 是完整 JSON,一般用不到);文案不要超过括号里的字数上限,超了渲染会报错;数组条数要和对应的数量控件一致(例如 `items` 写 4 条就同时写 `"itemCount": 4`);每个内容页都写 `chapterIndex`(属于第几章,1 起)、`sectionNo`(如 `"2.1"`)和 `title`。**不要去读组件源码**,`inspect:layout` 和样例足够。
     5. 完整样例随技能提供:`<skill-root>/references/examples/campus-thesis-defense-xmu.json`(带学校的 9 页短稿,先看这份)、`<skill-root>/references/examples/campus-thesis-defense-engineering.json`(工科毕业答辩)、`<skill-root>/references/examples/campus-thesis-defense-management.json`(经管文科毕业答辩)、`<skill-root>/references/examples/campus-proposal-defense.json`(硕士开题)——照它们的写法写。
     6. 写完直接用渲染脚本渲染,脚本会做校验;报错按提示改对应页的 props。面向用户的稿子每个可见文案字段都要写成真实内容,不能留默认演示文案。
+    7. **没有图片时不要留空图位**:用户没给图片就不写 `images`,并把这一页的图位关掉——`--brief` 的「控件」里凡是图位相关的开关 / 选项都选「不显示」(例如 `campus_background_figure` 写 `"imageSide": "none"`、`campus_feasibility` 写 `"mediaAt": "none"`、`campus_case_study` / `campus_acknowledgement` 写 `"showPhoto": false`;`mediaMode` 是 `auto` 的图示页不写图片会自动原生绘制,不用管);关不掉图位的页(`figure_matrix`、`screenshot_grid`、`annotated_figure`、`stage_figures`、`timeline_figures`、`image_text_split` 等以图为主的页)在没有图片时不要选,换成对照表里同类的无图页面。`caption` / `source` 这类图注字段在关掉图位后不用写,不要写「配图位:请替换」之类的占位话。
+    8. **没有真实数据 / 文献时**:用户没给实验数据、案例数据而又让你自拟时,数字写成合理的示意值,并在这一页的备注类字段(图注、表注、结论条)里标「示意数据」,交付说明里提醒用户替换;没有真实参考文献就不做 `references_list` 页,研究现状页写研究方向 / 方法流派而不是编造的作者和年份;不要出现「学者 A」「示例同学」「XX」这类占位名字。
+    9. **交付**:生成后把预览地址给用户。用户要 PPTX 时(或在豆包这类带右侧工作台的 Agent APP 里交付时),**由你运行导出命令**:在 `<skill-root>/project` 下 `npm run export:pptx -- <本次输出目录>/ppt <本次输出目录>/<题目>.pptx`,然后把这个 PPTX 文件作为文件交付给用户(发文件卡片 / 在右侧工作台打开)——这样用户点开就能在右侧工作台里查看和编辑。不要只让用户自己去预览页里点「导出」:预览页的「导出」按钮下载的文件不会出现在对话和工作台里(本地电脑上点「立即查看」是弹出独立窗口,云电脑里这个按钮用不了)。
     下文凡是讲「3 个模板方案 / v4 bespoke / contentMap / projection / PageContentPack / `--layout-variants`」的规则,都不适用于 campus。
   - 外观开关:`fill` 渐变 / 纯色实底;`nav` 顶部通栏章节标签 / 顶部胶囊标签 / 左侧竖栏 / 并进标题行 / 斜切标签 / 下划线 / 平铺方格 / 文件夹页签 / 深色通栏胶囊 / 进度步骤(用户也能在预览面板「全稿外观」里直接切换);`titleStyle` 书签箭头 / 竖条 / 圆徽。用户没提就不写。页眉的章节标签每页固定显示:**campus 稿必须写 `chapters`**(2–6 个,按稿子的真实章节,每项 4–6 字为宜、不超过 8 字),并给每个内容页设 `chapterIndex`(当前第几章,1 起);不写 `chapters` 会显示占位的通用章节名。
   - 学校信息(用户说「我是 XX 大学的」时):`name` 写学校中文全称;`nameEn` 只在确知官方英文名时写(建议全大写),不确定就问用户,不要编;`footerNote` 写「XX大学 · XX学院 · 本科毕业论文答辩」这类(不写时页脚默认用「校名 · 学院名称」占位,带出校名;选了 `school` 的见下条);`mark` 一般不写(默认取校名首字)。`accent` 用用户给的校色;用户没给时不要凭记忆猜具体学校的标准色,保持默认并告诉用户可以在预览面板「学校信息 → 校色」里改。过浅 / 过暗 / 接近灰的校色会被主题自动规整成白字看得清的深浅(面板里会提示调整后的色值)。

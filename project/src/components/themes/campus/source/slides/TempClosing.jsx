@@ -24,6 +24,13 @@ const CSS = `
 .cp-closing-frame::before{content:'';position:absolute;inset:10px;border:1px solid var(--campus-on-accent-line);border-radius:16px;}
 `;
 
+// 结语大字按字数缩小:6 个字以内用设计字号,更长时缩到一行排得下,不让最后一个字单独掉到第二行
+function closingTitleSize(title) {
+  const count = Array.from(String(title ?? '').trim()).length;
+  if (count <= 6) return {};
+  return { fontSize: `${Math.min(156, Math.max(84, Math.floor(1120 / count)))}px` };
+}
+
 export function TempClosing(props) {
   useThemeStyle('campus-temp-closing-style', CSS);
   const p = { ...DEFAULTS, ...props };
@@ -35,7 +42,7 @@ export function TempClosing(props) {
         <div className="cp-closing-top campus-fade" style={enterDelay(0)}><CampusBrand tone="inverse" /></div>
         <div className="cp-closing-main">
           <div className="cp-closing-kicker campus-rise" style={enterDelay(1)}>{p.kicker}</div>
-          <h2 className="cp-closing-title campus-rise" style={enterDelay(2)}>{p.title}</h2>
+          <h2 className="cp-closing-title campus-rise" style={{ ...enterDelay(2), ...closingTitleSize(p.title) }}>{p.title}</h2>
           <div className="cp-closing-rule campus-draw" style={enterDelay(3)} />
           <p className="cp-closing-sub campus-rise" style={enterDelay(3)}>{p.subtitle}</p>
           <div className="cp-closing-contact campus-rise" style={enterDelay(4)}>{p.contact}</div>

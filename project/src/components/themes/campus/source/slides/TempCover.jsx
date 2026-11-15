@@ -45,6 +45,8 @@ export function TempCover(props) {
   const p = { ...DEFAULTS, ...props };
   const school = renderSchoolCover(brand, schoolCoverProps(p));
   if (school) return school;
+  // goal 写了真实题目却没写副标题时,不把「副标题：一句话说明…」这句占位说明留在封面上
+  const subtitle = p.subtitle === DEFAULTS.subtitle && p.title !== DEFAULTS.title ? '' : String(p.subtitle ?? '').trim();
   const extraMeta = [
     { key: 'advisor', label: p.advisorLabel, value: p.advisor },
     { key: 'unit', label: p.unitLabel, value: p.unit },
@@ -58,7 +60,7 @@ export function TempCover(props) {
             <div className="cp-cover-bar" aria-hidden="true" />
             <div className="cp-cover-kicker campus-chip campus-rise" style={enterDelay(1)}>{p.kicker}</div>
             <h1 className="cp-cover-title campus-rise" style={{ ...enterDelay(2), ...coverTitleSize(p.title) }}>{p.title}</h1>
-            <p className="cp-cover-sub campus-rise" style={enterDelay(3)}>{p.subtitle}</p>
+            {subtitle && <p className="cp-cover-sub campus-rise" style={enterDelay(3)}>{subtitle}</p>}
           </div>
         </div>
         <aside className="cp-cover-side campus-fade" style={enterDelay(1)}>

@@ -33,7 +33,7 @@ const CSS = `
 /* —— 左侧主题区 —— */
 .cp-g1-ip-hero{position:relative;isolation:isolate;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:40px 40px 44px;border-radius:var(--campus-radius-lg);background:var(--campus-fill-deep);color:var(--theme-on-accent);box-shadow:var(--campus-shadow-lift);overflow:hidden;}
 .cp-g1-ip-hero-kicker{font-size:18px;font-weight:700;letter-spacing:.32em;color:var(--campus-on-accent-muted);}
-.cp-g1-ip-hero-title{margin-top:18px;font-family:var(--theme-font-serif);font-weight:700;font-size:92px;line-height:1.1;letter-spacing:.06em;}
+.cp-g1-ip-hero-title{margin-top:18px;font-family:var(--theme-font-serif);font-weight:700;font-size:calc(92px * var(--cp-ip-hero-scale,1));line-height:1.1;letter-spacing:.06em;}
 .cp-g1-ip-hero-rule{display:flex;align-items:center;gap:10px;margin:26px 0 24px;color:var(--campus-spark);}
 .cp-g1-ip-hero-rule-line{width:70px;height:4px;border-radius:2px;background:var(--campus-spark);}
 .cp-g1-ip-hero-note{font-size:24px;line-height:1.65;color:var(--campus-on-accent-muted);text-wrap:pretty;}
@@ -70,7 +70,7 @@ const CSS = `
 .cp-g1-ip.is-3 .cp-g1-ip-keyword{font-size:34px;}
 .cp-g1-ip.is-3 .cp-g1-ip-desc{font-size:24px;line-height:1.7;}
 .campus[data-campus-nav="rail"] .cp-g1-ip{grid-template-columns:340px minmax(0,1fr);}
-.campus[data-campus-nav="rail"] .cp-g1-ip-hero-title{font-size:80px;}
+.campus[data-campus-nav="rail"] .cp-g1-ip-hero-title{font-size:calc(80px * var(--cp-ip-hero-scale,1));}
 `;
 
 const Burst = ({ size, className }) => (
@@ -78,6 +78,12 @@ const Burst = ({ size, className }) => (
     <path fill="currentColor" d="M12 1.5l2.6 7.1 7.4.3-5.8 4.6 2 7.2L12 16.6l-6.2 4.1 2-7.2L2 8.9l7.4-.3z" />
   </svg>
 );
+
+// 左侧大字按 3 个字设计(「创新点」);4–5 个字时等比缩小,保持一行,不掉单字
+function heroTitleScale(title) {
+  const count = Array.from(String(title ?? '').trim()).length;
+  return count > 3 ? { '--cp-ip-hero-scale': (3 / count).toFixed(3) } : undefined;
+}
 
 export function InnovationPoints(props) {
   useNarrativeStyle();
@@ -102,7 +108,7 @@ export function InnovationPoints(props) {
             <Burst size={150} className="cp-g1-ip-burst is-b" />
             <div className="cp-g1-ip-ring" aria-hidden="true" />
             <div className="cp-g1-ip-hero-kicker">{p.heroKicker}</div>
-            <h3 className="cp-g1-ip-hero-title">{p.heroTitle}</h3>
+            <h3 className="cp-g1-ip-hero-title" style={heroTitleScale(p.heroTitle)}>{p.heroTitle}</h3>
             <div className="cp-g1-ip-hero-rule" aria-hidden="true"><SparkStar size={22} /><div className="cp-g1-ip-hero-rule-line" /></div>
             <p className="cp-g1-ip-hero-note">{p.heroNote}</p>
           </section>
