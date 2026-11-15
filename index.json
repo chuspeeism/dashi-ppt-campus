@@ -48,6 +48,19 @@
     "seu.pptx.part-009",
     "seu.pptx.part-010"
    ]
+  },
+  "ynu.pptx": {
+   "bytes": 46567473,
+   "parts": [
+    "ynu.pptx.part-000",
+    "ynu.pptx.part-001",
+    "ynu.pptx.part-002",
+    "ynu.pptx.part-003",
+    "ynu.pptx.part-004",
+    "ynu.pptx.part-005",
+    "ynu.pptx.part-006",
+    "ynu.pptx.part-007"
+   ]
   }
  }
 }
