@@ -32,6 +32,22 @@
     "xmu.pptx.part-006",
     "xmu.pptx.part-007"
    ]
+  },
+  "seu.pptx": {
+   "bytes": 67341614,
+   "parts": [
+    "seu.pptx.part-000",
+    "seu.pptx.part-001",
+    "seu.pptx.part-002",
+    "seu.pptx.part-003",
+    "seu.pptx.part-004",
+    "seu.pptx.part-005",
+    "seu.pptx.part-006",
+    "seu.pptx.part-007",
+    "seu.pptx.part-008",
+    "seu.pptx.part-009",
+    "seu.pptx.part-010"
+   ]
   }
  }
 }
