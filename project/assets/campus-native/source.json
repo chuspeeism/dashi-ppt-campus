@@ -1,7 +1,9 @@
 {
-  "note": "学校原生封面 / 目录模板(<学校 key>.pptx)的下载地址。导出时本机没有所选学校的模板,就按顺序从这些地址下载;正式发布时把地址换成正式仓库或国内镜像。",
+  "note": "学校原生封面 / 目录模板(<学校 key>.pptx)的下载地址。导出时本机没有所选学校的模板,就按顺序从这些地址下载,前一个不通自动试下一个。",
   "baseUrls": [
-    "https://raw.githubusercontent.com/jadon7/dashi-ppt-campus-preview/campus-native/",
-    "https://github.com/jadon7/dashi-ppt-campus-preview/raw/campus-native/"
+    "https://raw.githubusercontent.com/chuspeeism/dashi-ppt-campus/campus-native/",
+    "https://raw.githubusercontent.com/jadon7/dashi-ppt-campus/campus-native/",
+    "https://github.com/chuspeeism/dashi-ppt-campus/raw/campus-native/",
+    "https://github.com/jadon7/dashi-ppt-campus/raw/campus-native/"
   ]
 }
