@@ -22,6 +22,8 @@ node <skill-root>/scripts/check_latest_version.mjs
 
 如果脚本有输出,把输出内容附在最终回复末尾提醒用户更新;如果脚本无输出或检查失败,保持静默,不要提版本检查。
 
+用户同意更新时,替用户在终端运行 `npx --registry=https://registry.npmmirror.com dashi-ppt-campus-skill@latest`(国内网络用这条,走 npmmirror,不需要访问 GitHub;海外可用 `npx dashi-ppt-campus-skill@latest`);当前 Skill 装在豆包工作的技能目录(路径里有 `.doubaowork`)时,在命令末尾加 `--doubao`。依赖和已下载的学校模板在 `~/.dashi-ppt/`,更新不会重复下载。更新完提醒用户新开一个对话再用。
+
 ## Skill 目录
 
 当前 `SKILL.md` 所在目录就是 Skill 根目录,下文记为 `<skill-root>`。
