@@ -56,12 +56,28 @@ export function renderDeck(deck, { outFile, includeThemeSwitcher = deck.preview?
   const htmlLang = language === 'en' ? 'en' : 'zh-CN';
   html = html.replace('<html lang="zh-CN">', `<html lang="${htmlLang}" data-theme-pack="${themePackName}">`);
   html = html.replace('<title>[必填] 替换为 PPT 标题 · Deck Title</title>', `<title>${escapeHtml(viewModel.model.title)}</title>`);
+  html = injectSkillName(html);
   html = injectPreviewOptions(html, viewModel.options, { includeThemeSwitcher, brand: deck.brand, deckCover: deckCoverFromSlides(deck.slides), language, viewModel, deckStyles: collectDeckStyles(viewModel) });
   html = injectDeckViewModel(html, serializeDeckViewModel(viewModel));
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, html);
   copyRuntimeAssets(path.dirname(outFile), { usedThemeKeys: collectUsedThemeKeys(viewModel), schools: selectedSchoolKeys(deck.brand?.school) });
+}
+
+// 技能名:导出引导弹窗里的提示词要指名本技能的预览服务。高校版(dashi-ppt-campus)和原版(dashi-ppt)可能装在同一个
+// 技能目录里,写死名字会指错技能,所以按分发配置(package.json 的 dashiDistribution.skillName,开发仓库与安装版的
+// project/package.json 都有)写进模板的 <meta name="dashi-skill-name">;读不到时保留模板里的默认值。
+function injectSkillName(html) {
+  let skillName = '';
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+    skillName = String(pkg?.dashiDistribution?.skillName || '').trim();
+  } catch {
+    skillName = '';
+  }
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(skillName)) return html;
+  return html.replace(/<meta name="dashi-skill-name" content="[^"]*">/, `<meta name="dashi-skill-name" content="${skillName}">`);
 }
 
 // 全稿级外观开关:deck 用到的主题里声明了 deckStyles 的(目前只有 campus),按主题 key 收集给预览工作台。
