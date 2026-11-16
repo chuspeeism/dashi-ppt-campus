@@ -1992,13 +1992,14 @@
   html.pp-intro-fade body{animation:pp-intro-fade .42s cubic-bezier(.2,0,.2,1) both}
   @keyframes pp-intro-fade{from{opacity:0}to{opacity:1}}
   #pp-intro-backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--pp-intro-bg,#07080b)}
-  #pp-intro-backdrop::before{content:"";position:absolute;inset:-10%;background:radial-gradient(ellipse 62% 54% at 50% 46%,var(--pp-intro-glow,rgba(70,80,110,.55)) 0%,transparent 72%)}
+  #pp-intro-backdrop::before{content:"";position:absolute;inset:-10%;background:radial-gradient(ellipse 70% 62% at 50% 46%,var(--pp-intro-glow,rgba(70,80,110,.55)) 0%,rgba(0,0,0,0) 100%)}
   #pp-intro-backdrop::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 120% 100% at 50% 50%,transparent 55%,rgba(0,0,0,.62) 100%)}
   #pp-intro{position:fixed;inset:0;z-index:30;overflow:hidden;pointer-events:auto;cursor:default;contain:strict}
-  #pp-intro .ppi-card{position:absolute;overflow:hidden;background:#fff;backface-visibility:hidden;will-change:transform,opacity;box-shadow:0 26px 60px rgba(0,0,0,.42),0 0 0 1px rgba(255,255,255,.06)}
+  #pp-intro .ppi-wall{position:absolute;inset:0;isolation:isolate}
+  #pp-intro .ppi-card{position:absolute;overflow:hidden;background:#fff;backface-visibility:hidden;will-change:transform,opacity,filter;box-shadow:0 18px 44px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.05);contain:layout paint style}
   #pp-intro .ppi-card>.ppi-slide{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none}
-  #pp-intro .ppi-dim{position:absolute;inset:0;background:var(--pp-intro-bg,#07080b);pointer-events:none;will-change:opacity}
-  #pp-intro .ppi-title{position:absolute;left:50%;top:50%;width:min(80vw,760px);transform:translate(-50%,-50%);text-align:center;color:rgba(255,255,255,.86);pointer-events:none;font-family:var(--sans-zh)}
+  .ppi-open{position:fixed;z-index:0;border-radius:50%;pointer-events:none;background:radial-gradient(circle,var(--pp-stage,#efede9) 0%,var(--pp-stage,#efede9) 42%,transparent 70%);will-change:transform,opacity}
+  #pp-intro .ppi-title{position:absolute;left:50%;top:50%;width:min(80vw,760px);transform:translate(-50%,-50%);text-align:center;color:rgba(255,255,255,.92);pointer-events:none;font-family:var(--sans-zh);text-shadow:0 2px 18px rgba(0,0,0,.55)}
   #pp-intro .ppi-title-main{font:600 15px/1.5 var(--sans-zh);letter-spacing:.24em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #pp-intro .ppi-title-count{margin-top:12px;font:500 12px/1 var(--mono);letter-spacing:.32em;color:rgba(255,255,255,.46);font-variant-numeric:tabular-nums}
   #pp-intro .ppi-skip{position:absolute;right:22px;bottom:18px;display:flex;align-items:center;gap:8px;padding:6px 10px;border:0;border-radius:999px;background:transparent;color:rgba(255,255,255,.42);font:500 12px/1 var(--sans-zh);letter-spacing:.06em;cursor:pointer}
@@ -11846,17 +11847,22 @@ refreshRailCatalog();
 </script>
 <script>
 /* =============== Deck Intro · 首次打开的开场 ===============
-   一镜到底,开场里飞的页面卡片最后就是左侧目录里的缩略图(时间从稿子就绪、界面藏好后算起,总长约 6.9s):
-   静场  0–1.1s    深色空间(当前主题 / 学校主色压暗的底色 + 径向光 + 暗角),中间稿子标题与页数从 0 数到 N
-   全览  0.5–3.1s  卡片从纵深错峰飞入,铺成倾斜的 3D 墙(仰 50°、转 -27°),镜头沿墙对角漂移;
-                   1.75s 起「换阵」:墙面按列依次卷成一道首尾相接的弧形环廊(凹面朝镜头,当前页居中,最后几页接在左侧),
-                   环廊绕镜头转过小半圈,把当前页(首次打开即第 1 页)转到正前方;换阵途中卡片先往后让,避免半空穿插
-   聚焦  3.15–4.55s 当前页转正、放大,落到舞台上真实页面的位置;真实舞台从 3.15s 起接管同一套变换(落位时是恒等变换,
-                   无跳变),封面视频此时起播、入场动画在落位前一刻放开;背景过渡回控制台底色,落位时一道扫光
-   就位  4.35–6.9s  目录滑入,其余卡片从舞台背后沿弧线飞进目录各自的缩略图位并换成真实缩略图(当前页的缩略图从舞台背后抽出);
-                   顶栏落下、按钮错峰,右侧面板滑入、字段逐行出现(窄视口面板是收起的浮层,跳过这一步),翻页器弹出,「播放」脉冲收尾
-   卡片与界面动画都是预先采样的 Web Animations 关键帧,只动 transform / opacity。点击 / 按键 / 滚轮在 250ms 内快进到终态;
-   任何异常或 12 秒看门狗都直接切到终态。结束后取消全部动画、删掉临时节点和类名,界面与不播开场时完全一致。 */
+   一镜到底,开场里的页面卡片最后就是左侧目录里的缩略图(时间从稿子就绪、界面藏好后算起,总长约 6.8s):
+   静场    0–0.9s   深色空间(当前主题 / 学校主色压暗)上的稿子标题与页数;第一批卡片从镜头前掠过时标题退场
+   下落成墙 0.15–3.0s 整份稿子按顺序循环铺满一面远大于视口的墙(行间错位,相邻不出现同一页);每张卡从紧贴镜头处
+                   垂直于墙面落向自己的格子(先快后慢、落定很稳、不回弹),从四周向中心错峰,正中央的当前页
+                   (首次打开即第 1 页 / 封面)最后落下。焦平面就是墙面:离墙越高越虚、略透明、略暗,落定时完全清晰。
+                   镜头同时从倾斜(滚转 -20°、俯仰 14°、偏航 -11°)一个缓动连续转正,封面落定时正好转正
+   停一拍  3.0–3.4s 正对的平铺墙,极慢推近
+   聚焦    3.4–4.6s 直接推向正中央的当前页并移焦(其余卡片虚化,布景卡先于落位退净),落到舞台上真实页面的位置:
+                   真实舞台接管同一套变换,落位即恒等变换(无跳变),一道扫光;控制台底色从舞台后方圆形铺开
+   就位    4.4–6.8s 目录滑入,每页一张的真卡飞进目录各自的缩略图位(当前页的缩略图从舞台背后抽出),
+                   顶栏落下、按钮错峰,右侧面板滑入、字段逐行出现(窄视口跳过),翻页器弹出,「播放」脉冲收尾
+   普通封面落位即完整内容;带视频的封面在舞台接管前一刻起播。
+   卡片内容复用目录缩略图的 DOM 克隆:每页只生成一份,重复卡从它复制;视锥外的格子不建;卡片按下落时间分批挂载,
+   首帧只绘制最早出现的几张。动画都是预先采样的 Web Animations 关键帧(统一起点),只动 transform / opacity / filter。
+   点击 / 按键 / 滚轮在 250ms 内快进到终态;任何异常或 12 秒看门狗都直接切到终态。
+   结束后取消全部动画、删掉临时节点和类名,界面与不播开场时完全一致。 */
 (function(){
   const plan = window.__ppIntroPlan || {};
   const rootEl = document.documentElement;
@@ -11867,26 +11873,26 @@ refreshRailCatalog();
 
   // —— 时间轴(ms)——
   const T = {
-    flyIn: 520, flyStagger: 32, flyDur: 980,
-    panStart: 120, panDur: 3300,
-    morph: 1750, morphColStagger: 34, morphRowStagger: 50, morphDur: 1000, morphCamDur: 1150,
-    spinStart: 1950, spinDur: 1350,
-    focus: 3150, focusDur: 1400, stageFade: 380,
-    bgFadeStart: 3750, bgFadeDur: 760,
-    recede: 3150, recedeDur: 1300,
-    rail: 4350, railDur: 520,
-    toRail: 4480, toRailStagger: 32, toRailDur: 840,
-    topbar: 4980, topbarDur: 540, topbarItems: 5120, topbarItemStagger: 42,
-    panel: 5180, panelDur: 600, panelItems: 5320, panelItemStagger: 46,
-    pager: 5620, pagerDur: 500,
-    pulse: 6120, pulseDur: 720,
+    titleIn: 40, titleInEnd: 260, titleOut: 340, titleOutEnd: 600,
+    heroStart: 380, heroFallDur: 1150,
+    othersFrom: 760, othersSpread: 1720, othersJitter: 760, durMin: 700, durMax: 1450, upright: 3300,
+    hold: 3700, land: 4900,
+    stageIn: 3660, stageFade: 300,
+    focusPull: 3700, decorOut: 3720, decorOutDur: 520,
+    bgOpen: 3680, bgOpenDur: 820,
+    rail: 4250, railDur: 560,
+    toRail: 4080, toRailStagger: 32, toRailDur: 860,
+    topbar: 5300, topbarDur: 520, topbarItems: 5420, topbarItemStagger: 40,
+    panel: 5480, panelDur: 580, panelItems: 5600, panelItemStagger: 44,
+    pager: 5840, pagerDur: 480,
+    pulse: 6220, pulseDur: 700,
   };
-  const WALL_LIMIT = 36;
+  const CARD_LIMIT = 90;
 
   const clamp01 = v => (v < 0 ? 0 : v > 1 ? 1 : v);
   const lerp = (a, b, u) => a + (b - a) * u;
-  const easeOutQuint = u => 1 - Math.pow(1 - u, 5);
   const easeOutCubic = u => 1 - Math.pow(1 - u, 3);
+  const easeOutQuart = u => 1 - Math.pow(1 - u, 4);
   const easeInOutCubic = u => (u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
   const easeInOutSine = u => -(Math.cos(Math.PI * u) - 1) / 2;
   const seg = (t, start, dur, ease) => { const u = clamp01((t - start) / dur); return ease ? ease(u) : u; };
@@ -11894,7 +11900,12 @@ refreshRailCatalog();
   const num = (v, d = 2) => (Number.isFinite(v) ? +v.toFixed(d) : 0);
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   const frame = () => new Promise(resolve => requestAnimationFrame(() => resolve()));
+  const mod = (a, n) => ((a % n) + n) % n;
+  // 固定种子的伪随机:种子由稿子标识(路径 + 标题)派生,同一份稿子每次播放一致,方便录屏复现
+  const SEED = (() => { let h = 2166136261; for(const ch of SEEN_KEY){ h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h; })();
+  const hash01 = (a, b, salt = 0) => { let x = Math.imul((a * 73856093) ^ (b * 19349663) ^ (salt * 83492791) ^ SEED, 2654435761) >>> 0; x ^= x >>> 15; x = Math.imul(x, 2246822519) >>> 0; x ^= x >>> 13; x = Math.imul(x, 3266489917) >>> 0; x ^= x >>> 16; return (x >>> 0) / 4294967296; };
   const EASE_OUT = 'cubic-bezier(.16,1,.3,1)';
+  const RAD = Math.PI / 180;
 
   function releaseHold(){
     rootEl.classList.remove('pp-intro-hold');
@@ -11934,19 +11945,10 @@ refreshRailCatalog();
   }
   function mix(a, b, u){ return a.map((v, i) => Math.round(lerp(v, b[i], u))); }
 
-  // —— 媒体与入场动画:开场期间按住,聚焦 / 落位时才放 ——
-  function holdStage(slide, s){
-    const hold = { anims: [], videos: [], entranceReleased: false, mediaReleased: false };
+  // —— 封面视频:开场期间按住(停在第一帧),真实舞台接管前一刻才起播。普通封面不动,落位即完整内容 ——
+  function holdStage(slide){
+    const hold = { videos: [], mediaReleased: false };
     if(!slide) return hold;
-    try {
-      window.__clearRuntimeMotionSuppression?.(slide);
-      slide.removeAttribute('data-deck-active');
-      void slide.offsetWidth;
-      slide.setAttribute('data-deck-active', '');
-      window.__syncTheme10Motion?.(slide);
-      hold.anims = slide.getAnimations ? slide.getAnimations({ subtree: true }) : [];
-      hold.anims.forEach(anim => { try { anim.pause(); anim.currentTime = 0; } catch {} });
-    } catch {}
     slide.querySelectorAll('video').forEach(video => {
       const autoplay = video.autoplay || !video.paused;
       const guard = () => { if(!hold.mediaReleased) { try { video.pause(); } catch {} } };
@@ -11964,14 +11966,9 @@ refreshRailCatalog();
       if(autoplay){ try { const p = video.play(); p?.catch?.(() => {}); } catch {} }
     });
   }
-  function releaseEntrance(hold){
-    if(!hold || hold.entranceReleased) return;
-    hold.entranceReleased = true;
-    hold.anims.forEach(anim => { try { if(anim.playState === 'paused') anim.play(); } catch {} });
-  }
 
-  // —— 卡片内容:复用目录缩略图的 DOM 克隆(冻结在终态)——
-  function slideClone(slide, boxW){
+  // —— 卡片内容:每页一份目录缩略图式的 DOM 克隆(冻结在终态),重复卡片从它复制 ——
+  function slideMaster(slide){
     let node = null;
     try { if(typeof createOverviewDomPreview === 'function') node = createOverviewDomPreview(slide); } catch { node = null; }
     if(!node){
@@ -11987,7 +11984,6 @@ refreshRailCatalog();
     node.style.width = '1920px';
     node.style.height = '1080px';
     node.style.transformOrigin = '0 0';
-    node.style.transform = `scale(${boxW / 1920})`;
     return node;
   }
 
@@ -12003,7 +11999,7 @@ refreshRailCatalog();
   async function start(opts = {}){
     if(session) return session.promise;
     if(shouldSkipNow()){ releaseHold(); window.__ppIntroState = 'skipped-env'; return; }
-    const s = session = { anims: [], nodes: [], timers: [], listeners: [], done: false, skipping: false };
+    const s = session = { anims: [], nodes: [], timers: [], listeners: [], pending: [], done: false, skipping: false };
     s.promise = new Promise(resolve => { s.resolve = resolve; });
     window.__ppIntroState = 'preparing';
     rootEl.classList.add('pp-intro-hold', 'pp-intro-running');
@@ -12024,8 +12020,10 @@ refreshRailCatalog();
     const heroSlide = (typeof slides !== 'undefined' && slides[idx]) || document.querySelector('#deck > .slide.active');
     const catalog = (typeof getCatalogSlides === 'function' ? getCatalogSlides() : [...document.querySelectorAll('#deck > .slide:not([hidden])')]).filter(Boolean);
     if(!heroSlide || !catalog.length) throw new Error('no slides');
+    const N = catalog.length;
+    const heroPage = Math.max(0, catalog.indexOf(heroSlide));
 
-    // 深色空间先铺上(稿子还在准备时就是「静场」)
+    // 深色空间先铺上
     const accent = themeAccent(heroSlide);
     const bg = mix(accent, [5, 6, 9], .9);
     const glow = mix(accent, [24, 26, 34], .5);
@@ -12044,21 +12042,188 @@ refreshRailCatalog();
     s.nodes.push(layer);
     bindSkip(s, layer);
 
-    // 当前页先按住入场动画与视频
-    s.hold = holdStage(heroSlide, s);
+    s.hold = holdStage(heroSlide);
 
-    // —— 几何 ——
+    // —— 几何:世界单位是像素,每张卡片的盒子就是舞台本身的大小与位置 ——
     const R = stage.getBoundingClientRect();
     if(R.width < 40 || R.height < 20) throw new Error('stage not laid out');
+    const Rw = R.width, Rh = R.height;
+    const ox = R.left + Rw / 2 - cx, oy = R.top + Rh / 2 - cy;
     const stageRadius = parseFloat(getComputedStyle(stage).borderTopLeftRadius) || 0;
-    // 竖长的窄视口(如豆包右侧工作台约 640×760)按高度折算一个「等效宽度」,卡片和镜头别缩得太小
+    const narrow = vw < 1000;
     const base = Math.max(vw, vh * 1.35);
-    const P = Math.max(1100, base * 1.15);
-    let wall = catalog.slice(0, WALL_LIMIT);
-    if(!wall.includes(heroSlide)) wall = [...wall.slice(0, WALL_LIMIT - 1), heroSlide];
-    const n = wall.length;
-    const h = wall.indexOf(heroSlide);
-    const STEP = n > 24 ? 1000 / 18 : 1000 / 24;
+    const P = Math.max(860, base * .78);
+    const gap = Rw * .03;
+    const PX = Rw + gap, PY = Rh + gap;
+    // 转正后的画面:约 4–5 列(窄视口约 2.6 列,看得清)
+    const wallCardW = narrow ? vw / 2.6 : vw / 4.5;
+    const dzFor = width => P - P * Rw / width;
+    const dzWall = dzFor(wallCardW);
+    const STEP = 1000 / 24;
+
+    // 镜头:一个缓动从倾斜连续转正(封面落定时正好转正),停一拍极慢推近,再推向舞台
+    const camStart = { tx: 0, ty: 0, dz: dzWall * 1.05, pitch: 14, yaw: -11, roll: -20 };
+    const camUp = { tx: 0, ty: 0, dz: dzWall, pitch: 0, yaw: 0, roll: 0 };
+    const camHold = { tx: 0, ty: 0, dz: dzWall * .93, pitch: 0, yaw: 0, roll: 0 };
+    const camI = { tx: -ox, ty: -oy, dz: 0, pitch: 0, yaw: 0, roll: 0 };
+    const lerpCam = (a, b, u) => ({ tx: lerp(a.tx, b.tx, u), ty: lerp(a.ty, b.ty, u), dz: lerp(a.dz, b.dz, u), pitch: lerp(a.pitch, b.pitch, u), yaw: lerp(a.yaw, b.yaw, u), roll: lerp(a.roll, b.roll, u) });
+    function camAt(t){
+      if(t < T.upright) return lerpCam(camStart, camUp, easeInOutSine(clamp01(t / T.upright)));
+      if(t < T.hold) return lerpCam(camUp, camHold, seg(t, T.upright, T.hold - T.upright));
+      // 推向舞台:接住「停一拍」的极慢推近,再加速、稳稳落位
+      return lerpCam(camHold, camI, seg(t, T.hold, T.land - T.hold, easeInOutCubic));
+    }
+
+    // 墙上格子 → 世界坐标、页码(行间错位半格;下一行页码偏移 k,保证上下左右与斜邻都不是同一页)
+    let k = Math.max(2, Math.round(N / 2) - 1);
+    while(N >= 4 && [0, 1, N - 1].includes(mod(k, N))) k++;
+    const cellX = (r, c) => c * PX + (mod(r, 2) ? PX / 2 : 0);
+    const cellY = r => r * PY;
+    const cellPage = (r, c) => mod(c + r * k + heroPage, N);
+
+    // 投影:与 CSS 变换同一套数学(perspective(P) translateZ(dz) rotateX rotateY rotateZ translate3d(…, h))
+    function toView(cam, x, y, h = 0){
+      let X = x - cam.tx, Y = y - cam.ty, Z = h;
+      let a = cam.roll * RAD; [X, Y] = [X * Math.cos(a) - Y * Math.sin(a), X * Math.sin(a) + Y * Math.cos(a)];
+      a = cam.yaw * RAD; [X, Z] = [X * Math.cos(a) + Z * Math.sin(a), -X * Math.sin(a) + Z * Math.cos(a)];
+      a = cam.pitch * RAD; [Y, Z] = [Y * Math.cos(a) - Z * Math.sin(a), Y * Math.sin(a) + Z * Math.cos(a)];
+      return { x: X, y: Y, z: Z + cam.dz };
+    }
+    const CORNERS = [[-Rw / 2, -Rh / 2], [Rw / 2, -Rh / 2], [Rw / 2, Rh / 2], [-Rw / 2, Rh / 2]];
+    function screenBox(cam, x, y, h = 0){
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, maxZ = -Infinity;
+      for(const [dx, dy] of CORNERS){
+        const v = toView(cam, x + dx, y + dy, h);
+        maxZ = Math.max(maxZ, v.z);
+        const k2 = P / Math.max(1, P - v.z);
+        const sx = cx + v.x * k2, sy = cy + v.y * k2;
+        minX = Math.min(minX, sx); maxX = Math.max(maxX, sx); minY = Math.min(minY, sy); maxY = Math.max(maxY, sy);
+      }
+      return { minX, maxX, minY, maxY, maxZ };
+    }
+    const onScreen = box => box.maxZ < P - 40 && box.maxX > 0 && box.minX < vw && box.maxY > 0 && box.minY < vh;
+    const tfOf = (cam, X, Y, Z, S, ax = 0, ay = 0) => `perspective(${num(P, 1)}px) translate3d(0px,0px,${num(cam.dz)}px) rotateX(${num(cam.pitch, 3)}deg) rotateY(${num(cam.yaw, 3)}deg) rotateZ(${num(cam.roll, 3)}deg) `
+      + `translate3d(${num(X)}px,${num(Y)}px,${num(Z)}px) rotateX(${num(ax, 3)}deg) rotateY(${num(ay, 3)}deg) scale(${num(S, 5)}) translate(${num(-ox)}px,${num(-oy)}px)`;
+    const wallTf = (cam, x, y, h = 0, k = 1, ax = 0, ay = 0) => tfOf(cam, x - cam.tx, y - cam.ty, h, k, ax, ay);
+    // 除当前页外,卡片的盒子只有落定时在画面里的大小(世界尺寸靠 scale 补回):栅格化的像素少一个数量级,
+    // 贴近镜头时放大的部分本来就是虚的,看不出;当前页的盒子仍是舞台本身,落位时像素级清晰
+    const bw = Math.min(Rw, Math.max(160, wallCardW * 1.05)), bh = bw * Rh / Rw;
+    const kSmall = Rw / bw;
+
+    // —— 采样时间点 ——
+    const TOTAL = T.pulse + T.pulseDur + 40;
+    const times = [];
+    for(let t = 0; t < TOTAL; t += STEP) times.push(t);
+    times.push(TOTAL);
+    const camSamples = times.map(t => camAt(t));
+
+    // 当前页与每页一张「真卡」:各页取离当前页最近的那一格
+    const canonical = new Map();
+    for(let r = -4; r <= 4; r++) for(let c = -6; c <= 6; c++){
+      const page = cellPage(r, c);
+      const d = Math.hypot(cellX(r, c), cellY(r));
+      const prev = canonical.get(page);
+      if(!prev || d < prev.d) canonical.set(page, { r, c, d });
+    }
+    canonical.set(heroPage, { r: 0, c: 0, d: 0 });
+    const canonicalKey = new Map([...canonical.entries()].map(([page, v]) => [`${v.r},${v.c}`, page]));
+
+    // 落定后(墙面上)在镜头路径里出现过的格子才建;斜着的时候四个角也要盖住
+    const sampleEnd = times.findIndex(t => t > T.decorOut);
+    const cells = new Map();
+    for(let j = 0; j < sampleEnd; j += 2){
+      const cam = camSamples[j];
+      const r0 = Math.round(cam.ty / PY), c0 = Math.round(cam.tx / PX);
+      for(let r = r0 - 9; r <= r0 + 9; r++) for(let c = c0 - 9; c <= c0 + 9; c++){
+        const key = `${r},${c}`;
+        if(cells.has(key)) continue;
+        if(onScreen(screenBox(cam, cellX(r, c), cellY(r)))) cells.set(key, { r, c });
+      }
+    }
+    canonical.forEach(v => cells.set(`${v.r},${v.c}`, { r: v.r, c: v.c }));
+
+    // 下落编排:封面先独自落下(主角时刻),它落到一半时周围的卡片才陆续出现;其余卡片按离中心的距离给一个基础延迟,
+    // 再加幅度很大的随机量(相邻两张谁先谁后看不出规律,远处偶尔比近处先落)——以封面为中心向四周蔓延着落满,而不是波纹。
+    // 层次:起始高度、下落时长各自分散,同一帧里空中同时有贴近镜头的(巨大、全虚)、中等高度的(半虚)、贴近墙面的(几乎实)。
+    const upCam = camAt(T.upright);
+    const halfDiag = Math.hypot(cx, cy);
+    const FALL_POW = 2.2;
+    const hCeil = cam => P - 150 - cam.dz;                            // 再高就越过镜头平面
+    const cellList = [...cells.values()].map(cell => {
+      const key = `${cell.r},${cell.c}`;
+      const x = cellX(cell.r, cell.c), y = cellY(cell.r);
+      const v = toView(upCam, x, y);
+      const kk = P / (P - v.z);
+      const d = Math.min(1.3, Math.hypot(v.x * kk, v.y * kk) / halfDiag);
+      const isHero = cell.r === 0 && cell.c === 0;
+      let fallStart, fallDur, level;
+      if(isHero){
+        fallStart = T.heroStart; fallDur = T.heroFallDur; level = 1;      // 封面从紧贴镜头处压下来
+      }else{
+        const jitter = (hash01(cell.r, cell.c, 1) * 2 - 1) * T.othersJitter;
+        fallStart = T.othersFrom + (d / 1.3) * T.othersSpread + jitter;
+        fallDur = lerp(T.durMin, T.durMax, hash01(cell.r, cell.c, 2));
+        // 起始高度三档连续分布:约四成从紧贴镜头处落,其余在中等到较低之间
+        const rh = hash01(cell.r, cell.c, 3);
+        level = rh < .42 ? lerp(.8, 1, rh / .42) : lerp(.22, .72, (rh - .42) / .58);
+        fallStart = Math.max(T.othersFrom, fallStart);
+        // 最后一批在镜头转正时落定(末尾 15% 的时长只剩不到 1% 的高度,看起来已经落定)
+        const lastEnd = T.upright - 20;
+        if(fallStart + fallDur * .85 > lastEnd){
+          fallDur = Math.max(T.durMin, Math.min(fallDur, (lastEnd - fallStart) / .85));
+          fallStart = Math.min(fallStart, lastEnd - fallDur * .85);
+        }
+      }
+      const camAtStart = camAt(fallStart);
+      const low = screenBox(camAtStart, x, y, 0).maxZ;
+      const hMax = Math.max(200, Math.min(hCeil(camAtStart), (P - 90 - low) * .92));
+      const h0 = Math.max(160, hMax * level);
+      const tiltX = (hash01(cell.r, cell.c, 4) * 2 - 1) * 3.2, tiltY = (hash01(cell.r, cell.c, 5) * 2 - 1) * 3.2;
+      return { ...cell, key, x, y, d, isHero, fallStart, fallDur, h0, tiltX: isHero ? 0 : tiltX, tiltY: isHero ? 0 : tiltY,
+        page: canonicalKey.get(key) ?? cellPage(cell.r, cell.c), canonical: canonicalKey.has(key) };
+    }).sort((a, b) => a.fallStart - b.fallStart).slice(0, CARD_LIMIT);
+    // 相邻两张出现至少隔 18ms,避免同一帧里一次冒出一批新卡
+    for(let i = 1; i < cellList.length; i++){
+      const cell = cellList[i];
+      if(cell.isHero) continue;
+      cell.fallStart = Math.max(cell.fallStart, cellList[i - 1].fallStart + 18);
+    }
+    // 前后关系:每个采样时刻按离墙高度给卡片排名(飞得高的压在低的上面,同高按落下先后),只在名次变化处写一个阶跃关键帧。
+    // 不用 preserve-3d 让合成器排序:每张卡自带 perspective(),实测 Chrome 的深度排序会把空中的卡排到落定的卡后面
+    const heightAt = (cell, t) => t < cell.fallStart ? -1 : cell.h0 * Math.pow(1 - clamp01((t - cell.fallStart) / cell.fallDur), FALL_POW);
+    {
+      const zSeq = cellList.map(() => []);
+      const order = cellList.map((_, i) => i);
+      times.forEach((t, j) => {
+        if(t > T.upright + 200) return;
+        const hs = cellList.map(cell => heightAt(cell, t));
+        order.sort((a, b) => (hs[a] - hs[b]) || (a - b));
+        order.forEach((i, rank) => zSeq[i].push([t, rank + 1]));
+      });
+      cellList.forEach((cell, i) => {
+        const frames = [];
+        zSeq[i].forEach(([t, z], k) => {
+          if(k === 0 || z !== zSeq[i][k - 1][1]) frames.push({ offset: Math.min(1, t / TOTAL), zIndex: z, easing: 'steps(1, end)' });
+        });
+        frames.push({ offset: 1, zIndex: i + 1 });   // 落定以后与 DOM 顺序一致
+        if(frames[0].offset > 0) frames.unshift({ offset: 0, zIndex: frames[0].zIndex, easing: 'steps(1, end)' });
+        cell.zFrames = frames;
+      });
+    }
+    // 统一的高度参照:模糊量 / 压暗 / 透明度按「离墙多高」连续变化,不同起始高度的卡片在同一时刻虚实不同
+    const hRef = Math.max(400, ...cellList.map(cell => cell.h0));
+    if(!cellList.some(cell => cell.isHero)) throw new Error('hero cell missing');
+
+    // 景深:焦平面就是墙面,离墙越高越虚(屏幕上的模糊量随高度连续变化),落定时完全清晰
+    const BfallMax = Math.max(14, 30 * vw / 1920);
+    const Bpull = Math.max(5, 9 * vw / 1920);
+    const heightLens = (cam, cell, h) => {
+      const v = toView(cam, cell.x, cell.y, h);
+      const scale = P / Math.max(60, P - v.z);
+      const rel = clamp01(h / hRef);
+      const blurScreen = BfallMax * smoothstep(0, .62, rel);
+      return { blur: Math.min(60, blurScreen / scale), bright: 1 - .26 * smoothstep(.04, .8, rel), alpha: lerp(1, .78, smoothstep(.02, .55, rel)) };
+    };
 
     // 目录里的缩略图位
     const railList = document.getElementById('slide-rail-list');
@@ -12072,223 +12237,62 @@ refreshRailCatalog();
       const frameEl = card?.querySelector('.rail-thumb-frame');
       const r = frameEl?.getBoundingClientRect();
       if(!r || r.width < 4) return null;
-      return { card, frameEl, x: r.left + r.width / 2 - cx, y: r.top + r.height / 2 - cy, w: r.width, h: r.height,
+      return { card, X: r.left + r.width / 2 - cx, Y: r.top + r.height / 2 - cy, S: r.width / Rw,
         visible: !!railRect && r.bottom > railRect.top + 1 && r.top < railRect.bottom - 1 };
     };
-    const firstFrame = railTarget(wall[0]) || railTarget(heroSlide);
-    const frameW = firstFrame?.w || 120;
 
-    // 卡片尺寸(盒子大小,世界里再缩放)
-    const cols = Math.max(4, Math.min(8, Math.round(Math.sqrt(n * 1.6))));
-    const rows = Math.ceil(n / cols);
-    const CW = Math.max(170, Math.min(base * .25, (base * 1.55) / cols, 430));
-    const CH = CW * 9 / 16;
-    const gap = CW * .09;
-    const cardRadius = Math.min(CW * .055, 8 * CW / frameW);
-
-    // 构图 A:倾斜的 3D 墙(砖缝错开),沿墙对角漂移
-    const wallW = cols * (CW + gap);
-    const A = wall.map((_, i) => {
-      const r = Math.floor(i / cols), c = i % cols;
-      return {
-        x: (c - (cols - 1) / 2) * (CW + gap) + (r % 2 ? (CW + gap) * .5 : 0) - (rows > 1 ? (CW + gap) * .25 : 0),
-        y: (r - (rows - 1) / 2) * (CH + gap),
-        flyStart: T.flyIn + i * T.flyStagger,
-      };
+    const LAND = T.land;
+    const keyframesFor = fn => times.map((t, j) => {
+      const st = fn(t, j);
+      return { offset: Math.min(1, t / TOTAL), transform: st.transform, opacity: num(clamp01(st.opacity), 3),
+        filter: `blur(${num(st.blur || 0, 2)}px) brightness(${num(st.bright ?? 1, 3)})` };
     });
-    const camA = { tx: 0, ty: -vh * .02, tz: -240, rx: 50, rz: -27 };
-    const panX = t => lerp(wallW * .17, -wallW * .17, seg(t, T.panStart, T.panDur, easeInOutSine));
-    const panY = t => lerp(-CH * .35, CH * .35, seg(t, T.panStart, T.panDur, easeInOutSine));
 
-    // 构图 B:弧形环廊——卡片排在一段以镜头为轴的圆弧上(凹面朝镜头,两侧卡片转向镜头),1–2 行;
-    // 环廊绕镜头转过小半圈,把当前页转到正前方
-    const rowsB = n >= 8 ? 2 : 1;
-    const colsB = Math.ceil(n / rowsB);
-    const Rc = Math.max(620, base * .62);
-    const sB = Math.min(1.6, Math.max(.7, (Rc * .5) / CW));
-    const zc = 0;
-    const dTheta = (CW * sB + gap * 1.2) / Rc;
-    const hCol = h % colsB;
-    const hRow = Math.floor(h / colsB);
-    // 环廊首尾相接:以当前页所在列为中心,读序往右排、到头后从左边接回来(最后几页在第 1 页左侧)
-    const wrapCol = c => { let d = ((c - hCol) % colsB + colsB) % colsB; if(d > Math.floor(colsB / 2)) d -= colsB; return d; };
-    const spinEnd = 0;
-    const spinFrom = -Math.min(.8, dTheta * 1.45);
-    const spin = t => lerp(spinFrom, spinEnd, seg(t, T.spinStart, T.spinDur, easeInOutCubic));
-    const rowPitch = CH * sB + gap * 1.1;
-    const B = wall.map((_, i) => {
-      const rB = Math.floor(i / colsB), cB = i % colsB;
-      return {
-        col: cB, row: rB,
-        th0: wrapCol(cB) * dTheta,
-        y: (rB - (rowsB - 1) / 2) * rowPitch,
-        mStart: T.morph + cB * T.morphColStagger + rB * T.morphRowStagger,
-      };
-    });
-    void hRow;
-    const camB = { tx: 0, ty: 0, tz: 0, rx: 3, rz: 0 };
-    const camI = { tx: 0, ty: 0, tz: 0, rx: 0, rz: 0 };
-
-    const lerpCam = (a, b, u) => ({ tx: lerp(a.tx, b.tx, u), ty: lerp(a.ty, b.ty, u), tz: lerp(a.tz, b.tz, u), rx: lerp(a.rx, b.rx, u), rz: lerp(a.rz, b.rz, u) });
-    const lerpPose = (a, b, u) => ({ x: lerp(a.x, b.x, u), y: lerp(a.y, b.y, u), z: lerp(a.z, b.z, u), ry: lerp(a.ry, b.ry, u), rx: lerp(a.rx, b.rx, u), s: lerp(a.s, b.s, u) });
-
-    // 一张卡在 t 时刻的镜头与位姿(盒子是 CW×CH,以视口中心为原点)
-    function sceneState(i, t){
-      const a = A[i], b = B[i];
-      const fly = seg(t, a.flyStart, T.flyDur, easeOutQuint);
-      const pa = { x: a.x + panX(t), y: a.y + panY(t), z: lerp(-1500, 0, fly), ry: lerp(-14, 0, fly), rx: 0, s: 1 };
-      const th = b.th0 + spin(t);
-      const pb = { x: Rc * Math.sin(th), y: b.y, z: zc - Rc * Math.cos(th), ry: -th * 180 / Math.PI, rx: 0, s: sB };
-      const u = seg(t, b.mStart, T.morphDur, easeInOutCubic);
-      const cam = lerpCam(camA, camB, seg(t, T.morph, T.morphCamDur, easeInOutCubic));
-      const pose = lerpPose(pa, pb, u);
-      // 换阵途中先往后让一让(横跨越远让得越多),免得卡片在半空里互相穿插
-      pose.z -= Math.sin(Math.PI * u) * (240 + .5 * Math.abs(pa.x - pb.x));
-      const fadeIn = clamp01((t - a.flyStart) / 420);
-      // 转到环廊两侧深处的卡片先压暗、最后才淡出,避免半透明的卡片叠在一起
-      const arcFade = 1 - smoothstep(1.34, 1.52, Math.abs(th));
-      let opacity = fadeIn * lerp(1, arcFade, u);
-      let dimExtra = smoothstep(.95, 1.36, Math.abs(th)) * .62 * u;
-      if(i !== h){
-        const r = seg(t, T.recede, T.recedeDur, easeInOutCubic);
-        pose.z -= 460 * r;
-        dimExtra += .32 * r;
-      }
-      return { cam, pose, opacity, dimExtra };
-    }
-    function viewDepth(cam, pose){
-      const rz = cam.rz * Math.PI / 180, rx = cam.rx * Math.PI / 180;
-      const x1 = pose.x * Math.cos(rz) - pose.y * Math.sin(rz);
-      const y1 = pose.x * Math.sin(rz) + pose.y * Math.cos(rz);
-      void x1;
-      return y1 * Math.sin(rx) + pose.z * Math.cos(rx) + cam.tz;
-    }
-    const depthDim = (cam, pose) => clamp01((-viewDepth(cam, pose) - 120) / 1900) * .62;
-    function tf(cam, pose, ox, oy){
-      return `perspective(${num(P, 1)}px) translate3d(${num(cam.tx)}px,${num(cam.ty)}px,${num(cam.tz)}px) rotateX(${num(cam.rx, 3)}deg) rotateZ(${num(cam.rz, 3)}deg) `
-        + `translate3d(${num(pose.x)}px,${num(pose.y)}px,${num(pose.z)}px) rotateY(${num(pose.ry, 3)}deg) rotateX(${num(pose.rx, 3)}deg) scale(${num(pose.s, 5)}) translate(${num(-ox)}px,${num(-oy)}px)`;
-    }
-
-    // 落位:当前页的终态就是舞台本身
-    const heroOx = R.left + R.width / 2 - cx, heroOy = R.top + R.height / 2 - cy;
-    const heroScale = CW / R.width;
-    const heroFinal = { x: heroOx, y: heroOy, z: 0, ry: 0, rx: 0, s: 1 };
-    const LAND = T.focus + T.focusDur;
-    function heroState(t){
-      if(t < T.focus){
-        const st = sceneState(h, t);
-        return { cam: st.cam, pose: { ...st.pose, s: st.pose.s * heroScale }, opacity: st.opacity, dim: depthDim(st.cam, st.pose) };
-      }
-      const from = sceneState(h, T.focus);
-      const fromPose = { ...from.pose, s: from.pose.s * heroScale };
-      const u = seg(t, T.focus, T.focusDur, easeInOutCubic);
-      const cam = lerpCam(from.cam, camI, u);
-      const pose = lerpPose(fromPose, heroFinal, u);
-      return { cam, pose, opacity: 1, dim: depthDim(from.cam, from.pose) * (1 - u) };
-    }
-
-    // 飞进目录:从舞台背后沿弧线落到缩略图位
-    const toRailOrder = [];
-    wall.forEach((slide, i) => { toRailOrder.push({ i, slide, target: railTarget(slide) }); });
-    toRailOrder.sort((a, b) => catalog.indexOf(a.slide) - catalog.indexOf(b.slide));
-    const flight = new Map();
-    toRailOrder.forEach((item, k) => {
-      if(item.i === h) return;   // 当前页的缩略图另外从舞台里抽出来(见 heroThumb)
-      const startAt = T.toRail + k * T.toRailStagger;
-      flight.set(item.i, { startAt, land: startAt + T.toRailDur, target: item.target });
-    });
-    function railPose(target){
-      if(!target) return null;
-      return { x: target.x, y: target.y, z: 0, ry: 0, rx: 0, s: target.w / CW };
-    }
-    function cardState(i, t){
-      const fl = flight.get(i);
-      if(fl && t >= fl.startAt && fl.target){
-        const from = sceneState(i, fl.startAt);
-        const u = seg(t, fl.startAt, T.toRailDur, easeInOutCubic);
-        const to = railPose(fl.target);
-        const cam = lerpCam(from.cam, camI, u);
-        const pose = lerpPose(from.pose, to, u);
-        const bulge = Math.sin(Math.PI * u);
-        pose.z -= 320 * bulge;
-        pose.y -= 46 * bulge;
-        const dim = lerp(depthDim(from.cam, from.pose) + from.dimExtra, 0, easeOutCubic(u));
-        const opacity = (t > fl.land + 90 ? 1 - clamp01((t - fl.land - 90) / 140) : 1) * lerp(from.opacity, 1, u);
-        return { cam, pose, opacity, dim };
-      }
-      if(fl && t >= fl.startAt && !fl.target){
-        const st = sceneState(i, fl.startAt);
-        return { cam: st.cam, pose: st.pose, opacity: st.opacity * (1 - seg(t, fl.startAt, 360)), dim: depthDim(st.cam, st.pose) + st.dimExtra };
-      }
-      const st = sceneState(i, t);
-      return { cam: st.cam, pose: st.pose, opacity: st.opacity, dim: Math.min(.8, depthDim(st.cam, st.pose) + st.dimExtra) };
-    }
-
-    // —— 节点 ——
-    const TOTAL = Math.max(T.pulse + T.pulseDur, ...[...flight.values()].map(f => f.land + 240)) + 40;
-    const times = [];
-    for(let t = 0; t < TOTAL; t += STEP) times.push(t);
-    times.push(TOTAL);
-    const opts = { duration: TOTAL, fill: 'both', easing: 'linear' };
-    const keyframesFor = (fn, ox, oy) => {
-      const tfFrames = [], dimFrames = [];
-      times.forEach(t => {
-        const st = fn(t);
-        const offset = t / TOTAL;
-        tfFrames.push({ offset, transform: tf(st.cam, st.pose, ox, oy), opacity: num(clamp01(st.opacity), 3) });
-        dimFrames.push({ offset, opacity: num(clamp01(st.dim), 3) });
-      });
-      return { tfFrames, dimFrames };
-    };
-    const makeCard = (slide, boxW, boxH, left, top, radius) => {
-      const card = document.createElement('div');
-      card.className = 'ppi-card';
-      card.style.cssText = `left:${num(left)}px;top:${num(top)}px;width:${num(boxW)}px;height:${num(boxH)}px;border-radius:${num(radius)}px;transform-origin:${num(cx - left)}px ${num(cy - top)}px;opacity:0`;
-      card.appendChild(slideClone(slide, boxW));
-      const dim = document.createElement('div');
-      dim.className = 'ppi-dim';
-      card.appendChild(dim);
-      return { card, dim };
-    };
-    const animate = (el, frames, o) => { const anim = el.animate(frames, o); s.anims.push(anim); return anim; };
-
-    // 先把卡片与关键帧都备好(克隆缩略图有一定开销,放在开播前)
-    const built = [];
-    const cardLeft = cx - CW / 2, cardTop = cy - CH / 2;
-    wall.forEach((slide, i) => {
-      if(i === h){
-        const { card, dim } = makeCard(slide, R.width, R.height, R.left, R.top, stageRadius);
-        const kf = keyframesFor(t => {
-          const st = heroState(t);
-          return { ...st, opacity: t < T.focus ? st.opacity : (t < T.focus + T.stageFade + 30 ? 1 : 0) };
-        }, heroOx, heroOy);
-        built.push({ card, dim, kf });
-        return;
-      }
-      const { card, dim } = makeCard(slide, CW, CH, cardLeft, cardTop, cardRadius);
-      built.push({ card, dim, kf: keyframesFor(t => cardState(i, t), 0, 0) });
-    });
-    // 当前页的缩略图:落位后从舞台里抽出来飞进目录
-    const heroThumbTarget = railTarget(heroSlide);
-    let heroThumb = null;
-    if(heroThumbTarget){
-      // 从舞台背后、比舞台略小处起飞(被舞台挡着),飞出舞台边缘时才渐显,不会看起来像舞台重影
-      const fromPose = { x: heroOx, y: heroOy, z: -160, ry: 0, rx: 0, s: R.width / CW * .72 };
-      const startAt = LAND + 30;
+    // 一张卡的关键帧:下落 → 落定随镜头走 → 布景卡退场 / 真卡移焦后飞进目录 / 当前页交给真实舞台
+    let rank = 0;
+    const cardFrames = cell => {
+      const target = cell.canonical && !cell.isHero ? railTarget(catalog[cell.page]) : null;
+      // 只有真卡排飞行顺序(按落下的先后,外圈先飞)
+      const startAt = T.toRail + (target ? rank++ : 0) * T.toRailStagger;
       const land = startAt + T.toRailDur;
-      const { card, dim } = makeCard(heroSlide, CW, CH, cardLeft, cardTop, cardRadius);
-      const kf = keyframesFor(t => {
-        if(t < startAt) return { cam: camI, pose: fromPose, opacity: 0, dim: 0 };
-        const u = seg(t, startAt, T.toRailDur, easeInOutCubic);
-        const pose = lerpPose(fromPose, railPose(heroThumbTarget), u);
-        const bulge = Math.sin(Math.PI * u);
-        pose.z -= 260 * bulge;
-        const appear = smoothstep(.12, .42, u);
-        return { cam: camI, pose, opacity: appear * (t > land + 90 ? 1 - clamp01((t - land - 90) / 140) : 1), dim: .25 * (1 - u) };
-      }, 0, 0);
-      heroThumb = { card, dim, kf, land };
-      flight.set('hero-thumb', { land, target: heroThumbTarget });
-    }
+      const camAtFlight = camAt(startAt);
+      return keyframesFor((t, j) => {
+        const cam = camSamples[j];
+        // 飞进目录
+        if(target && t >= startAt){
+          const u = seg(t, startAt, T.toRailDur, easeInOutCubic);
+          const bulge = Math.sin(Math.PI * u);
+          // 从起飞那一刻的镜头里接着飞(镜头还在推近),落点是目录里的缩略图位
+          const from = camAtFlight;
+          const flyCam = lerpCam(from, camI, u);
+          const X = lerp(cell.x - from.tx, target.X, u), Y = lerp(cell.y - from.ty, target.Y, u) - 40 * bulge;
+          const fade = !target.visible ? 1 - smoothstep(.25, .6, u) : (t > land + 90 ? 1 - clamp01((t - land - 90) / 140) : 1);
+          return { transform: tfOf(flyCam, X, Y, -280 * bulge, lerp(1, target.S, u) * kSmall), opacity: fade * lerp(.75, 1, smoothstep(0, .35, u)),
+            blur: lerp(Bpull * .8, 0, easeOutCubic(u)), bright: lerp(.86, 1, easeOutCubic(u)) };
+        }
+        // 下落中
+        const fu = clamp01((t - cell.fallStart) / cell.fallDur);
+        const h = Math.max(0, heightAt(cell, t));   // 前段下落快、末段轻轻落定
+        const lens = heightLens(cam, cell, h);
+        const appear = smoothstep(0, .14, fu);
+        let opacity = t < cell.fallStart ? 0 : appear * lens.alpha;
+        let blur = lens.blur, bright = lens.bright;
+        if(cell.isHero){
+          if(t >= T.stageIn + T.stageFade + 40) opacity = 0;
+        }else{
+          const pull = seg(t, T.focusPull, LAND - T.focusPull, easeInOutCubic);
+          const scale = P / Math.max(60, P - toView(cam, cell.x, cell.y).z);
+          blur = lerp(blur, Bpull * (target ? .8 : 1.4) / scale, pull);
+          bright = lerp(bright, target ? .86 : .7, pull);
+          opacity *= target ? lerp(1, .75, pull) : 1 - seg(t, T.decorOut, T.decorOutDur, easeInOutCubic);
+        }
+        const tiltK = cell.h0 > 0 ? h / cell.h0 : 0;   // 空中略有倾侧,落定时归零
+        return { transform: wallTf(cam, cell.x, cell.y, h, cell.isHero ? 1 : kSmall, cell.tiltX * tiltK, cell.tiltY * tiltK), opacity, blur: blur / (cell.isHero ? 1 : kSmall), bright };
+      });
+    };
+
+    // 当前页的缩略图:落位后从舞台背后抽出来飞进目录
+    const heroTarget = railTarget(heroSlide);
 
     // 标题 + 页数
     const title = document.createElement('div');
@@ -12300,12 +12304,16 @@ refreshRailCatalog();
     titleCount.className = 'ppi-title-count';
     titleCount.textContent = ui('{count} 页', { count: 0 });
     title.append(titleMain, titleCount);
-    // 跳过提示
     const skipBtn = document.createElement('button');
     skipBtn.type = 'button';
     skipBtn.className = 'ppi-skip';
     skipBtn.innerHTML = `<span></span><kbd>Esc</kbd>`;
     skipBtn.firstChild.textContent = ui('跳过开场');
+
+    // 每页一份缩略内容(开播前生成,开播后不再有大块的克隆开销)
+    const masters = new Map();
+    const usedPages = new Set(cellList.map(cell => cell.page));
+    usedPages.forEach(page => masters.set(page, { node: slideMaster(catalog[page]), used: false }));
 
     // 稿子就绪:字体与当前页图片最多等 1.2s
     const ready = [];
@@ -12314,81 +12322,179 @@ refreshRailCatalog();
     await Promise.race([Promise.all(ready), sleep(1200)]);
     if(s.done) return;
 
-    // 节点进场(全部 opacity 0,同一帧里挂上动画再放出界面)
-    // 绘制顺序 ≈ 环廊里的远近:正中(最远)先画、两侧(更近)后画,当前页最后
-    built.map((item, i) => ({ item, key: i === h ? 1e6 : Math.abs(B[i].th0) }))
-      .sort((a, b) => a.key - b.key)
-      .forEach(({ item }) => layer.appendChild(item.card));
-    if(heroThumb) layer.insertBefore(heroThumb.card, layer.firstChild);
+    const wall = document.createElement('div');
+    wall.className = 'ppi-wall';
+    layer.appendChild(wall);
+    const cardRadius = Math.max(6, Rw * .018);
+    const makeCard = (page, radius, small = false) => {
+      const card = document.createElement('div');
+      card.className = 'ppi-card';
+      const w = small ? bw : Rw, hgt = small ? bh : Rh;
+      const left = R.left + Rw / 2 - w / 2, top = R.top + Rh / 2 - hgt / 2;   // 与舞台同心,ox / oy 不变
+      card.style.cssText = `left:${num(left)}px;top:${num(top)}px;width:${num(w)}px;height:${num(hgt)}px;border-radius:${num(radius * w / Rw)}px;transform-origin:${num(cx - left)}px ${num(cy - top)}px;opacity:0`;
+      const master = masters.get(page) || { node: slideMaster(catalog[page]), used: false };
+      masters.set(page, master);
+      const content = master.used ? master.node.cloneNode(true) : master.node;
+      master.used = true;
+      content.style.transform = `scale(${w / 1920})`;
+      card.appendChild(content);
+      return card;
+    };
     layer.append(title, skipBtn);
     const sweep = document.createElement('div');
     sweep.className = 'ppi-sweep';
-    sweep.style.cssText = `left:${num(R.left)}px;top:${num(R.top)}px;width:${num(R.width)}px;height:${num(R.height)}px;border-radius:${num(stageRadius)}px`;
+    sweep.style.cssText = `left:${num(R.left)}px;top:${num(R.top)}px;width:${num(Rw)}px;height:${num(Rh)}px;border-radius:${num(stageRadius)}px`;
     const sweepBand = document.createElement('i');
     sweep.appendChild(sweepBand);
     document.body.appendChild(sweep);
     s.nodes.push(sweep);
+    const opener = document.createElement('div');
+    opener.className = 'ppi-open';
+    const openSize = Math.hypot(vw, vh) * 4.4;
+    opener.style.cssText = `left:${num(R.left + Rw / 2 - openSize / 2)}px;top:${num(R.top + Rh / 2 - openSize / 2)}px;width:${num(openSize)}px;height:${num(openSize)}px;opacity:0`;
+    backdrop.after(opener);
+    s.nodes.push(opener);
+    window.__ppIntroDebug = { cards: cellList.length + (heroTarget ? 1 : 0), cells: cells.size, canonical: canonical.size, pages: N, masters: masters.size, seed: SEED,
+      upright: T.upright, schedule: cellList.map(cell => ({ r: cell.r, c: cell.c, hero: cell.isHero, start: Math.round(cell.fallStart), dur: Math.round(cell.fallDur), h0: Math.round(cell.h0), hRel: +(cell.h0 / hRef).toFixed(2), d: +cell.d.toFixed(2) })) };
+    // 开播前把所有卡片挂好并预先绘制一遍:先摆在各自第一帧的位置、透明度取一个看不见的极小值,
+    // DOM / 样式 / 布局 / 绘制的开销都发生在开播之前(此时界面还藏着、只有深色背景),开播后不再出现长帧。落得越晚的越靠上
+    cellList.forEach(cell => {
+      cell.card = makeCard(cell.page, cell.isHero ? stageRadius : cardRadius, !cell.isHero);
+      cell.frames = cardFrames(cell);
+      cell.card.style.transform = wallTf(upCam, cell.x, cell.y, 0, cell.isHero ? 1 : kSmall);   // 按落定时的大小预先栅格化(解码图片、录制绘制指令)
+      cell.card.style.opacity = '0.012';   // 低于 1/255 的透明度会被当成完全透明而跳过绘制
+      wall.appendChild(cell.card);
+    });
+    // 目录缩略图也在开播前补齐,然后暂停目录的缩略图队列(它在开场期间按定时器生成缩略图,会占住主线程造成长帧),结束后恢复
+    ensureRailThumbs(railCards);
+    try { if(typeof pauseOverviewThumbs === 'function'){ pauseOverviewThumbs(); s.thumbsPaused = true; } } catch {}
+    void wall.offsetWidth;
+    await frame();
+    await frame();
     await frame();
     if(s.done) return;
 
+    const opts = { duration: TOTAL, fill: 'both', easing: 'linear' };
+    const t0 = document.timeline.currentTime;
+    s.t0 = t0;
+    // 所有动画共用同一个起点(分批挂载的卡片也对齐到它)
+    const animate = (el, frames, o) => {
+      const anim = el.animate(frames, o);
+      anim.startTime = t0;
+      if(s.seekAt != null){ anim.pause(); anim.currentTime = s.seekAt; }
+      s.anims.push(anim);
+      return anim;
+    };
     window.__ppIntroState = 'running';
-    built.forEach(item => { animate(item.card, item.kf.tfFrames, opts); animate(item.dim, item.kf.dimFrames, opts); });
-    if(heroThumb){ animate(heroThumb.card, heroThumb.kf.tfFrames, opts); animate(heroThumb.dim, heroThumb.kf.dimFrames, opts); }
 
-    // 真实舞台:3.15s 起接管当前页的变换,落位即恒等
-    const stageFrames = times.map(t => {
-      const st = heroState(Math.max(t, T.focus));
-      const opacity = t < T.focus ? 0 : clamp01((t - T.focus) / T.stageFade);
-      return { offset: t / TOTAL, transform: tf(st.cam, st.pose, heroOx, heroOy), opacity: num(opacity, 3) };
-    });
-    animate(stage, stageFrames, opts);
+    // 卡片在开播前已挂好(透明的卡不绘制,开播后按各自出现的时间才开始绘制)。这里挂动画:
+    // 封面立刻挂,其余卡片分几帧挂上(它们最早 0.76s 才出现),把一次性创建上百个动画的开销从第一帧摊开
+    const startCard = cell => {
+      if(s.done || s.skipping) return;
+      animate(cell.card, cell.frames, opts);
+      animate(cell.card, cell.zFrames, opts);
+      cell.card.style.removeProperty('transform');
+      cell.card.style.opacity = '0';
+    };
+    const heroCell = cellList.find(cell => cell.isHero);
+    startCard(heroCell);
+    const pending = cellList.filter(cell => cell !== heroCell);
+    const startBatch = () => {
+      if(s.done) return;
+      pending.splice(0, 4).forEach(startCard);
+      if(pending.length) requestAnimationFrame(startBatch);
+      else if(window.__ppIntroDebug) window.__ppIntroDebug.cardsStarted = true;
+    };
+    requestAnimationFrame(startBatch);
+
+    if(heroTarget){
+      const startAt = LAND + 30;
+      const land = startAt + T.toRailDur;
+      const heroThumb = makeCard(heroPage, cardRadius, true);
+      wall.insertBefore(heroThumb, wall.firstChild);
+      animate(heroThumb, keyframesFor(t => {
+        if(t < startAt) return { transform: tfOf(camI, ox, oy, -160, .72 * kSmall), opacity: 0 };
+        const u = seg(t, startAt, T.toRailDur, easeInOutCubic);
+        const appear = smoothstep(.12, .42, u);
+        return { transform: tfOf(camI, lerp(ox, heroTarget.X, u), lerp(oy, heroTarget.Y, u), lerp(-160, 0, u) - 240 * Math.sin(Math.PI * u), lerp(.72, heroTarget.S, u) * kSmall),
+          opacity: appear * (t > land + 90 ? 1 - clamp01((t - land - 90) / 140) : 1), bright: lerp(.75, 1, u) };
+      }), opts);
+    }
+
+    // 真实舞台:接管当前页的变换,落位即恒等
+    const stageInIndex = Math.max(0, times.findIndex(x => x >= T.stageIn));
+    animate(stage, times.map((t, j) => {
+      const cam = camSamples[Math.max(j, stageInIndex)];
+      const opacity = t < T.stageIn ? 0 : clamp01((t - T.stageIn) / T.stageFade);
+      return { offset: Math.min(1, t / TOTAL), transform: wallTf(cam, 0, 0), opacity: num(opacity, 3) };
+    }), opts);
     animate(stage, [{ zIndex: 35, transformOrigin: `${num(cx - R.left)}px ${num(cy - R.top)}px` }, { zIndex: 35, transformOrigin: `${num(cx - R.left)}px ${num(cy - R.top)}px` }], opts);
 
-    // 背景:静场 → 回到控制台底色
-    animate(backdrop, [{ opacity: 1 }, { opacity: 1, offset: T.bgFadeStart / TOTAL, easing: 'cubic-bezier(.5,0,.75,0)' }, { opacity: 0, offset: (T.bgFadeStart + T.bgFadeDur) / TOTAL }, { opacity: 0 }], { ...opts, easing: 'linear' });
+    animate(opener, [{ opacity: 0, transform: 'scale(.02)' }, { opacity: 0, transform: 'scale(.02)', offset: T.bgOpen / TOTAL },
+      { opacity: 1, transform: 'scale(.08)', offset: (T.bgOpen + 160) / TOTAL, easing: 'cubic-bezier(.45,0,.2,1)' },
+      { opacity: 1, transform: 'scale(1)', offset: (T.bgOpen + T.bgOpenDur) / TOTAL }, { opacity: 1, transform: 'scale(1)' }], opts);
     animate(title, [
       { opacity: 0, transform: 'translate(-50%,-50%) translateY(10px)' },
-      { opacity: 1, transform: 'translate(-50%,-50%)', offset: 460 / TOTAL, easing: 'ease-in-out' },
-      { opacity: 1, transform: 'translate(-50%,-50%)', offset: 760 / TOTAL },
-      { opacity: 0, transform: 'translate(-50%,-50%) translateY(-14px)', offset: 1120 / TOTAL },
+      { opacity: 0, transform: 'translate(-50%,-50%) translateY(10px)', offset: T.titleIn / TOTAL },
+      { opacity: 1, transform: 'translate(-50%,-50%)', offset: T.titleInEnd / TOTAL, easing: 'ease-in-out' },
+      { opacity: 1, transform: 'translate(-50%,-50%)', offset: T.titleOut / TOTAL },
+      { opacity: 0, transform: 'translate(-50%,-50%) translateY(-14px)', offset: T.titleOutEnd / TOTAL },
       { opacity: 0, transform: 'translate(-50%,-50%) translateY(-14px)' },
     ], opts);
-    animate(skipBtn, [{ opacity: 0 }, { opacity: 0, offset: 700 / TOTAL }, { opacity: 1, offset: 1100 / TOTAL }, { opacity: 1, offset: 4200 / TOTAL }, { opacity: 0, offset: 4600 / TOTAL }, { opacity: 0 }], opts);
+    animate(skipBtn, [{ opacity: 0 }, { opacity: 0, offset: 500 / TOTAL }, { opacity: 1, offset: 900 / TOTAL }, { opacity: 1, offset: 3300 / TOTAL }, { opacity: 0, offset: 3700 / TOTAL }, { opacity: 0 }], opts);
     animate(sweepBand, [{ transform: 'translateX(-110%)', opacity: 0 }, { transform: 'translateX(-110%)', opacity: 0, offset: (LAND - 80) / TOTAL },
       { transform: 'translateX(40%)', opacity: 1, offset: (LAND + 300) / TOTAL }, { transform: 'translateX(235%)', opacity: 0, offset: (LAND + 820) / TOTAL }, { transform: 'translateX(235%)', opacity: 0 }], opts);
 
     // 界面:目录 → 顶栏 → 右侧面板 → 翻页器 → 播放脉冲
-    const ui1 = (el, from, to, delay, duration, extra = {}) => {
+    // 预先把 EASE_OUT 烘焙进关键帧(统一时间起点,跳过时整体快进)
+    const easedPair = (el, from, to, delay, duration) => {
       if(!el) return;
-      animate(el, [{ ...from }, { ...to }], { delay, duration, easing: extra.easing || EASE_OUT, fill: 'both' });
+      const frames = [];
+      const steps = 12;
+      frames.push({ ...interp(from, to, 0), offset: 0 });
+      for(let i = 0; i <= steps; i++){
+        const u = i / steps;
+        frames.push({ ...interp(from, to, 1 - Math.pow(1 - u, 4)), offset: Math.min(1, (delay + duration * u) / TOTAL) });
+      }
+      frames.push({ ...interp(from, to, 1), offset: 1 });
+      animate(el, frames, { duration: TOTAL, easing: 'linear', fill: 'both' });
     };
     const rail = document.getElementById('slide-rail');
-    ui1(rail, { opacity: 0, transform: 'translateX(-56px)' }, { opacity: 1, transform: 'translateX(0px)' }, T.rail, T.railDur);
-    // 目录里的缩略图:对应卡片落下时才显形
-    const landed = new Map();
-    flight.forEach((fl, key) => { if(fl.target?.card) landed.set(fl.target.card, Math.min(landed.get(fl.target.card) ?? Infinity, fl.land)); });
+    easedPair(rail, { opacity: 0, tx: -56 }, { opacity: 1, tx: 0 }, T.rail, T.railDur);
+    // 目录里的缩略图:对应真卡落下时才显形(卡片分批挂载,这里按同一顺序预先算好落点时间)
+    const railLand = new Map();
+    let preRank = 0;
+    cellList.forEach(cell => {
+      if(!cell.canonical || cell.isHero || !railTarget(catalog[cell.page])) return;
+      const startAt = T.toRail + (preRank++) * T.toRailStagger;
+      const tgt = railCards.get(catalog[cell.page]);
+      if(tgt) railLand.set(tgt, startAt + T.toRailDur);
+    });
+    if(heroTarget) railLand.set(heroTarget.card, LAND + 30 + T.toRailDur);
     railCards.forEach(card => {
-      const base = parseFloat(card.style.opacity || '1');
-      const at = landed.get(card) ?? (T.rail + 160);
-      animate(card, [{ opacity: 0 }, { opacity: 0, offset: at / TOTAL }, { opacity: Number.isFinite(base) ? base : 1, offset: Math.min(1, (at + 130) / TOTAL) }, { opacity: Number.isFinite(base) ? base : 1 }], opts);
+      const baseOpacity = parseFloat(card.style.opacity || '1');
+      const atMs = railLand.get(card) ?? (T.rail + 160);
+      const end = Number.isFinite(baseOpacity) ? baseOpacity : 1;
+      animate(card, [{ opacity: 0 }, { opacity: 0, offset: Math.min(1, atMs / TOTAL) }, { opacity: end, offset: Math.min(1, (atMs + 130) / TOTAL) }, { opacity: end }], opts);
     });
     const topbar = document.getElementById('deck-topbar');
-    ui1(topbar, { transform: 'translateY(-100%)' }, { transform: 'translateY(0px)' }, T.topbar, T.topbarDur);
+    easedPair(topbar, { ty: -100, unit: '%' }, { ty: 0, unit: '%' }, T.topbar, T.topbarDur);
     const topItems = [...document.querySelectorAll('#deck-topbar .pp-topbar-brand > *, #deck-topbar .pp-topbar-actions > *'), document.getElementById('preview-panel-collapse')].filter(Boolean);
-    topItems.forEach((el, k) => ui1(el, { opacity: 0, transform: 'translateY(-8px)' }, { opacity: 1, transform: 'translateY(0px)' }, T.topbarItems + k * T.topbarItemStagger, 420));
+    topItems.forEach((el, n) => easedPair(el, { opacity: 0, ty: -8 }, { opacity: 1, ty: 0 }, T.topbarItems + n * T.topbarItemStagger, 420));
     const panel = document.getElementById('preview-panel');
     const panelShown = panel && document.body.classList.contains('preview-panel-open') && !document.body.classList.contains('pp-narrow');
     if(panelShown){
-      ui1(panel, { opacity: 0, transform: 'translateX(56px)' }, { opacity: 1, transform: 'translateX(0px)' }, T.panel, T.panelDur);
+      easedPair(panel, { opacity: 0, tx: 56 }, { opacity: 1, tx: 0 }, T.panel, T.panelDur);
       const rows = [...panel.querySelectorAll('.preview-fields > *:not(.is-hidden), .preview-author')]
         .filter(el => { const r = el.getBoundingClientRect(); return r.height > 0 && r.top < vh; }).slice(0, 11);
-      rows.forEach((el, k) => ui1(el, { opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'translateY(0px)' }, T.panelItems + k * T.panelItemStagger, 460));
+      rows.forEach((el, n) => easedPair(el, { opacity: 0, ty: 12 }, { opacity: 1, ty: 0 }, T.panelItems + n * T.panelItemStagger, 460));
     }
     const pager = document.getElementById('deck-page-pager');
-    ui1(pager, { opacity: 0, transform: 'translateX(-50%) translateY(16px) scale(.96)' }, { opacity: 1, transform: 'translateX(-50%) translateY(0px) scale(1)' }, T.pager, T.pagerDur);
+    easedPair(pager, { opacity: 0, ty: 16, sc: .96, pre: 'translateX(-50%) ' }, { opacity: 1, ty: 0, sc: 1, pre: 'translateX(-50%) ' }, T.pager, T.pagerDur);
     const playBtn = document.getElementById('preview-present-btn');
     if(playBtn){
-      animate(playBtn, [{ transform: 'scale(1)' }, { transform: 'scale(1.05)', offset: .38 }, { transform: 'scale(1)' }], { delay: T.pulse, duration: T.pulseDur, easing: 'ease-in-out', fill: 'none' });
+      const pulse = [{ transform: 'scale(1)', offset: 0 }, { transform: 'scale(1)', offset: T.pulse / TOTAL }, { transform: 'scale(1.05)', offset: (T.pulse + T.pulseDur * .38) / TOTAL }, { transform: 'scale(1)', offset: (T.pulse + T.pulseDur) / TOTAL }, { transform: 'scale(1)', offset: 1 }];
+      animate(playBtn, pulse, { duration: TOTAL, easing: 'linear', fill: 'none' });
       const br = playBtn.getBoundingClientRect();
       if(br.width > 0){
         const ring = document.createElement('div');
@@ -12396,7 +12502,9 @@ refreshRailCatalog();
         ring.style.cssText = `left:${num(br.left)}px;top:${num(br.top)}px;width:${num(br.width)}px;height:${num(br.height)}px;border-radius:${getComputedStyle(playBtn).borderTopLeftRadius};opacity:0`;
         document.body.appendChild(ring);
         s.nodes.push(ring);
-        animate(ring, [{ opacity: 0, transform: 'scale(1)' }, { opacity: .55, transform: 'scale(1.02)', offset: .15 }, { opacity: 0, transform: 'scale(1.32)' }], { delay: T.pulse + 80, duration: T.pulseDur, easing: 'ease-out', fill: 'both' });
+        const r0 = T.pulse + 80;
+        animate(ring, [{ opacity: 0, transform: 'scale(1)', offset: 0 }, { opacity: 0, transform: 'scale(1)', offset: r0 / TOTAL }, { opacity: .55, transform: 'scale(1.02)', offset: (r0 + T.pulseDur * .15) / TOTAL },
+          { opacity: 0, transform: 'scale(1.32)', offset: Math.min(1, (r0 + T.pulseDur) / TOTAL) }, { opacity: 0, transform: 'scale(1.32)', offset: 1 }], opts);
       }
     }
 
@@ -12405,22 +12513,29 @@ refreshRailCatalog();
     s.startedAt = performance.now();
 
     // 页数从 0 数到 N
-    const N = catalog.length;
     const countStart = performance.now();
     const countTick = () => {
       if(s.done) return;
-      const u = clamp01((performance.now() - countStart - 260) / 760);
+      const u = clamp01((performance.now() - countStart - 80) / 520);
       titleCount.textContent = ui('{count} 页', { count: Math.round(N * easeOutCubic(u)) });
       if(u < 1) requestAnimationFrame(countTick);
     };
     requestAnimationFrame(countTick);
 
-    // 时间点上的动作:视频在聚焦开始时起播(此时舞台还是透明的),入场动画在落位前一点放开
+    // 时间点上的动作:带视频的封面在舞台接管前一刻起播(此时舞台还是透明的)
     const at = (ms, fn) => { s.timers.push(setTimeout(() => { if(!s.done && !s.skipping) { try { fn(); } catch (error) { console.warn('[intro]', error); } } }, ms)); };
-    at(T.focus, () => releaseMedia(s.hold));
-    at(LAND - 160, () => releaseEntrance(s.hold));
-    at(T.toRail - 200, () => ensureRailThumbs(railCards));
+    at(T.stageIn - 140, () => releaseMedia(s.hold));
     at(TOTAL + 30, () => finish('done'));
+  }
+
+  // 统一时间起点的界面动画:from / to 用 {opacity, tx, ty, sc, unit, pre} 描述,插值后拼成 transform
+  function interp(from, to, u){
+    const out = {};
+    if('opacity' in from || 'opacity' in to) out.opacity = lerp(from.opacity ?? 1, to.opacity ?? 1, u);
+    const unit = from.unit || to.unit || 'px';
+    const tx = lerp(from.tx ?? 0, to.tx ?? 0, u), ty = lerp(from.ty ?? 0, to.ty ?? 0, u), sc = lerp(from.sc ?? 1, to.sc ?? 1, u);
+    out.transform = `${from.pre || ''}translate(${num(tx, 3)}${unit},${num(ty, 3)}${unit}) scale(${num(sc, 4)})`;
+    return out;
   }
 
   // 目录缩略图还没生成好的,在卡片落下前补上(用目录自己的生成路径),避免落下后露出占位
@@ -12492,7 +12607,7 @@ refreshRailCatalog();
     s.anims.forEach(anim => { try { anim.cancel(); } catch {} });
     s.nodes.forEach(node => { try { node.remove(); } catch {} });
     releaseMedia(s.hold);
-    releaseEntrance(s.hold);
+    if(s.thumbsPaused){ try { if(typeof requestOverviewThumbRefresh === 'function') requestOverviewThumbRefresh(false, { priority: true }); } catch {} }
     releaseHold();
     rootEl.classList.remove('pp-intro-running');
     session = null;
@@ -12509,8 +12624,10 @@ refreshRailCatalog();
     seek(ms){
       const s = session;
       if(!s || s.done || !s.anims.length) return false;
+      clearTimeout(s.watchdog);
       s.timers.forEach(clearTimeout);
       s.timers = [];
+      s.seekAt = ms;
       s.anims.forEach(anim => { try { anim.pause(); anim.currentTime = ms; } catch {} });
       return true;
     },
