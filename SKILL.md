@@ -1,9 +1,9 @@
 ---
-name: dashi-ppt
-description: 制作 PPT、演示文稿、幻灯片、汇报材料时使用。Dashi PPT 基于预置视觉主题组合页面,生成可离线打开、可在浏览器编辑的 HTML 演示,支持导出 PPTX / PDF 文件。
+name: dashi-ppt-campus
+description: Dashi PPT 高校版。制作 PPT、演示文稿、幻灯片、汇报材料时使用,尤其是高校 / 学术场景:毕业答辩、学位论文答辩、开题报告、中期检查、课程汇报、组会汇报、文献精读、读书分享,以及要用学校校徽、学校定制封面 / 目录的稿子。基于预置视觉主题组合页面,生成可离线打开、可在浏览器编辑的 HTML 演示,支持导出 PPTX / PDF 文件(选了学校时封面 / 目录换成学校原生页)。与原版 dashi-ppt 同时安装时,高校 / 学术场景用本技能。
 ---
 
-# Dashi PPT
+# Dashi PPT 高校版
 
 Dashi PPT 生成静态 HTML 横向翻页 PPT。使用本 skill 时,先把用户的自然语言需求整理成 JSON 计划,再调用本地项目生成器输出 `index.html` 和 `assets/`。
 

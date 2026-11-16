@@ -1,11 +1,15 @@
 {
-  "name": "dashi-ppt-runtime",
+  "name": "dashi-ppt-campus-runtime",
   "version": "0.4.14",
   "private": true,
   "type": "module",
   "dashiDistribution": {
     "edition": "campus",
     "displayName": "Dashi PPT 高校版",
+    "skillName": "dashi-ppt-campus",
+    "legacySkillNames": [
+      "dashi-ppt"
+    ],
     "npmPackage": "dashi-ppt-campus-skill",
     "githubRepos": [
       "chuspeeism/dashi-ppt-campus",
