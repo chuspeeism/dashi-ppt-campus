@@ -365,91 +365,64 @@
       }
     },
     {
-      "layout": "campus_tech_route",
+      "layout": "campus_method_roadmap",
       "props": {
         "chapterIndex": 4,
-        "methodCount": 4,
-        "branchCount": 3,
-        "resultCount": 2,
-        "showConclusion": true,
         "sectionNo": "4.1",
-        "title": "研究路线",
-        "stages": [
+        "title": "总体研究方案",
+        "methodCount": 3,
+        "stepCount": 4,
+        "showOutputs": true,
+        "showConclusion": true,
+        "methodsLabel": "研究方法",
+        "coreLabel": "核心思路",
+        "coreTitle": "惯导信息辅助的深组合",
+        "coreDesc": "用惯导递推的速度与姿态辅助接收机环路，再以抗差滤波融合两类观测。",
+        "methodsSubLabel": "支撑手段",
+        "methods": [
+          {
+            "title": "理论建模",
+            "desc": "建立深组合状态方程与弱信号跟踪误差模型。"
+          },
+          {
+            "title": "软件接收机平台",
+            "desc": "基于中频采样数据搭建可改环路的软件接收机。"
+          },
+          {
+            "title": "仿真与车载实测",
+            "desc": "多场景仿真考核，再用城市车载数据复核。"
+          }
+        ],
+        "stepsLabel": "研究步骤",
+        "outputLabel": "阶段产出",
+        "steps": [
           {
             "no": "01",
-            "name": "提出问题"
+            "title": "机理分析",
+            "desc": "分析城市峡谷中信号衰减、多路径与遮挡对跟踪环路和观测质量的影响机理。",
+            "output": "误差特性与建模报告"
           },
           {
             "no": "02",
-            "name": "理论方法"
+            "title": "弱信号跟踪",
+            "desc": "设计惯导辅助的长相干积分载波跟踪环路，压缩环路带宽、提升跟踪灵敏度。",
+            "output": "辅助跟踪算法"
           },
           {
             "no": "03",
-            "name": "研究内容"
+            "title": "抗差深组合滤波",
+            "desc": "基于新息检验构造自适应权函数，对异常观测逐通道降权，抑制滤波发散。",
+            "output": "抗差滤波算法"
           },
           {
             "no": "04",
-            "name": "验证成果"
+            "title": "仿真与实测验证",
+            "desc": "在仿真场景与城市车载数据上评估定位精度、连续性和信号中断后的漂移。",
+            "output": "验证结果与论文"
           }
         ],
-        "question": {
-          "kicker": "核心问题",
-          "title": "复杂环境下观测量异常时，如何实现正常、精确、连续的定位"
-        },
-        "methods": [
-          {
-            "title": "卫星 / 惯导深组合理论"
-          },
-          {
-            "title": "最大似然估计"
-          },
-          {
-            "title": "权函数抗差估计"
-          },
-          {
-            "title": "频率稳定度传递"
-          }
-        ],
-        "branches": [
-          {
-            "no": "1",
-            "title": "分析问题",
-            "labels": [
-              "观测量对跟踪环路与定位精度的影响",
-              "限制相干积分时间的因素"
-            ]
-          },
-          {
-            "no": "2",
-            "title": "搭建平台",
-            "labels": [
-              "软件接收机",
-              "惯导解算模块",
-              "导航滤波器"
-            ]
-          },
-          {
-            "no": "3",
-            "title": "解决问题",
-            "labels": [
-              "权函数抗差，优化导航滤波器",
-              "最大似然估计 + 惯导辅助提高灵敏度"
-            ]
-          }
-        ],
-        "results": [
-          {
-            "title": "性能分析",
-            "desc": "仿真与实测数据双重验证"
-          },
-          {
-            "title": "总结与展望",
-            "desc": "归纳结论，提出后续方向"
-          }
-        ],
-        "imageCaption": "图 4-1 研究路线图",
-        "conclusionLabel": "研究难点",
-        "conclusion": "软件仿真平台的搭建；卫星与惯导数据的同步采集与读取。"
+        "conclusionLabel": "研究主线",
+        "conclusion": "机理分析 → 辅助跟踪 → 抗差融合 → 仿真与实测双路验证"
       }
     },
     {
