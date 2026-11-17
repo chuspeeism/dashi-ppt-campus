@@ -12,7 +12,7 @@ Dashi PPT 生成静态 HTML 横向翻页 PPT。使用本 skill 时,先把用户�
 
 ## 版本
 
-当前版本: `0.4.14`
+当前版本: `0.4.15`
 
 每次完成用户请求、准备最终回复前,运行:
 
@@ -111,7 +111,7 @@ node <skill-root>/scripts/check_latest_version.mjs
     | 单篇重点文献(文献精读的被读论文、开题的代表性研究、答辩的研究基础 / 对比基线) | `paper_intro`(论文首页缩略图 + 题目、摘要、发表时间 / 期刊 / 分区等标签、影响因子大数字;变体 `introMode: "points"` 是 01 / 02 / 03 精读要点)。没有首页截图也能用:自动画一张论文首页 |
     | 研究内容总览 / 研究问题 | `problem_work_map`(问题 → 本文工作 → 研究目标)、`objective_contents`(总目标 + 内容卡)、`parallel_columns` |
     | 论文结构 / 章节安排 | `thesis_structure` |
-    | 研究思路 / 技术路线 | `tech_route`(分层分支路线图)、`method_roadmap`(方法清单 + 步骤)、`flow_chain` |
+    | 研究思路 / 技术路线 | `method_roadmap`(方法清单 + 步骤,首选)、`flow_chain`;`tech_route`(分层分支路线图)只在用户明确要「分层分支的路线图」时用 |
     | 理论框架 / 研究假设 | `variable_model`(X → M → Y + 假设清单)、`layer_pyramid`、`hub_spokes` |
     | 系统架构 / 功能模块 | `layer_architecture`、`tree_structure` |
     | 业务流程 / 算法流程 | `swimlane_flow`(多角色)、`decision_flow`(带判断分支)、`flow_chain`、`cycle_loop` |
@@ -152,9 +152,9 @@ node <skill-root>/scripts/check_latest_version.mjs
     - 本科毕设 · 工科系统:`background_figure` → `domestic_abroad` / `literature_table` → 技术选型 `option_matrix` → `layer_architecture` → `tree_structure` → `swimlane_flow` / `decision_flow` → `er_schema` → `screenshot_grid`(每个功能模块一页)→ `test_cases` → `summary_outlook` → `acknowledgement`。硬件类在系统设计后加 `stage_figures`。
     - 本科毕设 · 算法实验:`background_figure` → `literature_table` → `paper_intro`(主要对比的基线论文)→ `problem_work_map` → `model_pipeline`(可连续多页)→ `formula_notes` → `setup_tables` → `figure_points`(训练曲线 + 结论)/ `curve_grid` → `experiment_compare` → `ablation_table` → `figure_matrix` / `finding_figure` → `summary_outlook` → `acknowledgement`。实验章占全稿三到四成。
     - 本科毕设 · 经管文科:`background_figure` → `significance_cards` → `domestic_abroad` → `thesis_structure` → `variable_model`(实证类)或 `method_roadmap` → `case_study` → `cause_countermeasure`(可 2–3 页)→ `survey_bars` / `stats_table`(有数据时)→ `innovation_points` → `summary_outlook` → `references_list` → `acknowledgement`。
-    - 开题报告:`background_figure` → `significance_cards` → `domestic_abroad` / `literature_table` → `paper_intro`(代表性文献)→ `objective_contents` → `problem_work_map` → 研究方案(`method_roadmap` / `model_pipeline` / `tech_route`)→ `figure_points`(仿真 / 预实验曲线 + 结论)→ `feasibility` → `schedule_table` → `expected_outcomes` → `innovation_points` → `references_list`。
-    - 硕博答辩:`background_figure` → `literature_table` → `paper_intro`(研究基础 / 对比基线)→ `problem_work_map` → 每项工作一章(`chapter_opener` → `model_pipeline` / `tech_route` → 实验页,其中至少一页 `figure_points`)→ `summary_outlook` → `achievement_list` → `review_comments` → `acknowledgement`。
-    - 组会文献精读(讲别人的论文,不是自己的课题):`paper_intro`(被精读论文的介绍页:题目、作者、期刊、摘要、影响因子)→ `background_figure` → `problem_work_map` / `lead_quotes_subject` → `model_pipeline` / `tech_route` → 结果页 `figure_points`(论文里的关键曲线 + 几条结论)/ `bar_chart_insight` / `heatmap_matrix` → 亮点 `innovation_points` → 局限与启发 `numbered_list` → 讨论题 `qa_response`。读书分享把 `paper_intro` 换成 `metric_grid`(书的概况),观点页用 `key_statement` / `hub_spokes` / `versus_compare`。用户没给具体论文时不要编作者、期刊和年份(`authors` 不写,标签只写能确定的),只写研究内容。
+    - 开题报告:`background_figure` → `significance_cards` → `domestic_abroad` / `literature_table` → `paper_intro`(代表性文献)→ `objective_contents` → `problem_work_map` → 研究方案(`method_roadmap` / `model_pipeline`)→ `figure_points`(仿真 / 预实验曲线 + 结论)→ `feasibility` → `schedule_table` → `expected_outcomes` → `innovation_points` → `references_list`。
+    - 硕博答辩:`background_figure` → `literature_table` → `paper_intro`(研究基础 / 对比基线)→ `problem_work_map` → 每项工作一章(`chapter_opener` → `model_pipeline` / `method_roadmap` → 实验页,其中至少一页 `figure_points`)→ `summary_outlook` → `achievement_list` → `review_comments` → `acknowledgement`。
+    - 组会文献精读(讲别人的论文,不是自己的课题):`paper_intro`(被精读论文的介绍页:题目、作者、期刊、摘要、影响因子)→ `background_figure` → `problem_work_map` / `lead_quotes_subject` → `model_pipeline` / `method_roadmap` → 结果页 `figure_points`(论文里的关键曲线 + 几条结论)/ `bar_chart_insight` / `heatmap_matrix` → 亮点 `innovation_points` → 局限与启发 `numbered_list` → 讨论题 `qa_response`。读书分享把 `paper_intro` 换成 `metric_grid`(书的概况),观点页用 `key_statement` / `hub_spokes` / `versus_compare`。用户没给具体论文时不要编作者、期刊和年份(`authors` 不写,标签只写能确定的),只写研究内容。
     - 项目申报 / 结题:`background_figure` / `domestic_abroad` → `objective_contents` → `schedule_table` / `gantt_schedule` → `team_lead` + `timeline_figures`(研究基础)→ `expected_outcomes` → `budget_table`;结题再加 `status_table`、`achievement_list`。
   - **campus 特色页**(label 以「特色 ·」开头的 23 页:立体柱、大数字、领奖台、道路、山峰、靶心、漏斗、拼图、天平、齿轮、积木、扇形卡、勋章、立体书等):一份稿子用 1–3 页,放在总结性、需要视觉重心的位置(核心成果、三大优势、研究目标、创新点汇总、阶段历程),不要连续两页都用特色页,也不要用它承载大段正文或完整数据表。
   - **段内强调 `**词**`**:用两个星号包住要强调的词(可以多处),显示为加粗校色字 + 浅色荧光笔,星号不显示;没配对的星号原样显示。只有这些字段支持:`campus_background_figure` 的 `paragraphs[].body`,`campus_significance_cards` 的 `items[].desc`,`campus_domestic_abroad` 的 `abroadItems[].body` / `domesticItems[].body` / `gap` / `focus`,`campus_problem_work_map` 的 `pairs[].problem` / `pairs[].work` / `goal`,`campus_objective_contents` 的 `goal` / `items[].desc`,`campus_innovation_points` 的 `points[].desc`,`campus_thesis_structure` 的 `chapters[].desc`,`campus_acknowledgement` 的 `letter` / `thanks[].body`,`campus_paper_intro` 的 `abstract`,`campus_figure_points` 的 `items[].body`。每段强调 1–2 处为宜。导出 PPTX 后整段是一个可编辑文本框,强调词在 PPTX 里不保留加粗着色。
