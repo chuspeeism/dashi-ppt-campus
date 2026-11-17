@@ -6250,9 +6250,175 @@ export const pages = [
     }
   },
   {
-    "key": "campus_literature_table",
+    "key": "campus_paper_intro",
     "themeKey": "campus",
     "pageNumber": 44,
+    "layout": "CAMPUS-PAPER-INTRO",
+    "slot": "paper-intro",
+    "label": "单篇论文介绍 · 首页缩略图配摘要与影响因子",
+    "roles": [
+      "case",
+      "context",
+      "observation"
+    ],
+    "controls": [
+      {
+        "key": "chapterIndex",
+        "type": "number",
+        "label": "当前章节",
+        "default": 1,
+        "min": 1,
+        "max": 8,
+        "publicKey": "chapterIndex",
+        "desc": "页眉章节导航里高亮第几章;章节名称取自整份演示稿的章节设置,没有设置章节时不显示导航。"
+      },
+      {
+        "key": "introMode",
+        "type": "radio",
+        "label": "版式",
+        "default": "abstract",
+        "options": [
+          {
+            "value": "abstract",
+            "label": "摘要与指标"
+          },
+          {
+            "value": "points",
+            "label": "编号精读要点"
+          }
+        ],
+        "publicKey": "introMode",
+        "desc": "摘要与指标:左侧论文首页,右侧题目、作者、成段摘要、信息标签与影响因子块;编号精读要点:首页移到右侧,左侧是题目、简介和 2–3 条 01 / 02 / 03 要点(不显示信息标签与影响因子)。"
+      },
+      {
+        "key": "mediaMode",
+        "type": "radio",
+        "label": "论文首页",
+        "default": "auto",
+        "options": [
+          {
+            "value": "auto",
+            "label": "自动"
+          },
+          {
+            "value": "drawn",
+            "label": "绘制首页"
+          },
+          {
+            "value": "image",
+            "label": "首页截图"
+          }
+        ],
+        "publicKey": "mediaMode",
+        "desc": "自动(默认):goal 里写了 props.images(论文首页截图)就放截图,没写就画一张论文首页(题目、期刊、年份、作者跟随本页字段);在页面上上传截图前先切到「首页截图」。"
+      },
+      {
+        "key": "images",
+        "type": "images",
+        "label": "论文首页截图",
+        "publicKey": "images",
+        "desc": "论文首页截图(竖版,按 A4 比例裁切显示)。「论文首页」为「自动」时,goal 里写了 props.images 就显示截图。"
+      },
+      {
+        "key": "fieldCount",
+        "type": "number",
+        "label": "信息标签数",
+        "default": 3,
+        "min": 2,
+        "max": 4,
+        "countArrays": [
+          "fields"
+        ],
+        "publicKey": "fieldCount",
+        "desc": "摘要下方一行信息标签的个数(发表时间 / 期刊名称 / 论文分区 / 被引次数等,每个是标签名 + 值);期刊、时间类标签的值同时显示在绘制的首页页眉上。"
+      },
+      {
+        "key": "showMetric",
+        "type": "toggle",
+        "label": "影响因子块",
+        "default": true,
+        "publicKey": "showMetric",
+        "desc": "信息标签下方的浅底大数字块(数值 + 名称 + 一行说明),常用来放影响因子、被引次数或核心指标。"
+      },
+      {
+        "key": "pointCount",
+        "type": "number",
+        "label": "精读要点数",
+        "default": 3,
+        "min": 2,
+        "max": 3,
+        "countArrays": [
+          "points"
+        ],
+        "publicKey": "pointCount",
+        "desc": "「编号精读要点」版式里 01 / 02 / 03 要点的条数。"
+      }
+    ],
+    "defaultProps": {
+      "chapterIndex": 1,
+      "introMode": "abstract",
+      "mediaMode": "auto",
+      "fieldCount": 3,
+      "pointCount": 3,
+      "showMetric": true,
+      "sectionNo": "1.3",
+      "title": "代表性文献精读",
+      "paperTitle": "基于时空图注意力网络的城市路网交通流多步预测方法",
+      "authors": "陈思远，刘佳宁，周文博，等",
+      "abstract": "针对城市路网交通流**时空依赖复杂、长时预测误差累积**的问题，提出一种融合动态邻接矩阵与多头时间注意力的图神经网络模型。模型按小时更新路段间的相关结构，并在解码阶段引入误差校正分支。在两个城市的真实检测器数据上，60 分钟预测的平均绝对误差较主流基线降低约 12%，且在早晚高峰时段更为稳定。",
+      "fields": [
+        {
+          "label": "发表时间",
+          "value": "2024 年 6 月"
+        },
+        {
+          "label": "期刊名称",
+          "value": "示例交通工程学报"
+        },
+        {
+          "label": "论文分区",
+          "value": "中科院一区 · Top"
+        },
+        {
+          "label": "被引次数",
+          "value": "126 次"
+        }
+      ],
+      "metricValue": "6.8",
+      "metricLabel": "影响因子",
+      "metricNote": "期刊 2024 年 JCR 影响因子，位列交通运输领域前 10%",
+      "points": [
+        {
+          "title": "研究问题与动机",
+          "body": "路网结构随时段变化，静态图难以刻画早晚高峰的传播关系。"
+        },
+        {
+          "title": "模型结构与关键设计",
+          "body": "动态邻接矩阵 + 多头时间注意力，解码端加误差校正分支。"
+        },
+        {
+          "title": "实验结论与可借鉴之处",
+          "body": "长时预测误差降低约 12%，校正分支思路可直接用于本研究。"
+        }
+      ]
+    },
+    "copyBudgets": {
+      "paperTitle": 44,
+      "authors": 32,
+      "abstract": 190,
+      "fields[].label": 6,
+      "fields[].value": 12,
+      "metricValue": 6,
+      "metricLabel": 8,
+      "metricNote": 40,
+      "points[].title": 14,
+      "points[].body": 34
+    }
+  },
+  {
+    "key": "campus_literature_table",
+    "themeKey": "campus",
+    "pageNumber": 45,
     "layout": "CAMPUS-LITERATURE-TABLE",
     "slot": "literature-table",
     "label": "文献综述表 · 学者方法配本文切入点",
@@ -6377,7 +6543,7 @@ export const pages = [
   {
     "key": "campus_review_comments",
     "themeKey": "campus",
-    "pageNumber": 45,
+    "pageNumber": 46,
     "layout": "CAMPUS-REVIEW-COMMENTS",
     "slot": "review-comments",
     "label": "评审意见 · 评分印章配评语与修改对照",
@@ -6514,7 +6680,7 @@ export const pages = [
   {
     "key": "campus_showcase_bars",
     "themeKey": "campus",
-    "pageNumber": 46,
+    "pageNumber": 47,
     "layout": "CAMPUS-SHOWCASE-BARS",
     "slot": "showcase-bars",
     "label": "特色 · 立体柱状图配指标条",
@@ -6690,7 +6856,7 @@ export const pages = [
   {
     "key": "campus_big_numeral",
     "themeKey": "campus",
-    "pageNumber": 47,
+    "pageNumber": 48,
     "layout": "CAMPUS-BIG-NUMERAL",
     "slot": "big-numeral",
     "label": "特色 · 图案填充大数字配两侧要点",
@@ -6807,7 +6973,7 @@ export const pages = [
   {
     "key": "campus_stage_cards",
     "themeKey": "campus",
-    "pageNumber": 48,
+    "pageNumber": 49,
     "layout": "CAMPUS-STAGE-CARDS",
     "slot": "stage-cards",
     "label": "特色 · 弧形玻璃卡配底座数字球",
@@ -6885,7 +7051,7 @@ export const pages = [
   {
     "key": "campus_orbit_ring",
     "themeKey": "campus",
-    "pageNumber": 49,
+    "pageNumber": 50,
     "layout": "CAMPUS-ORBIT-RING",
     "slot": "orbit-ring",
     "label": "特色 · 环形轨道编号节点配阶段条",
@@ -7022,7 +7188,7 @@ export const pages = [
   {
     "key": "campus_scroll_story",
     "themeKey": "campus",
-    "pageNumber": 50,
+    "pageNumber": 51,
     "layout": "CAMPUS-SCROLL-STORY",
     "slot": "scroll-story",
     "label": "特色 · 卷轴大卡配照片要点与指标",
@@ -7134,7 +7300,7 @@ export const pages = [
   {
     "key": "campus_duo_ring",
     "themeKey": "campus",
-    "pageNumber": 51,
+    "pageNumber": 52,
     "layout": "CAMPUS-DUO-RING",
     "slot": "duo-ring",
     "label": "特色 · 双色立体环对照",
@@ -7254,7 +7420,7 @@ export const pages = [
   {
     "key": "campus_hex_flywheel",
     "themeKey": "campus",
-    "pageNumber": 52,
+    "pageNumber": 53,
     "layout": "CAMPUS-HEX-FLYWHEEL",
     "slot": "hex-flywheel",
     "label": "特色 · 立体六边形飞轮",
@@ -7337,7 +7503,7 @@ export const pages = [
   {
     "key": "campus_arrow_ring",
     "themeKey": "campus",
-    "pageNumber": 53,
+    "pageNumber": 54,
     "layout": "CAMPUS-ARROW-RING",
     "slot": "arrow-ring",
     "label": "特色 · 分段箭头环",
@@ -7462,7 +7628,7 @@ export const pages = [
   {
     "key": "campus_orb_bubbles",
     "themeKey": "campus",
-    "pageNumber": 54,
+    "pageNumber": 55,
     "layout": "CAMPUS-ORB-BUBBLES",
     "slot": "orb-bubbles",
     "label": "特色 · 中心数字球配气泡卡",
@@ -7547,7 +7713,7 @@ export const pages = [
   {
     "key": "campus_hex_branch",
     "themeKey": "campus",
-    "pageNumber": 55,
+    "pageNumber": 56,
     "layout": "CAMPUS-HEX-BRANCH",
     "slot": "hex-branch",
     "label": "特色 · 六边形分支",
@@ -7656,7 +7822,7 @@ export const pages = [
   {
     "key": "campus_slant_cards",
     "themeKey": "campus",
-    "pageNumber": 56,
+    "pageNumber": 57,
     "layout": "CAMPUS-SLANT-CARDS",
     "slot": "slant-cards",
     "label": "特色 · 斜切立体标签卡",
@@ -7797,7 +7963,7 @@ export const pages = [
   {
     "key": "campus_background_figure",
     "themeKey": "campus",
-    "pageNumber": 57,
+    "pageNumber": 58,
     "layout": "CAMPUS-BACKGROUND-FIGURE",
     "slot": "background-figure",
     "label": "研究背景 · 成段文字配图",
@@ -7955,7 +8121,7 @@ export const pages = [
   {
     "key": "campus_significance_cards",
     "themeKey": "campus",
-    "pageNumber": 58,
+    "pageNumber": 59,
     "layout": "CAMPUS-SIGNIFICANCE-CARDS",
     "slot": "significance-cards",
     "label": "研究意义 · 小图概念卡",
@@ -8074,7 +8240,7 @@ export const pages = [
   {
     "key": "campus_domestic_abroad",
     "themeKey": "campus",
-    "pageNumber": 59,
+    "pageNumber": 60,
     "layout": "CAMPUS-DOMESTIC-ABROAD",
     "slot": "domestic-abroad",
     "label": "国内外研究现状 · 两栏时间线配研究述评",
@@ -8213,7 +8379,7 @@ export const pages = [
   {
     "key": "campus_problem_work_map",
     "themeKey": "campus",
-    "pageNumber": 60,
+    "pageNumber": 61,
     "layout": "CAMPUS-PROBLEM-WORK-MAP",
     "slot": "problem-work-map",
     "label": "研究内容总览 · 问题到工作汇聚目标",
@@ -8319,7 +8485,7 @@ export const pages = [
   {
     "key": "campus_objective_contents",
     "themeKey": "campus",
-    "pageNumber": 61,
+    "pageNumber": 62,
     "layout": "CAMPUS-OBJECTIVE-CONTENTS",
     "slot": "objective-contents",
     "label": "研究目标与内容 · 总目标分解内容卡",
@@ -8417,7 +8583,7 @@ export const pages = [
   {
     "key": "campus_innovation_points",
     "themeKey": "campus",
-    "pageNumber": 62,
+    "pageNumber": 63,
     "layout": "CAMPUS-INNOVATION-POINTS",
     "slot": "innovation-points",
     "label": "创新点 · 竖向主题区配错落亮点卡",
@@ -8526,7 +8692,7 @@ export const pages = [
   {
     "key": "campus_thesis_structure",
     "themeKey": "campus",
-    "pageNumber": 63,
+    "pageNumber": 64,
     "layout": "CAMPUS-THESIS-STRUCTURE",
     "slot": "thesis-structure",
     "label": "论文结构 · 章节链配分段括线",
@@ -8648,7 +8814,7 @@ export const pages = [
   {
     "key": "campus_references_list",
     "themeKey": "campus",
-    "pageNumber": 64,
+    "pageNumber": 65,
     "layout": "CAMPUS-REFERENCES-LIST",
     "slot": "references-list",
     "label": "参考文献 · 装订文稿纸编号列表",
@@ -8732,7 +8898,7 @@ export const pages = [
   {
     "key": "campus_acknowledgement",
     "themeKey": "campus",
-    "pageNumber": 65,
+    "pageNumber": 66,
     "layout": "CAMPUS-ACKNOWLEDGEMENT",
     "slot": "acknowledgement",
     "label": "致谢 · 致谢词或分栏致谢",
@@ -8844,7 +9010,7 @@ export const pages = [
   {
     "key": "campus_model_pipeline",
     "themeKey": "campus",
-    "pageNumber": 66,
+    "pageNumber": 67,
     "layout": "CAMPUS-MODEL-PIPELINE",
     "slot": "model-pipeline",
     "label": "模型结构图 · 横向管线配编号步骤",
@@ -9112,7 +9278,7 @@ export const pages = [
   {
     "key": "campus_tech_route",
     "themeKey": "campus",
-    "pageNumber": 67,
+    "pageNumber": 68,
     "layout": "CAMPUS-TECH-ROUTE",
     "slot": "tech-route",
     "label": "技术路线图 · 问题到成果的分层分支流程",
@@ -9327,7 +9493,7 @@ export const pages = [
   {
     "key": "campus_swimlane_flow",
     "themeKey": "campus",
-    "pageNumber": 68,
+    "pageNumber": 69,
     "layout": "CAMPUS-SWIMLANE-FLOW",
     "slot": "swimlane-flow",
     "label": "泳道流程图 · 多角色分道配跨道箭头",
@@ -9580,7 +9746,7 @@ export const pages = [
   {
     "key": "campus_decision_flow",
     "themeKey": "campus",
-    "pageNumber": 69,
+    "pageNumber": 70,
     "layout": "CAMPUS-DECISION-FLOW",
     "slot": "decision-flow",
     "label": "判定流程图 · 菱形分支配编号说明",
@@ -9800,7 +9966,7 @@ export const pages = [
   {
     "key": "campus_er_schema",
     "themeKey": "campus",
-    "pageNumber": 70,
+    "pageNumber": 71,
     "layout": "CAMPUS-ER-SCHEMA",
     "slot": "er-schema",
     "label": "数据库设计 · 实体表卡与关系连线",
@@ -10214,7 +10380,7 @@ export const pages = [
   {
     "key": "campus_variable_model",
     "themeKey": "campus",
-    "pageNumber": 71,
+    "pageNumber": 72,
     "layout": "CAMPUS-VARIABLE-MODEL",
     "slot": "variable-model",
     "label": "变量关系模型 · 自变量到因变量的假设路径",
@@ -10465,7 +10631,7 @@ export const pages = [
   {
     "key": "campus_annotated_figure",
     "themeKey": "campus",
-    "pageNumber": 72,
+    "pageNumber": 73,
     "layout": "CAMPUS-ANNOTATED-FIGURE",
     "slot": "annotated-figure",
     "label": "标注示意图 · 大图编号标注配逐点说明",
@@ -10615,7 +10781,7 @@ export const pages = [
   {
     "key": "campus_stage_figures",
     "themeKey": "campus",
-    "pageNumber": 73,
+    "pageNumber": 74,
     "layout": "CAMPUS-STAGE-FIGURES",
     "slot": "stage-figures",
     "label": "多段图组 · 阶段并排配箭头(可放大最后一段)",
@@ -10739,7 +10905,7 @@ export const pages = [
   {
     "key": "campus_setup_tables",
     "themeKey": "campus",
-    "pageNumber": 74,
+    "pageNumber": 75,
     "layout": "CAMPUS-SETUP-TABLES",
     "slot": "setup-tables",
     "label": "实验设置 · 参数表配数据集划分",
@@ -11011,7 +11177,7 @@ export const pages = [
   {
     "key": "campus_curve_grid",
     "themeKey": "campus",
-    "pageNumber": 75,
+    "pageNumber": 76,
     "layout": "CAMPUS-CURVE-GRID",
     "slot": "curve-grid",
     "label": "曲线网格 · 2–6 张指标小图共用图例",
@@ -11523,9 +11689,362 @@ export const pages = [
     }
   },
   {
+    "key": "campus_figure_points",
+    "themeKey": "campus",
+    "pageNumber": 77,
+    "layout": "CAMPUS-FIGURE-POINTS",
+    "slot": "figure-points",
+    "label": "左图右要点 · 1–2 张研究图配 2–4 条结论",
+    "roles": [
+      "result",
+      "metrics",
+      "observation",
+      "trend"
+    ],
+    "controls": [
+      {
+        "key": "chapterIndex",
+        "type": "number",
+        "label": "当前章节",
+        "default": 3,
+        "min": 1,
+        "max": 8,
+        "publicKey": "chapterIndex",
+        "desc": "页眉章节导航里高亮第几章;章节名称取自整份演示稿的章节设置,没有设置章节时不显示导航。"
+      },
+      {
+        "key": "mediaMode",
+        "type": "radio",
+        "label": "图的来源",
+        "default": "auto",
+        "options": [
+          {
+            "value": "auto",
+            "label": "自动"
+          },
+          {
+            "value": "chart",
+            "label": "原生图表"
+          },
+          {
+            "value": "image",
+            "label": "图片"
+          }
+        ],
+        "publicKey": "mediaMode",
+        "desc": "自动(默认):goal 里写了 props.images 就放图片,没写就按 points 数据画原生图表;在页面上上传图片前先切到「图片」。图片时 charts[].tag / title / unit 作图题。"
+      },
+      {
+        "key": "images",
+        "type": "images",
+        "label": "研究图",
+        "countKey": "figureCount",
+        "publicKey": "images",
+        "desc": "左侧的研究图(实验结果、训练曲线等),按顺序放进上、下两个图位;「图的来源」为「自动」时,goal 里写了 props.images 就显示图片。"
+      },
+      {
+        "key": "figureCount",
+        "type": "number",
+        "label": "图的数量",
+        "default": 2,
+        "min": 1,
+        "max": 2,
+        "countArrays": [
+          "charts"
+        ],
+        "publicKey": "figureCount",
+        "desc": "左侧图的张数:2 张上下叠放,1 张撑满左栏。第 1 张图读 points 里的 a1 / a2 / a3,第 2 张读 b1 / b2 / b3。"
+      },
+      {
+        "key": "chartForm",
+        "type": "radio",
+        "label": "图表形式",
+        "default": "line",
+        "options": [
+          {
+            "value": "line",
+            "label": "折线"
+          },
+          {
+            "value": "bar",
+            "label": "柱状"
+          },
+          {
+            "value": "line-bar",
+            "label": "上折线下柱状"
+          }
+        ],
+        "publicKey": "chartForm",
+        "desc": "原生图表的画法:折线(主系列校色实线带浅色面积与终值,对照系列灰线 / 浅校色虚线);柱状(分组柱,纵轴从 0 开始);上折线下柱状(第 1 张折线、第 2 张柱状)。"
+      },
+      {
+        "key": "seriesCount",
+        "type": "number",
+        "label": "系列数",
+        "default": 3,
+        "min": 1,
+        "max": 3,
+        "countArrays": [
+          "series"
+        ],
+        "publicKey": "seriesCount",
+        "desc": "每张图的系列条数(名称在 series 里,共用图例)。"
+      },
+      {
+        "key": "pointCount",
+        "type": "number",
+        "label": "数据点数",
+        "default": 9,
+        "min": 3,
+        "max": 12,
+        "countArrays": [
+          "points"
+        ],
+        "publicKey": "pointCount",
+        "desc": "横轴取值个数(各图共用 points[].label);超过 9 个时横轴标签隔一个显示。没有真实数据时也要写成有起伏、趋势合理的数值,不要写成两条直线。"
+      },
+      {
+        "key": "itemCount",
+        "type": "number",
+        "label": "要点数量",
+        "default": 3,
+        "min": 2,
+        "max": 4,
+        "countArrays": [
+          "items"
+        ],
+        "publicKey": "itemCount",
+        "desc": "右侧要点条数。每条的圆形图标按小标题(其次说明)里的关键词自动挑选、同页不重复:收敛 / 提升 → 上升曲线,稳定 / 波动 → 盾牌,速度 / 时段 / 昼夜 → 时钟,精度 / 误差 → 靶心,对比 / 代价 → 天平,结构 / 模块 → 图层,实验 / 仿真 → 烧瓶,数据 / 样本 → 图表,信号 → 波形,区域 / 城市 → 定位,发现 / 机理 → 灯泡。"
+      },
+      {
+        "key": "showConclusion",
+        "type": "toggle",
+        "label": "底部结论条",
+        "default": false,
+        "publicKey": "showConclusion",
+        "desc": "页面底部一行结论(校色平涂标签 + 细线框),默认关。"
+      }
+    ],
+    "defaultProps": {
+      "chapterIndex": 3,
+      "mediaMode": "auto",
+      "figureCount": 2,
+      "chartForm": "line",
+      "seriesCount": 3,
+      "pointCount": 9,
+      "itemCount": 3,
+      "showConclusion": false,
+      "sectionNo": "3.2",
+      "title": "训练过程与验证结果",
+      "series": [
+        {
+          "name": "本文方法"
+        },
+        {
+          "name": "基线模型 A"
+        },
+        {
+          "name": "基线模型 B"
+        }
+      ],
+      "charts": [
+        {
+          "tag": "(a)",
+          "title": "训练损失",
+          "unit": "无量纲 · 越低越好",
+          "decimals": 2
+        },
+        {
+          "tag": "(b)",
+          "title": "验证集 mIoU",
+          "unit": "% · 越高越好",
+          "decimals": 1
+        }
+      ],
+      "points": [
+        {
+          "label": "0",
+          "a1": 1.92,
+          "a2": 1.95,
+          "a3": 1.97,
+          "b1": 42.3,
+          "b2": 41.8,
+          "b3": 40.9
+        },
+        {
+          "label": "25",
+          "a1": 1.24,
+          "a2": 1.41,
+          "a3": 1.52,
+          "b1": 58.6,
+          "b2": 54.2,
+          "b3": 51.5
+        },
+        {
+          "label": "50",
+          "a1": 0.93,
+          "a2": 1.12,
+          "a3": 1.27,
+          "b1": 65.1,
+          "b2": 60.7,
+          "b3": 57.3
+        },
+        {
+          "label": "75",
+          "a1": 0.76,
+          "a2": 0.97,
+          "a3": 1.1,
+          "b1": 69.8,
+          "b2": 64.3,
+          "b3": 60.2
+        },
+        {
+          "label": "100",
+          "a1": 0.69,
+          "a2": 0.9,
+          "a3": 1.06,
+          "b1": 71.2,
+          "b2": 66.9,
+          "b3": 62.8
+        },
+        {
+          "label": "125",
+          "a1": 0.6,
+          "a2": 0.84,
+          "a3": 0.99,
+          "b1": 73.9,
+          "b2": 66.1,
+          "b3": 63.5
+        },
+        {
+          "label": "150",
+          "a1": 0.62,
+          "a2": 0.86,
+          "a3": 0.95,
+          "b1": 73.1,
+          "b2": 68.4,
+          "b3": 62.9
+        },
+        {
+          "label": "175",
+          "a1": 0.53,
+          "a2": 0.79,
+          "a3": 0.97,
+          "b1": 75.4,
+          "b2": 69,
+          "b3": 64.6
+        },
+        {
+          "label": "200",
+          "a1": 0.5,
+          "a2": 0.77,
+          "a3": 0.92,
+          "b1": 76.2,
+          "b2": 69.7,
+          "b3": 65.1
+        },
+        {
+          "label": "225",
+          "a1": 0.49,
+          "a2": 0.76,
+          "a3": 0.91,
+          "b1": 76.5,
+          "b2": 70.1,
+          "b3": 65.3
+        },
+        {
+          "label": "250",
+          "a1": 0.48,
+          "a2": 0.74,
+          "a3": 0.9,
+          "b1": 76.4,
+          "b2": 70.4,
+          "b3": 65.6
+        },
+        {
+          "label": "275",
+          "a1": 0.48,
+          "a2": 0.75,
+          "a3": 0.89,
+          "b1": 76.8,
+          "b2": 70.2,
+          "b3": 65.4
+        }
+      ],
+      "items": [
+        {
+          "title": "收敛更快",
+          "body": "本文方法约 100 轮进入平稳区，最终损失比基线 A 低约 35%。"
+        },
+        {
+          "title": "精度全程领先",
+          "body": "验证集 mIoU 达 76.2%，较两条基线分别高 6.5 和 11.1 个百分点。"
+        },
+        {
+          "title": "后期波动更小",
+          "body": "150 轮之后指标起伏不超过 1 个百分点，训练过程更稳定。"
+        },
+        {
+          "title": "代价可以接受",
+          "body": "参数量只增加 4%，单张推理耗时与基线 A 基本持平。"
+        }
+      ],
+      "conclusionLabel": "结论",
+      "conclusion": "本文方法收敛更快、精度更高且后期更稳定，验证了时空注意力模块的有效性。"
+    },
+    "numberBounds": {
+      "points[].a1": {
+        "min": -1000000000,
+        "max": 1000000000,
+        "semantics": "magnitude"
+      },
+      "points[].a2": {
+        "min": -1000000000,
+        "max": 1000000000,
+        "semantics": "magnitude"
+      },
+      "points[].a3": {
+        "min": -1000000000,
+        "max": 1000000000,
+        "semantics": "magnitude"
+      },
+      "points[].b1": {
+        "min": -1000000000,
+        "max": 1000000000,
+        "semantics": "magnitude"
+      },
+      "points[].b2": {
+        "min": -1000000000,
+        "max": 1000000000,
+        "semantics": "magnitude"
+      },
+      "points[].b3": {
+        "min": -1000000000,
+        "max": 1000000000,
+        "semantics": "magnitude"
+      },
+      "charts[].decimals": {
+        "min": 0,
+        "max": 4,
+        "semantics": "count"
+      }
+    },
+    "copyBudgets": {
+      "series[].name": 8,
+      "charts[].tag": 4,
+      "charts[].title": 12,
+      "charts[].unit": 12,
+      "points[].label": 6,
+      "items[].title": 10,
+      "items[].body": 40,
+      "conclusionLabel": 4,
+      "conclusion": 56
+    }
+  },
+  {
     "key": "campus_ablation_table",
     "themeKey": "campus",
-    "pageNumber": 76,
+    "pageNumber": 78,
     "layout": "CAMPUS-ABLATION-TABLE",
     "slot": "ablation-table",
     "label": "消融实验 · 模块开关表配贡献解读",
@@ -11855,7 +12374,7 @@ export const pages = [
   {
     "key": "campus_test_cases",
     "themeKey": "campus",
-    "pageNumber": 77,
+    "pageNumber": 79,
     "layout": "CAMPUS-TEST-CASES",
     "slot": "test-cases",
     "label": "测试用例 · 汇总数字配用例表",
@@ -12074,7 +12593,7 @@ export const pages = [
   {
     "key": "campus_survey_bars",
     "themeKey": "campus",
-    "pageNumber": 78,
+    "pageNumber": 80,
     "layout": "CAMPUS-SURVEY-BARS",
     "slot": "survey-bars",
     "label": "问卷结果 · 李克特堆叠条配样本说明",
@@ -12327,7 +12846,7 @@ export const pages = [
   {
     "key": "campus_stats_table",
     "themeKey": "campus",
-    "pageNumber": 79,
+    "pageNumber": 81,
     "layout": "CAMPUS-STATS-TABLE",
     "slot": "stats-table",
     "label": "统计表 · 回归系数表配结论",
@@ -12685,7 +13204,7 @@ export const pages = [
   {
     "key": "campus_before_after",
     "themeKey": "campus",
-    "pageNumber": 80,
+    "pageNumber": 82,
     "layout": "CAMPUS-BEFORE-AFTER",
     "slot": "before-after",
     "label": "前后对比 · 双图位配指标变化",
@@ -12836,7 +13355,7 @@ export const pages = [
   {
     "key": "campus_heatmap_matrix",
     "themeKey": "campus",
-    "pageNumber": 81,
+    "pageNumber": 83,
     "layout": "CAMPUS-HEATMAP-MATRIX",
     "slot": "heatmap-matrix",
     "label": "矩阵热力图 · 混淆 / 相关系数矩阵配解读",
@@ -13129,7 +13648,7 @@ export const pages = [
   {
     "key": "campus_schedule_table",
     "themeKey": "campus",
-    "pageNumber": 82,
+    "pageNumber": 84,
     "layout": "CAMPUS-SCHEDULE-TABLE",
     "slot": "schedule-table",
     "label": "进度安排表 · 竖向时间线串起各阶段",
@@ -13292,7 +13811,7 @@ export const pages = [
   {
     "key": "campus_achievement_list",
     "themeKey": "campus",
-    "pageNumber": 83,
+    "pageNumber": 85,
     "layout": "CAMPUS-ACHIEVEMENT-LIST",
     "slot": "achievement-list",
     "label": "成果清单 · 分类大数字配文献式条目",
@@ -13537,7 +14056,7 @@ export const pages = [
   {
     "key": "campus_expected_outcomes",
     "themeKey": "campus",
-    "pageNumber": 84,
+    "pageNumber": 86,
     "layout": "CAMPUS-EXPECTED-OUTCOMES",
     "slot": "expected-outcomes",
     "label": "预期成果 · 奖章大数字指标卡分组",
@@ -13708,7 +14227,7 @@ export const pages = [
   {
     "key": "campus_feasibility",
     "themeKey": "campus",
-    "pageNumber": 85,
+    "pageNumber": 87,
     "layout": "CAMPUS-FEASIBILITY",
     "slot": "feasibility",
     "label": "可行性分析 · 维度论据卡配前期结果图",
@@ -13859,7 +14378,7 @@ export const pages = [
   {
     "key": "campus_budget_table",
     "themeKey": "campus",
-    "pageNumber": 86,
+    "pageNumber": 88,
     "layout": "CAMPUS-BUDGET-TABLE",
     "slot": "budget-table",
     "label": "经费预算 · 科目表配环形占比",
@@ -14029,7 +14548,7 @@ export const pages = [
   {
     "key": "campus_team_lead",
     "themeKey": "campus",
-    "pageNumber": 87,
+    "pageNumber": 89,
     "layout": "CAMPUS-TEAM-LEAD",
     "slot": "team-lead",
     "label": "团队 · 负责人大卡配骨干小卡",
@@ -14151,7 +14670,7 @@ export const pages = [
   {
     "key": "campus_timeline_figures",
     "themeKey": "campus",
-    "pageNumber": 88,
+    "pageNumber": 90,
     "layout": "CAMPUS-TIMELINE-FIGURES",
     "slot": "timeline-figures",
     "label": "配图时间轴 · 节点带图位可上下交错",
@@ -14310,7 +14829,7 @@ export const pages = [
   {
     "key": "campus_case_study",
     "themeKey": "campus",
-    "pageNumber": 89,
+    "pageNumber": 91,
     "layout": "CAMPUS-CASE-STUDY",
     "slot": "case-study",
     "label": "案例分析 · 概况卡配分段叙述",
@@ -14462,7 +14981,7 @@ export const pages = [
   {
     "key": "campus_cause_countermeasure",
     "themeKey": "campus",
-    "pageNumber": 90,
+    "pageNumber": 92,
     "layout": "CAMPUS-CAUSE-COUNTERMEASURE",
     "slot": "cause-countermeasure",
     "label": "问题—原因—对策 · 三段递进对应行",
@@ -14578,7 +15097,7 @@ export const pages = [
   {
     "key": "campus_podium_rank",
     "themeKey": "campus",
-    "pageNumber": 91,
+    "pageNumber": 93,
     "layout": "CAMPUS-PODIUM-RANK",
     "slot": "podium-rank",
     "label": "特色 · 立体领奖台",
@@ -14696,7 +15215,7 @@ export const pages = [
   {
     "key": "campus_road_journey",
     "themeKey": "campus",
-    "pageNumber": 92,
+    "pageNumber": 94,
     "layout": "CAMPUS-ROAD-JOURNEY",
     "slot": "road-journey",
     "label": "特色 · 蜿蜒立体道路",
@@ -14786,7 +15305,7 @@ export const pages = [
   {
     "key": "campus_mountain_peaks",
     "themeKey": "campus",
-    "pageNumber": 93,
+    "pageNumber": 95,
     "layout": "CAMPUS-MOUNTAIN-PEAKS",
     "slot": "mountain-peaks",
     "label": "特色 · 层叠山峰",
@@ -14905,7 +15424,7 @@ export const pages = [
   {
     "key": "campus_target_focus",
     "themeKey": "campus",
-    "pageNumber": 94,
+    "pageNumber": 96,
     "layout": "CAMPUS-TARGET-FOCUS",
     "slot": "target-focus",
     "label": "特色 · 立体靶心",
@@ -14983,7 +15502,7 @@ export const pages = [
   {
     "key": "campus_funnel_layers",
     "themeKey": "campus",
-    "pageNumber": 95,
+    "pageNumber": 97,
     "layout": "CAMPUS-FUNNEL-LAYERS",
     "slot": "funnel-layers",
     "label": "特色 · 立体漏斗",
@@ -15085,7 +15604,7 @@ export const pages = [
   {
     "key": "campus_puzzle_pieces",
     "themeKey": "campus",
-    "pageNumber": 96,
+    "pageNumber": 98,
     "layout": "CAMPUS-PUZZLE-PIECES",
     "slot": "puzzle-pieces",
     "label": "特色 · 立体拼图",
@@ -15173,7 +15692,7 @@ export const pages = [
   {
     "key": "campus_balance_scale",
     "themeKey": "campus",
-    "pageNumber": 97,
+    "pageNumber": 99,
     "layout": "CAMPUS-BALANCE-SCALE",
     "slot": "balance-scale",
     "label": "特色 · 立体天平取舍",
@@ -15296,7 +15815,7 @@ export const pages = [
   {
     "key": "campus_gear_linkage",
     "themeKey": "campus",
-    "pageNumber": 98,
+    "pageNumber": 100,
     "layout": "CAMPUS-GEAR-LINKAGE",
     "slot": "gear-linkage",
     "label": "特色 · 立体齿轮联动",
@@ -15372,7 +15891,7 @@ export const pages = [
   {
     "key": "campus_iso_blocks",
     "themeKey": "campus",
-    "pageNumber": 99,
+    "pageNumber": 101,
     "layout": "CAMPUS-ISO-BLOCKS",
     "slot": "iso-blocks",
     "label": "特色 · 等距立体积木",
@@ -15468,7 +15987,7 @@ export const pages = [
   {
     "key": "campus_fan_spread",
     "themeKey": "campus",
-    "pageNumber": 100,
+    "pageNumber": 102,
     "layout": "CAMPUS-FAN-SPREAD",
     "slot": "fan-spread",
     "label": "特色 · 扇形展开卡",
@@ -15566,7 +16085,7 @@ export const pages = [
   {
     "key": "campus_medal_ribbons",
     "themeKey": "campus",
-    "pageNumber": 101,
+    "pageNumber": 103,
     "layout": "CAMPUS-MEDAL-RIBBONS",
     "slot": "medal-ribbons",
     "label": "特色 · 立体勋章成果",
@@ -15658,7 +16177,7 @@ export const pages = [
   {
     "key": "campus_open_book",
     "themeKey": "campus",
-    "pageNumber": 102,
+    "pageNumber": 104,
     "layout": "CAMPUS-OPEN-BOOK",
     "slot": "open-book",
     "label": "特色 · 打开的立体书",
@@ -15786,7 +16305,7 @@ export const pages = [
   {
     "key": "campus_temp_closing",
     "themeKey": "campus",
-    "pageNumber": 103,
+    "pageNumber": 105,
     "layout": "CAMPUS-TEMP-CLOSING",
     "slot": "temp-closing",
     "label": "结语(临时)",

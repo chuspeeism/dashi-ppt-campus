@@ -139575,10 +139575,136 @@
       "numberBounds": {},
       "freeTextFields": []
     },
+    "campus_paper_intro": {
+      "key": "campus_paper_intro",
+      "themePack": "campus",
+      "pageNumber": 44,
+      "label": "单篇论文介绍 · 首页缩略图配摘要与影响因子",
+      "slot": "paper-intro",
+      "dataLayout": "CAMPUS-PAPER-INTRO",
+      "controls": [
+        {
+          "key": "chapterIndex",
+          "label": "当前章节",
+          "type": "range",
+          "default": 1,
+          "min": 1,
+          "max": 8,
+          "desc": "页眉章节导航里高亮第几章;章节名称取自整份演示稿的章节设置,没有设置章节时不显示导航。",
+          "publicKey": "chapterIndex"
+        },
+        {
+          "key": "introMode",
+          "label": "版式",
+          "type": "select",
+          "default": "abstract",
+          "options": [
+            {
+              "value": "abstract",
+              "label": "摘要与指标"
+            },
+            {
+              "value": "points",
+              "label": "编号精读要点"
+            }
+          ],
+          "desc": "摘要与指标:左侧论文首页,右侧题目、作者、成段摘要、信息标签与影响因子块;编号精读要点:首页移到右侧,左侧是题目、简介和 2–3 条 01 / 02 / 03 要点(不显示信息标签与影响因子)。",
+          "publicKey": "introMode"
+        },
+        {
+          "key": "mediaMode",
+          "label": "论文首页",
+          "type": "select",
+          "default": "auto",
+          "options": [
+            {
+              "value": "auto",
+              "label": "自动"
+            },
+            {
+              "value": "drawn",
+              "label": "绘制首页"
+            },
+            {
+              "value": "image",
+              "label": "首页截图"
+            }
+          ],
+          "desc": "自动(默认):goal 里写了 props.images(论文首页截图)就放截图,没写就画一张论文首页(题目、期刊、年份、作者跟随本页字段);在页面上上传截图前先切到「首页截图」。",
+          "publicKey": "mediaMode"
+        },
+        {
+          "key": "images",
+          "label": "论文首页截图",
+          "type": "images",
+          "desc": "论文首页截图(竖版,按 A4 比例裁切显示)。「论文首页」为「自动」时,goal 里写了 props.images 就显示截图。",
+          "publicKey": "images"
+        },
+        {
+          "key": "fieldCount",
+          "label": "信息标签数",
+          "type": "range",
+          "default": 3,
+          "min": 2,
+          "max": 4,
+          "countArrays": [
+            "fields"
+          ],
+          "desc": "摘要下方一行信息标签的个数(发表时间 / 期刊名称 / 论文分区 / 被引次数等,每个是标签名 + 值);期刊、时间类标签的值同时显示在绘制的首页页眉上。",
+          "publicKey": "fieldCount"
+        },
+        {
+          "key": "showMetric",
+          "label": "影响因子块",
+          "type": "toggle",
+          "default": true,
+          "desc": "信息标签下方的浅底大数字块(数值 + 名称 + 一行说明),常用来放影响因子、被引次数或核心指标。",
+          "publicKey": "showMetric"
+        },
+        {
+          "key": "pointCount",
+          "label": "精读要点数",
+          "type": "range",
+          "default": 3,
+          "min": 2,
+          "max": 3,
+          "countArrays": [
+            "points"
+          ],
+          "desc": "「编号精读要点」版式里 01 / 02 / 03 要点的条数。",
+          "publicKey": "pointCount"
+        }
+      ],
+      "countBindings": [
+        {
+          "key": "fieldCount",
+          "publicKey": "fieldCount",
+          "label": "信息标签数",
+          "arrays": [
+            "fields"
+          ],
+          "min": 2,
+          "max": 4
+        },
+        {
+          "key": "pointCount",
+          "publicKey": "pointCount",
+          "label": "精读要点数",
+          "arrays": [
+            "points"
+          ],
+          "min": 2,
+          "max": 3
+        }
+      ],
+      "lengthBindings": [],
+      "numberBounds": {},
+      "freeTextFields": []
+    },
     "campus_literature_table": {
       "key": "campus_literature_table",
       "themePack": "campus",
-      "pageNumber": 44,
+      "pageNumber": 45,
       "label": "文献综述表 · 学者方法配本文切入点",
       "slot": "literature-table",
       "dataLayout": "CAMPUS-LITERATURE-TABLE",
@@ -139647,7 +139773,7 @@
     "campus_review_comments": {
       "key": "campus_review_comments",
       "themePack": "campus",
-      "pageNumber": 45,
+      "pageNumber": 46,
       "label": "评审意见 · 评分印章配评语与修改对照",
       "slot": "review-comments",
       "dataLayout": "CAMPUS-REVIEW-COMMENTS",
@@ -139740,7 +139866,7 @@
     "campus_showcase_bars": {
       "key": "campus_showcase_bars",
       "themePack": "campus",
-      "pageNumber": 46,
+      "pageNumber": 47,
       "label": "特色 · 立体柱状图配指标条",
       "slot": "showcase-bars",
       "dataLayout": "CAMPUS-SHOWCASE-BARS",
@@ -139858,7 +139984,7 @@
     "campus_big_numeral": {
       "key": "campus_big_numeral",
       "themePack": "campus",
-      "pageNumber": 47,
+      "pageNumber": 48,
       "label": "特色 · 图案填充大数字配两侧要点",
       "slot": "big-numeral",
       "dataLayout": "CAMPUS-BIG-NUMERAL",
@@ -139941,7 +140067,7 @@
     "campus_stage_cards": {
       "key": "campus_stage_cards",
       "themePack": "campus",
-      "pageNumber": 48,
+      "pageNumber": 49,
       "label": "特色 · 弧形玻璃卡配底座数字球",
       "slot": "stage-cards",
       "dataLayout": "CAMPUS-STAGE-CARDS",
@@ -139986,7 +140112,7 @@
     "campus_orbit_ring": {
       "key": "campus_orbit_ring",
       "themePack": "campus",
-      "pageNumber": 49,
+      "pageNumber": 50,
       "label": "特色 · 环形轨道编号节点配阶段条",
       "slot": "orbit-ring",
       "dataLayout": "CAMPUS-ORBIT-RING",
@@ -140059,7 +140185,7 @@
     "campus_scroll_story": {
       "key": "campus_scroll_story",
       "themePack": "campus",
-      "pageNumber": 50,
+      "pageNumber": 51,
       "label": "特色 · 卷轴大卡配照片要点与指标",
       "slot": "scroll-story",
       "dataLayout": "CAMPUS-SCROLL-STORY",
@@ -140144,7 +140270,7 @@
     "campus_duo_ring": {
       "key": "campus_duo_ring",
       "themePack": "campus",
-      "pageNumber": 51,
+      "pageNumber": 52,
       "label": "特色 · 双色立体环对照",
       "slot": "duo-ring",
       "dataLayout": "CAMPUS-DUO-RING",
@@ -140212,7 +140338,7 @@
     "campus_hex_flywheel": {
       "key": "campus_hex_flywheel",
       "themePack": "campus",
-      "pageNumber": 52,
+      "pageNumber": 53,
       "label": "特色 · 立体六边形飞轮",
       "slot": "hex-flywheel",
       "dataLayout": "CAMPUS-HEX-FLYWHEEL",
@@ -140257,7 +140383,7 @@
     "campus_arrow_ring": {
       "key": "campus_arrow_ring",
       "themePack": "campus",
-      "pageNumber": 53,
+      "pageNumber": 54,
       "label": "特色 · 分段箭头环",
       "slot": "arrow-ring",
       "dataLayout": "CAMPUS-ARROW-RING",
@@ -140327,7 +140453,7 @@
     "campus_orb_bubbles": {
       "key": "campus_orb_bubbles",
       "themePack": "campus",
-      "pageNumber": 54,
+      "pageNumber": 55,
       "label": "特色 · 中心数字球配气泡卡",
       "slot": "orb-bubbles",
       "dataLayout": "CAMPUS-ORB-BUBBLES",
@@ -140372,7 +140498,7 @@
     "campus_hex_branch": {
       "key": "campus_hex_branch",
       "themePack": "campus",
-      "pageNumber": 55,
+      "pageNumber": 56,
       "label": "特色 · 六边形分支",
       "slot": "hex-branch",
       "dataLayout": "CAMPUS-HEX-BRANCH",
@@ -140417,7 +140543,7 @@
     "campus_slant_cards": {
       "key": "campus_slant_cards",
       "themePack": "campus",
-      "pageNumber": 56,
+      "pageNumber": 57,
       "label": "特色 · 斜切立体标签卡",
       "slot": "slant-cards",
       "dataLayout": "CAMPUS-SLANT-CARDS",
@@ -140480,7 +140606,7 @@
     "campus_background_figure": {
       "key": "campus_background_figure",
       "themePack": "campus",
-      "pageNumber": 57,
+      "pageNumber": 58,
       "label": "研究背景 · 成段文字配图",
       "slot": "background-figure",
       "dataLayout": "CAMPUS-BACKGROUND-FIGURE",
@@ -140601,7 +140727,7 @@
     "campus_significance_cards": {
       "key": "campus_significance_cards",
       "themePack": "campus",
-      "pageNumber": 58,
+      "pageNumber": 59,
       "label": "研究意义 · 小图概念卡",
       "slot": "significance-cards",
       "dataLayout": "CAMPUS-SIGNIFICANCE-CARDS",
@@ -140688,7 +140814,7 @@
     "campus_domestic_abroad": {
       "key": "campus_domestic_abroad",
       "themePack": "campus",
-      "pageNumber": 59,
+      "pageNumber": 60,
       "label": "国内外研究现状 · 两栏时间线配研究述评",
       "slot": "domestic-abroad",
       "dataLayout": "CAMPUS-DOMESTIC-ABROAD",
@@ -140769,7 +140895,7 @@
     "campus_problem_work_map": {
       "key": "campus_problem_work_map",
       "themePack": "campus",
-      "pageNumber": 60,
+      "pageNumber": 61,
       "label": "研究内容总览 · 问题到工作汇聚目标",
       "slot": "problem-work-map",
       "dataLayout": "CAMPUS-PROBLEM-WORK-MAP",
@@ -140832,7 +140958,7 @@
     "campus_objective_contents": {
       "key": "campus_objective_contents",
       "themePack": "campus",
-      "pageNumber": 61,
+      "pageNumber": 62,
       "label": "研究目标与内容 · 总目标分解内容卡",
       "slot": "objective-contents",
       "dataLayout": "CAMPUS-OBJECTIVE-CONTENTS",
@@ -140874,7 +141000,7 @@
     "campus_innovation_points": {
       "key": "campus_innovation_points",
       "themePack": "campus",
-      "pageNumber": 62,
+      "pageNumber": 63,
       "label": "创新点 · 竖向主题区配错落亮点卡",
       "slot": "innovation-points",
       "dataLayout": "CAMPUS-INNOVATION-POINTS",
@@ -140935,7 +141061,7 @@
     "campus_thesis_structure": {
       "key": "campus_thesis_structure",
       "themePack": "campus",
-      "pageNumber": 63,
+      "pageNumber": 64,
       "label": "论文结构 · 章节链配分段括线",
       "slot": "thesis-structure",
       "dataLayout": "CAMPUS-THESIS-STRUCTURE",
@@ -140999,7 +141125,7 @@
     "campus_references_list": {
       "key": "campus_references_list",
       "themePack": "campus",
-      "pageNumber": 64,
+      "pageNumber": 65,
       "label": "参考文献 · 装订文稿纸编号列表",
       "slot": "references-list",
       "dataLayout": "CAMPUS-REFERENCES-LIST",
@@ -141060,7 +141186,7 @@
     "campus_acknowledgement": {
       "key": "campus_acknowledgement",
       "themePack": "campus",
-      "pageNumber": 65,
+      "pageNumber": 66,
       "label": "致谢 · 致谢词或分栏致谢",
       "slot": "acknowledgement",
       "dataLayout": "CAMPUS-ACKNOWLEDGEMENT",
@@ -141139,7 +141265,7 @@
     "campus_model_pipeline": {
       "key": "campus_model_pipeline",
       "themePack": "campus",
-      "pageNumber": 66,
+      "pageNumber": 67,
       "label": "模型结构图 · 横向管线配编号步骤",
       "slot": "model-pipeline",
       "dataLayout": "CAMPUS-MODEL-PIPELINE",
@@ -141308,7 +141434,7 @@
     "campus_tech_route": {
       "key": "campus_tech_route",
       "themePack": "campus",
-      "pageNumber": 67,
+      "pageNumber": 68,
       "label": "技术路线图 · 问题到成果的分层分支流程",
       "slot": "tech-route",
       "dataLayout": "CAMPUS-TECH-ROUTE",
@@ -141439,7 +141565,7 @@
     "campus_swimlane_flow": {
       "key": "campus_swimlane_flow",
       "themePack": "campus",
-      "pageNumber": 68,
+      "pageNumber": 69,
       "label": "泳道流程图 · 多角色分道配跨道箭头",
       "slot": "swimlane-flow",
       "dataLayout": "CAMPUS-SWIMLANE-FLOW",
@@ -141568,7 +141694,7 @@
     "campus_decision_flow": {
       "key": "campus_decision_flow",
       "themePack": "campus",
-      "pageNumber": 69,
+      "pageNumber": 70,
       "label": "判定流程图 · 菱形分支配编号说明",
       "slot": "decision-flow",
       "dataLayout": "CAMPUS-DECISION-FLOW",
@@ -141679,7 +141805,7 @@
     "campus_er_schema": {
       "key": "campus_er_schema",
       "themePack": "campus",
-      "pageNumber": 70,
+      "pageNumber": 71,
       "label": "数据库设计 · 实体表卡与关系连线",
       "slot": "er-schema",
       "dataLayout": "CAMPUS-ER-SCHEMA",
@@ -141839,7 +141965,7 @@
     "campus_variable_model": {
       "key": "campus_variable_model",
       "themePack": "campus",
-      "pageNumber": 71,
+      "pageNumber": 72,
       "label": "变量关系模型 · 自变量到因变量的假设路径",
       "slot": "variable-model",
       "dataLayout": "CAMPUS-VARIABLE-MODEL",
@@ -142011,7 +142137,7 @@
     "campus_annotated_figure": {
       "key": "campus_annotated_figure",
       "themePack": "campus",
-      "pageNumber": 72,
+      "pageNumber": 73,
       "label": "标注示意图 · 大图编号标注配逐点说明",
       "slot": "annotated-figure",
       "dataLayout": "CAMPUS-ANNOTATED-FIGURE",
@@ -142105,7 +142231,7 @@
     "campus_stage_figures": {
       "key": "campus_stage_figures",
       "themePack": "campus",
-      "pageNumber": 73,
+      "pageNumber": 74,
       "label": "多段图组 · 阶段并排配箭头(可放大最后一段)",
       "slot": "stage-figures",
       "dataLayout": "CAMPUS-STAGE-FIGURES",
@@ -142179,7 +142305,7 @@
     "campus_setup_tables": {
       "key": "campus_setup_tables",
       "themePack": "campus",
-      "pageNumber": 74,
+      "pageNumber": 75,
       "label": "实验设置 · 参数表配数据集划分",
       "slot": "setup-tables",
       "dataLayout": "CAMPUS-SETUP-TABLES",
@@ -142348,7 +142474,7 @@
     "campus_curve_grid": {
       "key": "campus_curve_grid",
       "themePack": "campus",
-      "pageNumber": 75,
+      "pageNumber": 76,
       "label": "曲线网格 · 2–6 张指标小图共用图例",
       "slot": "curve-grid",
       "dataLayout": "CAMPUS-CURVE-GRID",
@@ -142561,10 +142687,223 @@
       },
       "freeTextFields": []
     },
+    "campus_figure_points": {
+      "key": "campus_figure_points",
+      "themePack": "campus",
+      "pageNumber": 77,
+      "label": "左图右要点 · 1–2 张研究图配 2–4 条结论",
+      "slot": "figure-points",
+      "dataLayout": "CAMPUS-FIGURE-POINTS",
+      "controls": [
+        {
+          "key": "chapterIndex",
+          "label": "当前章节",
+          "type": "range",
+          "default": 3,
+          "min": 1,
+          "max": 8,
+          "desc": "页眉章节导航里高亮第几章;章节名称取自整份演示稿的章节设置,没有设置章节时不显示导航。",
+          "publicKey": "chapterIndex"
+        },
+        {
+          "key": "mediaMode",
+          "label": "图的来源",
+          "type": "select",
+          "default": "auto",
+          "options": [
+            {
+              "value": "auto",
+              "label": "自动"
+            },
+            {
+              "value": "chart",
+              "label": "原生图表"
+            },
+            {
+              "value": "image",
+              "label": "图片"
+            }
+          ],
+          "desc": "自动(默认):goal 里写了 props.images 就放图片,没写就按 points 数据画原生图表;在页面上上传图片前先切到「图片」。图片时 charts[].tag / title / unit 作图题。",
+          "publicKey": "mediaMode"
+        },
+        {
+          "key": "images",
+          "label": "研究图",
+          "type": "images",
+          "countKey": "figureCount",
+          "desc": "左侧的研究图(实验结果、训练曲线等),按顺序放进上、下两个图位;「图的来源」为「自动」时,goal 里写了 props.images 就显示图片。",
+          "publicKey": "images"
+        },
+        {
+          "key": "figureCount",
+          "label": "图的数量",
+          "type": "range",
+          "default": 2,
+          "min": 1,
+          "max": 2,
+          "countArrays": [
+            "charts"
+          ],
+          "desc": "左侧图的张数:2 张上下叠放,1 张撑满左栏。第 1 张图读 points 里的 a1 / a2 / a3,第 2 张读 b1 / b2 / b3。",
+          "publicKey": "figureCount"
+        },
+        {
+          "key": "chartForm",
+          "label": "图表形式",
+          "type": "select",
+          "default": "line",
+          "options": [
+            {
+              "value": "line",
+              "label": "折线"
+            },
+            {
+              "value": "bar",
+              "label": "柱状"
+            },
+            {
+              "value": "line-bar",
+              "label": "上折线下柱状"
+            }
+          ],
+          "desc": "原生图表的画法:折线(主系列校色实线带浅色面积与终值,对照系列灰线 / 浅校色虚线);柱状(分组柱,纵轴从 0 开始);上折线下柱状(第 1 张折线、第 2 张柱状)。",
+          "publicKey": "chartForm"
+        },
+        {
+          "key": "seriesCount",
+          "label": "系列数",
+          "type": "range",
+          "default": 3,
+          "min": 1,
+          "max": 3,
+          "countArrays": [
+            "series"
+          ],
+          "desc": "每张图的系列条数(名称在 series 里,共用图例)。",
+          "publicKey": "seriesCount"
+        },
+        {
+          "key": "pointCount",
+          "label": "数据点数",
+          "type": "range",
+          "default": 9,
+          "min": 3,
+          "max": 12,
+          "countArrays": [
+            "points"
+          ],
+          "desc": "横轴取值个数(各图共用 points[].label);超过 9 个时横轴标签隔一个显示。没有真实数据时也要写成有起伏、趋势合理的数值,不要写成两条直线。",
+          "publicKey": "pointCount"
+        },
+        {
+          "key": "itemCount",
+          "label": "要点数量",
+          "type": "range",
+          "default": 3,
+          "min": 2,
+          "max": 4,
+          "countArrays": [
+            "items"
+          ],
+          "desc": "右侧要点条数。每条的圆形图标按小标题(其次说明)里的关键词自动挑选、同页不重复:收敛 / 提升 → 上升曲线,稳定 / 波动 → 盾牌,速度 / 时段 / 昼夜 → 时钟,精度 / 误差 → 靶心,对比 / 代价 → 天平,结构 / 模块 → 图层,实验 / 仿真 → 烧瓶,数据 / 样本 → 图表,信号 → 波形,区域 / 城市 → 定位,发现 / 机理 → 灯泡。",
+          "publicKey": "itemCount"
+        },
+        {
+          "key": "showConclusion",
+          "label": "底部结论条",
+          "type": "toggle",
+          "default": false,
+          "desc": "页面底部一行结论(校色平涂标签 + 细线框),默认关。",
+          "publicKey": "showConclusion"
+        }
+      ],
+      "countBindings": [
+        {
+          "key": "figureCount",
+          "publicKey": "figureCount",
+          "label": "图的数量",
+          "arrays": [
+            "charts"
+          ],
+          "min": 1,
+          "max": 2
+        },
+        {
+          "key": "seriesCount",
+          "publicKey": "seriesCount",
+          "label": "系列数",
+          "arrays": [
+            "series"
+          ],
+          "min": 1,
+          "max": 3
+        },
+        {
+          "key": "pointCount",
+          "publicKey": "pointCount",
+          "label": "数据点数",
+          "arrays": [
+            "points"
+          ],
+          "min": 3,
+          "max": 12
+        },
+        {
+          "key": "itemCount",
+          "publicKey": "itemCount",
+          "label": "要点数量",
+          "arrays": [
+            "items"
+          ],
+          "min": 2,
+          "max": 4
+        }
+      ],
+      "lengthBindings": [],
+      "numberBounds": {
+        "points[].a1": {
+          "min": -1000000000,
+          "max": 1000000000,
+          "semantics": "magnitude"
+        },
+        "points[].a2": {
+          "min": -1000000000,
+          "max": 1000000000,
+          "semantics": "magnitude"
+        },
+        "points[].a3": {
+          "min": -1000000000,
+          "max": 1000000000,
+          "semantics": "magnitude"
+        },
+        "points[].b1": {
+          "min": -1000000000,
+          "max": 1000000000,
+          "semantics": "magnitude"
+        },
+        "points[].b2": {
+          "min": -1000000000,
+          "max": 1000000000,
+          "semantics": "magnitude"
+        },
+        "points[].b3": {
+          "min": -1000000000,
+          "max": 1000000000,
+          "semantics": "magnitude"
+        },
+        "charts[].decimals": {
+          "min": 0,
+          "max": 4,
+          "semantics": "count"
+        }
+      },
+      "freeTextFields": []
+    },
     "campus_ablation_table": {
       "key": "campus_ablation_table",
       "themePack": "campus",
-      "pageNumber": 76,
+      "pageNumber": 78,
       "label": "消融实验 · 模块开关表配贡献解读",
       "slot": "ablation-table",
       "dataLayout": "CAMPUS-ABLATION-TABLE",
@@ -142750,7 +143089,7 @@
     "campus_test_cases": {
       "key": "campus_test_cases",
       "themePack": "campus",
-      "pageNumber": 77,
+      "pageNumber": 79,
       "label": "测试用例 · 汇总数字配用例表",
       "slot": "test-cases",
       "dataLayout": "CAMPUS-TEST-CASES",
@@ -142850,7 +143189,7 @@
     "campus_survey_bars": {
       "key": "campus_survey_bars",
       "themePack": "campus",
-      "pageNumber": 78,
+      "pageNumber": 80,
       "label": "问卷结果 · 李克特堆叠条配样本说明",
       "slot": "survey-bars",
       "dataLayout": "CAMPUS-SURVEY-BARS",
@@ -142994,7 +143333,7 @@
     "campus_stats_table": {
       "key": "campus_stats_table",
       "themePack": "campus",
-      "pageNumber": 79,
+      "pageNumber": 81,
       "label": "统计表 · 回归系数表配结论",
       "slot": "stats-table",
       "dataLayout": "CAMPUS-STATS-TABLE",
@@ -143173,7 +143512,7 @@
     "campus_before_after": {
       "key": "campus_before_after",
       "themePack": "campus",
-      "pageNumber": 80,
+      "pageNumber": 82,
       "label": "前后对比 · 双图位配指标变化",
       "slot": "before-after",
       "dataLayout": "CAMPUS-BEFORE-AFTER",
@@ -143279,7 +143618,7 @@
     "campus_heatmap_matrix": {
       "key": "campus_heatmap_matrix",
       "themePack": "campus",
-      "pageNumber": 81,
+      "pageNumber": 83,
       "label": "矩阵热力图 · 混淆 / 相关系数矩阵配解读",
       "slot": "heatmap-matrix",
       "dataLayout": "CAMPUS-HEATMAP-MATRIX",
@@ -143437,7 +143776,7 @@
     "campus_schedule_table": {
       "key": "campus_schedule_table",
       "themePack": "campus",
-      "pageNumber": 82,
+      "pageNumber": 84,
       "label": "进度安排表 · 竖向时间线串起各阶段",
       "slot": "schedule-table",
       "dataLayout": "CAMPUS-SCHEDULE-TABLE",
@@ -143526,7 +143865,7 @@
     "campus_achievement_list": {
       "key": "campus_achievement_list",
       "themePack": "campus",
-      "pageNumber": 83,
+      "pageNumber": 85,
       "label": "成果清单 · 分类大数字配文献式条目",
       "slot": "achievement-list",
       "dataLayout": "CAMPUS-ACHIEVEMENT-LIST",
@@ -143605,7 +143944,7 @@
     "campus_expected_outcomes": {
       "key": "campus_expected_outcomes",
       "themePack": "campus",
-      "pageNumber": 84,
+      "pageNumber": 86,
       "label": "预期成果 · 奖章大数字指标卡分组",
       "slot": "expected-outcomes",
       "dataLayout": "CAMPUS-EXPECTED-OUTCOMES",
@@ -143706,7 +144045,7 @@
     "campus_feasibility": {
       "key": "campus_feasibility",
       "themePack": "campus",
-      "pageNumber": 85,
+      "pageNumber": 87,
       "label": "可行性分析 · 维度论据卡配前期结果图",
       "slot": "feasibility",
       "dataLayout": "CAMPUS-FEASIBILITY",
@@ -143816,7 +144155,7 @@
     "campus_budget_table": {
       "key": "campus_budget_table",
       "themePack": "campus",
-      "pageNumber": 86,
+      "pageNumber": 88,
       "label": "经费预算 · 科目表配环形占比",
       "slot": "budget-table",
       "dataLayout": "CAMPUS-BUDGET-TABLE",
@@ -143901,7 +144240,7 @@
     "campus_team_lead": {
       "key": "campus_team_lead",
       "themePack": "campus",
-      "pageNumber": 87,
+      "pageNumber": 89,
       "label": "团队 · 负责人大卡配骨干小卡",
       "slot": "team-lead",
       "dataLayout": "CAMPUS-TEAM-LEAD",
@@ -143981,7 +144320,7 @@
     "campus_timeline_figures": {
       "key": "campus_timeline_figures",
       "themePack": "campus",
-      "pageNumber": 88,
+      "pageNumber": 90,
       "label": "配图时间轴 · 节点带图位可上下交错",
       "slot": "timeline-figures",
       "dataLayout": "CAMPUS-TIMELINE-FIGURES",
@@ -144091,7 +144430,7 @@
     "campus_case_study": {
       "key": "campus_case_study",
       "themePack": "campus",
-      "pageNumber": 89,
+      "pageNumber": 91,
       "label": "案例分析 · 概况卡配分段叙述",
       "slot": "case-study",
       "dataLayout": "CAMPUS-CASE-STUDY",
@@ -144187,7 +144526,7 @@
     "campus_cause_countermeasure": {
       "key": "campus_cause_countermeasure",
       "themePack": "campus",
-      "pageNumber": 90,
+      "pageNumber": 92,
       "label": "问题—原因—对策 · 三段递进对应行",
       "slot": "cause-countermeasure",
       "dataLayout": "CAMPUS-CAUSE-COUNTERMEASURE",
@@ -144251,7 +144590,7 @@
     "campus_podium_rank": {
       "key": "campus_podium_rank",
       "themePack": "campus",
-      "pageNumber": 91,
+      "pageNumber": 93,
       "label": "特色 · 立体领奖台",
       "slot": "podium-rank",
       "dataLayout": "CAMPUS-PODIUM-RANK",
@@ -144322,7 +144661,7 @@
     "campus_road_journey": {
       "key": "campus_road_journey",
       "themePack": "campus",
-      "pageNumber": 92,
+      "pageNumber": 94,
       "label": "特色 · 蜿蜒立体道路",
       "slot": "road-journey",
       "dataLayout": "CAMPUS-ROAD-JOURNEY",
@@ -144367,7 +144706,7 @@
     "campus_mountain_peaks": {
       "key": "campus_mountain_peaks",
       "themePack": "campus",
-      "pageNumber": 93,
+      "pageNumber": 95,
       "label": "特色 · 层叠山峰",
       "slot": "mountain-peaks",
       "dataLayout": "CAMPUS-MOUNTAIN-PEAKS",
@@ -144426,7 +144765,7 @@
     "campus_target_focus": {
       "key": "campus_target_focus",
       "themePack": "campus",
-      "pageNumber": 94,
+      "pageNumber": 96,
       "label": "特色 · 立体靶心",
       "slot": "target-focus",
       "dataLayout": "CAMPUS-TARGET-FOCUS",
@@ -144471,7 +144810,7 @@
     "campus_funnel_layers": {
       "key": "campus_funnel_layers",
       "themePack": "campus",
-      "pageNumber": 95,
+      "pageNumber": 97,
       "label": "特色 · 立体漏斗",
       "slot": "funnel-layers",
       "dataLayout": "CAMPUS-FUNNEL-LAYERS",
@@ -144516,7 +144855,7 @@
     "campus_puzzle_pieces": {
       "key": "campus_puzzle_pieces",
       "themePack": "campus",
-      "pageNumber": 96,
+      "pageNumber": 98,
       "label": "特色 · 立体拼图",
       "slot": "puzzle-pieces",
       "dataLayout": "CAMPUS-PUZZLE-PIECES",
@@ -144572,7 +144911,7 @@
     "campus_balance_scale": {
       "key": "campus_balance_scale",
       "themePack": "campus",
-      "pageNumber": 97,
+      "pageNumber": 99,
       "label": "特色 · 立体天平取舍",
       "slot": "balance-scale",
       "dataLayout": "CAMPUS-BALANCE-SCALE",
@@ -144644,7 +144983,7 @@
     "campus_gear_linkage": {
       "key": "campus_gear_linkage",
       "themePack": "campus",
-      "pageNumber": 98,
+      "pageNumber": 100,
       "label": "特色 · 立体齿轮联动",
       "slot": "gear-linkage",
       "dataLayout": "CAMPUS-GEAR-LINKAGE",
@@ -144692,7 +145031,7 @@
     "campus_iso_blocks": {
       "key": "campus_iso_blocks",
       "themePack": "campus",
-      "pageNumber": 99,
+      "pageNumber": 101,
       "label": "特色 · 等距立体积木",
       "slot": "iso-blocks",
       "dataLayout": "CAMPUS-ISO-BLOCKS",
@@ -144751,7 +145090,7 @@
     "campus_fan_spread": {
       "key": "campus_fan_spread",
       "themePack": "campus",
-      "pageNumber": 100,
+      "pageNumber": 102,
       "label": "特色 · 扇形展开卡",
       "slot": "fan-spread",
       "dataLayout": "CAMPUS-FAN-SPREAD",
@@ -144810,7 +145149,7 @@
     "campus_medal_ribbons": {
       "key": "campus_medal_ribbons",
       "themePack": "campus",
-      "pageNumber": 101,
+      "pageNumber": 103,
       "label": "特色 · 立体勋章成果",
       "slot": "medal-ribbons",
       "dataLayout": "CAMPUS-MEDAL-RIBBONS",
@@ -144866,7 +145205,7 @@
     "campus_open_book": {
       "key": "campus_open_book",
       "themePack": "campus",
-      "pageNumber": 102,
+      "pageNumber": 104,
       "label": "特色 · 打开的立体书",
       "slot": "open-book",
       "dataLayout": "CAMPUS-OPEN-BOOK",
@@ -144939,7 +145278,7 @@
     "campus_temp_closing": {
       "key": "campus_temp_closing",
       "themePack": "campus",
-      "pageNumber": 103,
+      "pageNumber": 105,
       "label": "结语(临时)",
       "slot": "temp-closing",
       "dataLayout": "CAMPUS-TEMP-CLOSING",
