@@ -80,7 +80,8 @@ export function NarrHead({ no, title, className = '', style }) {
 /**
  * 线性小图标(纯装饰,stroke 用 currentColor)。
  * name:globe 地球 / pin 定位 / target 靶心 / book 书本 / cap 学位帽 / people 同伴 / heart 心 / bulb 灯泡 /
- *       flag 旗 / scale 天平 / gear 齿轮 / chart 图表 / quill 笔 / home 家 / check 对勾。不认识的名字画一个小菱形。
+ *       flag 旗 / scale 天平 / gear 齿轮 / chart 图表 / quill 笔 / home 家 / check 对勾 /
+ *       search 放大镜 / trend 上升曲线 / flask 烧瓶 / layers 图层 / shield 盾牌 / clock 时钟 / wave 波形。不认识的名字画一个小菱形。
  */
 const ICON_PATHS = {
   globe: ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18Z', 'M3 12h18', 'M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3Z'],
@@ -98,6 +99,14 @@ const ICON_PATHS = {
   quill: ['M19.5 4.5C12 5 7.5 9.5 6 18', 'M6 18l-1.5 2.5', 'M9.5 12.5h5', 'M19.5 4.5c-.5 6-4 9.5-10 10'],
   home: ['M3.5 11 12 4l8.5 7', 'M6 9.5V20h12V9.5', 'M10 20v-5h4v5'],
   check: ['M5 12.5l4.4 4.2L19 7'],
+  // 以下为 paper-intro / figure-points 补充的图标(放大镜、上升曲线、烧瓶、图层、盾牌、时钟、波形)
+  search: ['M10.5 4a6.5 6.5 0 1 0 0 13a6.5 6.5 0 1 0 0-13Z', 'M15.3 15.3 20.5 20.5'],
+  trend: ['M3.5 17.5l5-5.5 3.5 3 8-8.5', 'M15 6.5h5v5'],
+  flask: ['M9.5 3.5h5', 'M10.5 3.5v6L5 18.6c-.6 1 .1 2 1.2 2h11.6c1.1 0 1.8-1 1.2-2L13.5 9.5v-6', 'M7.6 14.5h8.8'],
+  layers: ['M12 4 3 8.6l9 4.6 9-4.6Z', 'M3 12.6l9 4.6 9-4.6', 'M3 16.4l9 4.6 9-4.6'],
+  shield: ['M12 3.2 5 6v5.6c0 4.4 3 7.6 7 9.2 4-1.6 7-4.8 7-9.2V6Z', 'M9 12l2.2 2.2L15.5 10'],
+  clock: ['M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z', 'M12 7.5V12l3 2'],
+  wave: ['M2.5 12h3l2-5.5 3.5 11 3-8 2 2.5h5.5'],
 };
 export const NARR_ICON_NAMES = Object.freeze(Object.keys(ICON_PATHS));
 

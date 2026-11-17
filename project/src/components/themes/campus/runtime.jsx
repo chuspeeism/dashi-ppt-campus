@@ -49,6 +49,7 @@ import { FlowChain } from './source/slides/FlowChain.jsx';
 import { StatusTable } from './source/slides/StatusTable.jsx';
 import { OptionMatrix } from './source/slides/OptionMatrix.jsx';
 import { PaperCard } from './source/slides/PaperCard.jsx';
+import { PaperIntro } from './source/slides/PaperIntro.jsx';
 import { LiteratureTable } from './source/slides/LiteratureTable.jsx';
 import { ReviewComments } from './source/slides/ReviewComments.jsx';
 // —— 特色页 A 组(feature-a):立体柱、大数字、舞台卡片、环形轨道、卷轴图文 ——
@@ -86,6 +87,7 @@ import { StageFigures } from './source/slides/StageFigures.jsx';
 // ── g3 数据与实验页:实验设置表、曲线小图网格、消融表、测试用例表、问卷结果、统计表、前后对比、矩阵热力图 ──
 import { SetupTables } from './source/slides/SetupTables.jsx';
 import { CurveGrid } from './source/slides/CurveGrid.jsx';
+import { FigurePoints } from './source/slides/FigurePoints.jsx';
 import { AblationTable } from './source/slides/AblationTable.jsx';
 import { TestCases } from './source/slides/TestCases.jsx';
 import { SurveyBars } from './source/slides/SurveyBars.jsx';
@@ -176,6 +178,7 @@ export const runtimePages = definePages([
   StatusTable,
   OptionMatrix,
   PaperCard,
+  PaperIntro,
   LiteratureTable,
   ReviewComments,
   // —— 特色页 A 组(feature-a) ——
@@ -213,6 +216,7 @@ export const runtimePages = definePages([
   // ── g3 数据与实验页 ──
   SetupTables,
   CurveGrid,
+  FigurePoints,
   AblationTable,
   TestCases,
   SurveyBars,
