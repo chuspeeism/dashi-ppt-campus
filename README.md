@@ -1,62 +1,106 @@
-<!-- dashi-ppt-generated-readme -->
-# Dashi PPT
+# Dashi PPT 高校版 · 大学生的答辩 / 开题 / 组会 PPT Skill
 
-Dashi PPT 是一个本地 PPT 生成助手。你给它一个汇报目标、受众、页数和内容重点,它会从已接入的视觉页面中组合出一份可离线打开、可翻页、可编辑和可导出的 HTML PPT。
+![Version](https://img.shields.io/badge/version-v0.4.15-2EA44F?style=flat-square)
+![Release](https://img.shields.io/badge/%E6%AD%A3%E5%BC%8F%E7%89%88-Stable-2EA44F?style=flat-square)
+![豆包](https://img.shields.io/badge/%E8%B1%86%E5%8C%85%E5%B7%A5%E4%BD%9C-Supported-3370FF?style=flat-square)
+![Claude Code](https://img.shields.io/badge/Claude%20Code-Supported-6B5B95?style=flat-square)
+![Codex](https://img.shields.io/badge/Codex-Supported-222222?style=flat-square)
+![PPTX Export](https://img.shields.io/badge/PPTX-%E5%8F%AF%E7%BC%96%E8%BE%91%E5%AF%BC%E5%87%BA-D24726?style=flat-square)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue?style=flat-square)](./LICENSE)
 
-当前版本: `0.4.14`
+[Dashi PPT Skill](https://github.com/chuspeeism/dashi-ppt-skill) 的高校版。告诉 AI 你的学校、题目和场合，它会做出一整套带**学校专属封面、校徽和校色**的 PPT：封面、目录、正文一次排好，能在浏览器里接着改，改完导出**可编辑的 PPTX**。
 
-## 它适合做什么
+- **12 所学校专属封面和动画**，其他学校也能换上自己的校名、校徽、校色
+- **100+ 个学术场景版式**：研究背景、文献精读、技术路线、实验对比、消融实验、致谢……
+- **仪式感开场动画**，答辩第一页就抓住老师
+- **全局换色、换学校**，一改整套统一，不用一页页调
 
-- 行业研究、融资复盘、竞品分析和趋势报告
-- 项目汇报、方案展示、路演材料和内部培训
-- 需要快速形成结构完整、视觉统一、可继续编辑的演示文稿
+![武汉大学本科答辩：封面到正文](https://github.com/chuspeeism/dashi-ppt-campus/releases/download/readme-assets-v1/hero.gif)
 
-## 你会得到什么
+## 在豆包里用（三步）
 
-- 一份本地 HTML PPT,打开后即可横向翻页
-- 预览页里可以继续改文字、换图片/视频、调整页面属性
-- 你提供的图片/视频会写入本次 deck,成品不依赖原始素材路径
-- 可以导出 HTML、PDF 或 PPTX
-- 所有输出都保存在本机,适合继续归档、修改或交付
+1. 打开豆包电脑版，进入「豆包工作」，在左侧「工作台」里找到 **高校学生工作台**，点「使用」。
+2. 在输入框里发送下面这句话，等它装好（几分钟）：
 
-## 怎么使用
+   ```text
+   从 Github 上安装 chuspeeism/dashi-ppt-campus 这个 Skill
+   ```
 
-安装后,在 Codex/Agent 里说明要使用 `dashi-ppt`,然后直接描述你想做的 PPT:
+3. 新建一个工作任务，点输入框下方的「**技能**」，选中 `dashi-ppt-campus`，再写上你的要求发送。例如：
 
-- 主题和目标
-- 面向谁汇报
-- 希望几页
-- 想突出的结论或内容
-- 偏好的视觉风格
+   ```text
+   帮我做一个武汉大学的本科毕业论文答辩 PPT，题目《管理会计在企业经营管理中的应用研究》，经济与管理学院会计学专业，答辩人李雨桐，指导教师张丽副教授。内容包括研究绪论、理论与方法、应用与案例、问题与对策、结论与展望。15 页左右，做完导出 PPTX。
+   ```
 
-如果你没有指定风格,Skill 会先列出可选风格让你选择,不会直接替你决定。
+几分钟后就能拿到完整的 PPT 和可编辑的 PPTX 文件。
 
-## 当前风格
+> **小提示**
+> - 「技能」列表里找不到 `dashi-ppt-campus`：到「插件 · 技能 · 伙伴 → 管理 → 技能」里确认 **Dashi Ppt Campus** 的开关是打开的；或者不选技能，直接在要求开头写「用 dashi-ppt-campus 技能，帮我做……」。
+> - **本地电脑模式**：回复末尾会给一个预览链接，点开后在右侧网页里可以改文字、换学校、换配色，右上角「导出 → PPTX」；下载完成后点「立即查看」，还能用豆包自带的 PPT 编辑器继续改。
+> - **云电脑模式**：点回复里的 PPTX 文件卡片，右侧就能直接翻看整套 PPT。
+> - 有论文或开题报告的话，一起上传给它，内容会更贴近你的研究。
 
-当前包含 13 套已接入风格:
+## 12 所学校的专属封面
 
-- `theme01` 轻拟态风 (84 页): 适配场景: 产品介绍、企业汇报、方案说明、轻量级发布; 适配人群: 创业团队、产品经理、销售顾问、企业内部汇报者
-- `theme02` 炫光紫绿风 (74 页): 适配场景: 科技发布会、AI/自动驾驶/机器人主题、增长故事、创新项目展示; 适配人群: 科技公司创始人、技术负责人、品牌市场团队、投资路演团队
-- `theme03` 深浅代码风 (77 页): 适配场景: 技术方案、开发者大会、系统架构、AI 工程实践; 适配人群: 工程师、技术管理者、架构师、开发者社区
-- `theme04` 玻璃糖果风 (74 页): 适配场景: 年轻化品牌、消费产品、创意提案、社媒感内容; 适配人群: 品牌团队、设计师、内容创作者、消费品团队
-- `theme05` 色谱图表风 (94 页): 适配场景: 数据报告、市场分析、KPI 复盘、行业研究; 适配人群: 数据分析师、咨询顾问、研究员、业务负责人
-- `theme06` 深色图谱风 (83 页): 适配场景: 高密度数据展示、战略分析、科技/金融/产业报告; 适配人群: 战略团队、投资人、产业研究团队、高管汇报者
-- `theme07` 冷白调研风 (71 页): 适配场景: 调研报告、白皮书、竞品分析、学术/政策型表达; 适配人群: 研究机构、咨询团队、政府/高校/智库、B2B 团队
-- `theme08` 黑金实验风 (84 页): 适配场景: 高端发布、品牌提案、实验性概念、奢华科技叙事; 适配人群: 高端品牌、创意总监、科技品牌、发布会策划团队
-- `theme09` 深蓝杂志风 (111 页): 适配场景: 品牌故事、人物访谈、企业形象册、深度专题; 适配人群: 公关团队、媒体编辑、创始人、企业品牌部
-- `theme10` 金色指数风 (95 页): 适配场景: 金融数据、投资报告、商业指数、年度榜单; 适配人群: 投资机构、金融分析师、咨询公司、商业媒体
-- `theme11` 高能增长风 (87 页): 适配场景: 增长复盘、商业计划、融资路演、市场扩张方案; 适配人群: 创业者、增长团队、销售团队、VC/PE 路演团队
-- `theme12` 声波霓虹风 (86 页): 适配场景: 音乐娱乐、潮流活动、直播内容、年轻化发布; 适配人群: 娱乐品牌、活动策划、内容团队、潮流消费品牌
-- `campus` 高校版 (103 页): 适配场景: 毕业答辩、开题报告、课程汇报、社团活动、学期总结; 适配人群: 高校学生、教师、辅导员、社团负责人
+北京大学、清华大学、上海交通大学、浙江大学、武汉大学、东南大学、中山大学、厦门大学、四川大学、东北大学、河南大学、云南大学。
 
-每套风格都有独立的页面结构和视觉语言,适合不同类型的报告和展示场景。
+![各校封面](https://github.com/chuspeeism/dashi-ppt-campus/releases/download/readme-assets-v1/covers.jpg)
 
-## 安装说明
+导出 PPTX 时，这些学校的封面和目录会换成设计师做的原生页（3D 建筑模型或校园视频，在 PowerPoint 里可以旋转模型、播放视频；清华大学目前只有封面是原生页）。每所学校第一次导出时会自动下载这所学校的模板（45–90 MB），之后不再重复下载。
 
-把整个 `dashi-ppt` 目录放到本机 Skill 目录中,然后重新打开会话即可使用。
+其他学校也可以用：封面和目录用通用版式，校名、校徽、校色照常带出。
 
-本机需要能运行 Node.js 20+ 和 npm。首次生成时依赖会自动准备。
+## 为学术场景做的正文页
 
-## 更新提醒
+答辩、开题、组会、文献精读、读书分享常用的页面都有：数据结论页、代表性文献精读、技术路线、模型结构、实验对比、热力图、构成占比、读后反思、讨论题……
 
-Skill 会在完成任务后静默检查是否有新版本。没有新版本时不会打扰你;有新版本时才会在回复末尾提醒更新。
+![正文页示例](https://github.com/chuspeeism/dashi-ppt-campus/releases/download/readme-assets-v1/pages.jpg)
+
+## 生成后在浏览器里接着改
+
+生成的 PPT 是一个网页，打开就能横向翻页，也能直接编辑：
+
+- 点进文字直接改
+- 右侧面板「学校信息」里换学校、改校名、拖入自己的 LOGO、换校色，整套同时生效
+- 调整导航栏样式、标题装饰、卡片数量和排法等页面参数
+- 右上角「导出」：PPTX（可编辑）/ PDF / HTML，网页里看到的样子就是导出后的样子
+
+![换学校、换主题色](https://github.com/chuspeeism/dashi-ppt-campus/releases/download/readme-assets-v1/switch-school.gif)
+
+## 在其他 AI Agent 里安装（Claude Code / Codex 等）
+
+用 npm 一键安装或更新（自动探测常见技能目录）：
+
+```bash
+# 国内（走 npmmirror 镜像，不需要访问 GitHub）
+npx --registry=https://registry.npmmirror.com dashi-ppt-campus-skill@latest
+
+# 国际
+npx dashi-ppt-campus-skill@latest
+```
+
+- 装到豆包工作的本地技能目录：在命令末尾加 `--doubao`。
+- 指定位置：`--dir <技能根目录>`；更新所有探测到的目录：`--all`；只列出目录：`--list`。
+- 手动安装：在技能目录里 `git clone https://github.com/chuspeeism/dashi-ppt-campus dashi-ppt-campus`，然后重新打开会话。
+
+技能目录名是 `dashi-ppt-campus`，和原版 Dashi PPT（`dashi-ppt`）可以同时安装、互不覆盖。本机需要 Node.js 20+ 和 npm，首次生成时依赖会自动准备到 `~/.dashi-ppt/`（国内网络会自动切换到镜像源）。
+
+## 版本与更新
+
+当前正式版：**v0.4.15**（2026-11-17），npm 包 [`dashi-ppt-campus-skill`](https://www.npmjs.com/package/dashi-ppt-campus-skill) 同步发布。各版本的变化见 [Releases](https://github.com/chuspeeism/dashi-ppt-campus/releases)。
+
+- 在豆包里：对它说「把 dashi-ppt-campus 更新到最新版」，或重新发送一次安装那句话。
+- 在其他 Agent 里：重新运行上面的 npx 命令即可，已准备好的依赖和已下载的学校模板不会重复下载。
+- 技能会在完成任务后静默检查新版本，有新版本时才在回复末尾提醒你。
+
+## 常见问题
+
+**生成要多久？** 一般 10–20 分钟，页数多、模型慢或用云电脑时会更久。
+
+**内容里的数据是真的吗？** 你给了的（题目、姓名、导师、数据）照写；没给的会先合理自拟，并在交付说明里列出来，答辩前请换成你论文里的真实数据。
+
+**它和原版 Dashi PPT 什么关系？** 高校版在原版的基础上加了高校主题、学校专属封面、学术版式和学校信息面板，原版的 12 套视觉风格也都保留着。职场、商业类的 PPT 用 [原版](https://github.com/chuspeeism/dashi-ppt-skill) 更合适。
+
+## 开源协议
+
+[AGPL-3.0](./LICENSE)
